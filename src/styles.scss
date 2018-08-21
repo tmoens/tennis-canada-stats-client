@@ -1,0 +1,16 @@
+@import '../node_modules/@angular/material/theming';
+//@import '~@okta/okta-signin-widget/dist/css/okta-sign-in.min.css';
+//@import '~@okta/okta-signin-widget/dist/css/okta-theme.css';
+
+// always include only once per project
+@include mat-core();
+
+// import our custom theme
+@import 'tc-tools-theme';
+
+// specify theme class eg: <body class="my-theme"> ... </body>
+.tc-tools-theme {
+
+  // use our theme with angular-material-theme mixin
+  @include angular-material-theme($tc-tools);
+}

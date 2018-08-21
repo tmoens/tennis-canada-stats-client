@@ -1,0 +1,53 @@
+<div fxLayout="row" fxLayoutGap="10px">
+  <mat-card fxFlex="60">
+    <mat-card-header>
+      <mat-card-title>
+        <h3>Fix VR Licenses Without Provinces</h3>
+      </mat-card-title>
+    </mat-card-header>
+    <form [formGroup]="licenseUpdateForm" (ngSubmit)="onSubmit()">
+      <mat-card-content *ngIf="licensesWithoutProvince.length > 0">
+        <div formArrayName="licenses">
+          <mat-list>
+            <mat-list-item *ngFor="let l of licenses.controls; let i=index"
+                           [formGroupName]="i" style="padding: 15px">
+              <mat-form-field style="width: 300px">
+                <input matInput placeholder="License Name"
+                       class="form-control"
+                       formControlName="licenseName">
+              </mat-form-field>
+              <mat-form-field style="padding-left: 15px; width: 200px">
+                <mat-select formControlName="province" placeholder="Tennis Association">
+                  <mat-option value="TBD">--select--</mat-option>
+                  <mat-option *ngFor="let ta of tennisAssociations" [value]="ta.abbrv">{{ta.ptaName}}</mat-option>
+                </mat-select>
+              </mat-form-field>
+              <span class="fill-remaining-space"></span>
+            </mat-list-item>
+          </mat-list>
+        </div>
+        <!--For debugging -->
+        <!--<p>Form value: {{ licenseUpdateForm.value | json }}</p>-->
+        <!--<p>Form status: {{ licenseUpdateForm.status | json }}</p>-->
+
+      </mat-card-content>
+      <mat-card-content *ngIf="licensesWithoutProvince.length == 0">
+        <h4>All the VR license have provinces associated with them.</h4>
+      </mat-card-content>
+      <mat-card-footer>
+        <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="start center">
+          <button mat-button color="primary" type="button" (click)="getLicensesWithoutProvinces()">
+            Reload List
+          </button>
+          <button mat-button color="primary" type="button" (click)="rebuildForm()"
+                  [disabled]="licenseUpdateForm.pristine">
+            Revert
+          </button>
+          <button mat-button color="primary" type="submit" [disabled]="licenseUpdateForm.pristine">
+            Save Changes
+          </button>
+        </div>
+      </mat-card-footer>
+    </form>
+  </mat-card>
+</div>
