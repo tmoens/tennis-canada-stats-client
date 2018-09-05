@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams} from '@angular/common/http';
-import {MessageService} from "../messages/message.service";
-import {Observable, of} from "rxjs/index";
-import {VRLicense} from "./vrlicense-manager/VRLicense";
+import { MessageService} from "../messages/message.service";
+import { Observable, of} from "rxjs/index";
 import { environment } from '../../environments/environment';
+import {PlayerMergeRecord} from "./player-merge-import/player-merge-import.component";
 
 const httpOptions = {
   headers: new HttpHeaders({ 'Content-Type': 'application/json' })
@@ -12,7 +12,7 @@ const httpOptions = {
 @Injectable({
   providedIn: 'root'
 })
-export class VRLicenseService {
+export class VRPlayerService {
   private serverURL = environment.serverPrefix;
 
   constructor(
@@ -22,16 +22,9 @@ export class VRLicenseService {
 
   /** POST: a list of licenses with provinces */
   //TODO Handle error;
-  updateLicensesWithMissingProvince(licenses:VRLicense[]):Observable<VRLicense[]> {
-    let url = `${this.serverURL}/license/fixLicensesWithoutProvinces`;
-    return this.http.post<VRLicense[]>(url , licenses, httpOptions);
-  }
-
-  /** GET: list of licenses with missing province */
-  //TODO Handle error;
-  getLicensesWithMissingProvince():Observable<VRLicense[]> {
-    let url = `${this.serverURL}/license/missingProvince`;
-    return this.http.get<VRLicense[]>(url , httpOptions);
+  mergePlayers(mergeRecord: PlayerMergeRecord):Observable<string[]> {
+    let url = `${this.serverURL}/Player/renumber`;
+    return this.http.post<string[]>(url , mergeRecord, httpOptions);
   }
 
   /**
@@ -51,8 +44,9 @@ export class VRLicenseService {
     };
   }
 
+
   private log(message: string) {
-    this.messageService.add('LicenseService: ' + message);
+    this.messageService.add('Player Service: ' + message);
   }
 
 }

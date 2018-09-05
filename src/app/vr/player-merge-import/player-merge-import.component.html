@@ -1,0 +1,70 @@
+<mat-card >
+  <mat-card-header>
+    <mat-card-title>
+      <h2>VR Merge Player Importer</h2>
+    </mat-card-title>
+  </mat-card-header>
+  <mat-card-content>
+    <p *ngFor="let note of notes">{{note}}</p>
+    <mat-horizontal-stepper>
+      <mat-step>
+        <form >
+          <ng-template matStepLabel>Get VR Player Merge Data Ready</ng-template>
+          <ul>
+            <li *ngFor="let instruction of step1">
+              {{instruction}}
+            </li>
+          </ul>
+          <div>
+            <button mat-button matStepperNext color="primary">Next</button>
+          </div>
+        </form>
+      </mat-step>
+      <mat-step>
+        <form>
+          <ng-template matStepLabel>Do Merges</ng-template>
+          <div>
+            <button mat-button color="primary" >
+                    <!--onclick="document.getElementById('mergeFile')">-->
+              <label for="mergeFile" disabled="!canSelectFile">Select Player Merge file...</label>
+            </button>
+            <input id="mergeFile" type="file" style="display:none"
+            (change)="onFileChange($event)" multiple="false">
+            <span *ngIf="fileName">{{fileName}}</span>
+            <span>
+              <button mat-button color="primary" type="button" (click)="processFile()" [disabled]="!canProcessFile">
+                Process merges...
+              </button>
+            </span>
+          </div>
+          <div *ngIf="error">Error: {{error}}</div>
+          <mat-card *ngIf="canShowResults">
+            <mat-card-header class="mat-h3">Processing player merges...</mat-card-header>
+            <mat-card-content>
+              <div fxLayout="row" fxLayoutAlign="space-between center">
+                <div>Done: {{mergeStatus.counters['done']}}</div>
+                <div class="fill-remaining-space"></div>
+                <div>To Do: {{mergeStatus.toDo}}</div>
+              </div>
+              <mat-progress-bar
+                color="primary"
+                mode="determinate"
+                [value]="mergeStatus.percentComplete">
+              </mat-progress-bar>
+              <ul>
+                <li *ngFor="let result of results">
+                  <div>{{ result }}</div>
+                </li>
+              </ul>
+            </mat-card-content>
+          </mat-card>
+        </form>
+
+      </mat-step>
+    </mat-horizontal-stepper>
+
+  </mat-card-content>
+  <mat-card-footer>
+  </mat-card-footer>
+</mat-card>
+

@@ -6,8 +6,8 @@ import { RouterModule, Routes} from "@angular/router";
 import {
   MatButtonModule, MatCardModule, MatCheckboxModule,
   MatDatepickerModule, MatFormFieldModule, MatGridListModule, MatIconModule,
-  MatInputModule, MatListModule, MatOptionModule,
-  MatProgressSpinnerModule, MatSelectModule, MatSlideToggleModule,
+  MatInputModule, MatListModule, MatOptionModule, MatProgressBarModule,
+  MatProgressSpinnerModule, MatSelectModule, MatSlideToggleModule, MatStepperModule,
   MatTableModule, MatToolbarModule, MatSidenavModule, MatSortModule
 } from "@angular/material";
 import {HttpClientModule} from "@angular/common/http";
@@ -24,6 +24,8 @@ import { LayoutModule } from '@angular/cdk/layout';
 import { VRLicenseReporterComponent } from './vr/license-reporter/license-reporter.component';
 import {MomentDateModule} from "@angular/material-moment-adapter";
 import { PlayerImportComponent } from './vr/player-import/player-import.component';
+import {NgxUploaderModule} from "ngx-uploader";
+import {PlayerMergeImportComponent} from "./vr/player-merge-import/player-merge-import.component";
 
 // export function onAuthRequired({ oktaAuth, router }) {
 //   // Redirect the user to your custom login page
@@ -41,6 +43,12 @@ const routes: Routes = [
   { path: 'vr_license_reporter',
     component: VRLicenseReporterComponent,
   },
+  { path: 'player_import',
+    component: PlayerImportComponent,
+  },
+  { path: 'player_merge_import',
+    component: PlayerMergeImportComponent,
+  },
 ];
 
 @NgModule({
@@ -51,6 +59,7 @@ const routes: Routes = [
     TcStatsComponent,
     VRLicenseReporterComponent,
     PlayerImportComponent,
+    PlayerMergeImportComponent,
   ],
   imports: [
     BrowserModule,
@@ -63,11 +72,12 @@ const routes: Routes = [
     MatButtonModule, MatCardModule, MatCheckboxModule,
     MatDatepickerModule, MatIconModule, MatFormFieldModule, MatGridListModule,
     MatInputModule, MatListModule, MatOptionModule,
-    MatSelectModule, MatTableModule, MatProgressSpinnerModule,
+    MatSelectModule, MatStepperModule, MatTableModule,
+    MatSidenavModule, MatProgressBarModule, MatProgressSpinnerModule,
     MatSlideToggleModule, MatSortModule, MatToolbarModule,
+    NgxUploaderModule,
     ReactiveFormsModule,
     RouterModule.forRoot(routes),
-    MatSidenavModule,
   ],
   providers: [
   ],

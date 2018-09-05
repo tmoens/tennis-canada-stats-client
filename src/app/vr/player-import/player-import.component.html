@@ -1,3 +1,101 @@
-<p>
-  player-import works!
-</p>
+<mat-card >
+  <mat-card-header>
+    <mat-card-title>
+      <h2>VR Player Importer</h2>
+    </mat-card-title>
+  </mat-card-header>
+  <mat-card-content>
+    <p *ngFor="let note of notes">{{note}}</p>
+    <mat-horizontal-stepper>
+      <mat-step>
+        <form >
+          <ng-template matStepLabel>Get VR Player Data Ready</ng-template>
+          <ul>
+            <li *ngFor="let instruction of step1">
+              {{instruction}}
+            </li>
+          </ul>
+          <div>
+            <button mat-button matStepperNext color="primary">Next</button>
+          </div>
+        </form>
+      </mat-step>
+      <mat-step [completed]="state == 'done'">
+        <form>
+          <ng-template matStepLabel>Upload and Process Player Data</ng-template>
+          <div>
+            <button mat-button color="primary" onclick="document.getElementById('fileToUpload')">
+              <label for="fileToUpload" disabled="!canSelectFile">Select VR All Persons File...</label>
+            </button>
+            <input id="fileToUpload" type="file" style="display:none"
+                   ngFileSelect [options]="options"
+                   (uploadOutput)="onUploadOutput($event)"
+                   [uploadInput]="uploadInput" required
+                   [disabled]="!canSelectFile">
+            <span *ngIf="file">{{ file.name }}</span>
+            <span>
+              <button mat-button color="primary" type="button" (click)="startUpload()" [disabled]="!canSelectFile">
+                Import File
+              </button>
+            </span>
+          </div>
+          <mat-card *ngIf='state == "uploading"'>
+            <mat-card-header class="mat-h3">Uploading file...</mat-card-header>
+            <mat-progress-bar
+              color="primary"
+              mode="determinate"
+              [value]="file.progress?.data?.percentage">
+            </mat-progress-bar>
+
+            <div class="progress-text-content">
+                    <span class="progress-text" [class.is-done]="file?.progress?.data?.percentage === 100">
+                      <span>{{ file.progress?.data?.percentage }}% </span>
+                      <span *ngIf="file.progress?.data?.percentage !== 100">Uploading...</span>
+                      <span *ngIf="file.progress?.data?.percentage === 100">Done</span>
+                    </span>
+              <span class="speed-and-eta-text" *ngIf="file.progress?.data?.percentage !== 0 && file.progress?.data?.percentage !== 100">
+                      <span>{{ file.progress?.data?.speedHuman }} </span>
+                      <span>ETA {{ file.progress?.data?.etaHuman }}</span>
+                    </span>
+            </div>
+          </mat-card>
+          <mat-card *ngIf="state == 'processing'">
+            <mat-card-header class="mat-h3">File uploaded, now processing players...</mat-card-header>
+            <mat-card-content>
+              <div fxLayout="row" fxLayoutAlign="space-between center">
+                <div>Done: {{importStatus.counters['done']}}</div>
+                <div class="fill-remaining-space"></div>
+                <div>To Do: {{importStatus.toDo}}</div>
+              </div>
+              <mat-progress-bar
+                color="primary"
+                mode="determinate"
+                [value]="importStatus.percentComplete">
+              </mat-progress-bar>
+            </mat-card-content>
+          </mat-card>
+          <mat-card *ngIf="state == 'error'">
+            <mat-card-header class="mat-h3">Error uploading file...</mat-card-header>
+            <mat-card-content>
+              {{file.response.message}}
+            </mat-card-content>
+          </mat-card>
+          <mat-card *ngIf="state == 'done'">
+            <mat-card-header class="mat-h3">Tidy up</mat-card-header>
+            <mat-card-content>
+              <p *ngFor="let instruction of step3" i = index>
+                {{instruction}}
+              </p>
+            </mat-card-content>
+          </mat-card>
+
+        </form>
+
+      </mat-step>
+    </mat-horizontal-stepper>
+
+  </mat-card-content>
+  <mat-card-footer>
+  </mat-card-footer>
+</mat-card>
+
