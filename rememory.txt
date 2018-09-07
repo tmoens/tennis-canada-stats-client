@@ -1,0 +1,16 @@
+read the README.md
+
+Deployment
+
+Local production build served by node itself - just a test for running the client in production mode.
+> ng serve --prod
+
+Actual production build. The build shows up under dist/statsadmin ready for deployment to your web server
+> ng build --base-href=/TCStatsClient/ --prod
+
+To deploy it, deliver the dist/statsadmin as path/to/your/server/TCStatsClient.
+For an xampp deployment, the server is in the htdocs directory under xampp.
+Generally
+1) deploy it locally and test it out
+2) deploy to staging on TC server and test it out
+3) deploy to production and test it out

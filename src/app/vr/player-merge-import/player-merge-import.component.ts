@@ -2,6 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {JobState, JobStats} from "../../job-status.service";
 import * as XLSX from "xlsx";
 import {VRPlayerService} from "../player.service";
+import {AppStateService} from "../../app-state.service";
 
 @Component({
   selector: 'app-player-merge-import',
@@ -9,7 +10,6 @@ import {VRPlayerService} from "../player.service";
   styleUrls: ['./player-merge-import.component.css']
 })
 export class PlayerMergeImportComponent implements OnInit {
-  fileToUpload:File = null;
   public notes:string[] = [
     "When Player IDs get merged in the VR system, the merge is not sent " +
     "out via the VR API.  Instead we have to load the merge information here.",
@@ -33,10 +33,14 @@ export class PlayerMergeImportComponent implements OnInit {
   fileName:string;
 
 
-  constructor(private playerService:VRPlayerService) {
+  constructor(
+    private playerService:VRPlayerService,
+    private appState: AppStateService,
+  ){
   }
 
   ngOnInit() {
+    this.appState.setActiveTool("Player Merge Import");
     this.setState("waiting");
     this.mergeStatus =  {
       startTime: new Date(),

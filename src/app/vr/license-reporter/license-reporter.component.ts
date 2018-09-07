@@ -15,7 +15,7 @@ export class VRLicenseReporterComponent implements OnInit {
   ) {
   }
   ngOnInit() {
-    this.appState.setActiveTool(" License Usage Reporter");
+    this.appState.setActiveTool("License Usage Reporter");
     this.licenseReportURL = environment.serverPrefix + "/license/usageReport";
   }
 }

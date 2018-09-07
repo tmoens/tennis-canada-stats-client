@@ -1,9 +1,13 @@
-import {ChangeDetectorRef, Component, OnInit} from '@angular/core';
-import {Router} from "@angular/router";
+import {Component, OnInit} from '@angular/core';
 import {MessageService} from "./messages/message.service";
 
 import { environment } from '../environments/environment';
-// import {Okta} from "./auth/okta.service";
+import {Observable} from "rxjs";
+import {BreakpointObserver, Breakpoints} from "../../node_modules/@angular/cdk/layout";
+import {map} from "rxjs/operators";
+import {Router} from "@angular/router";
+import {AppStateService} from "./app-state.service";
+import {OktaAuthService} from "@okta/okta-angular";
 
 @Component({
   selector: 'tc-stats-app',
@@ -11,50 +15,30 @@ import { environment } from '../environments/environment';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
-  // oktaSignIn;
-  user;
-  title = 'Tennis Canada Competition Data';
+  isAuthenticated:boolean;
 
   constructor(
     public router: Router,
-    public messageService: MessageService,
-    // private changeDetectorRef: ChangeDetectorRef,
-    // private okta:Okta,
+    public appState: AppStateService,
+    public oktaAuth: OktaAuthService,
   ){
-    // this.oktaSignIn = okta.getWidget();
+    this.oktaAuth.$authenticationState.subscribe(
+      (isAuthenticated: boolean)  => this.isAuthenticated = isAuthenticated
+    );
   }
 
-  // showLogin() {
-  //   this.oktaSignIn.renderEl({el: '#okta-login-container'}, (response) => {
-  //     console.log("sign-in response: " + JSON.stringify(response));
-  //     if (response.status === 'SUCCESS') {
-  //       this.user = response.claims.email;
-  //       this.oktaSignIn.remove();
-  //       this.changeDetectorRef.detectChanges();
-  //       this.oktaSignIn.loginRedirect({ sessionToken: response.session.token });
-  //     }
-  //   });
-  // }
-
-
-  ngOnInit() {
-    this.messageService.add(JSON.stringify(environment));
-    // this.oktaSignIn.session.get((response) => {
-    //   if (response.status !== 'INACTIVE') {
-    //     this.user = response.login;
-    //     this.changeDetectorRef.detectChanges();
-    //   } else {
-    //     this.showLogin();
-    //   }
-    // });
-
+  async ngOnInit() {
+    this.isAuthenticated = await this.oktaAuth.isAuthenticated();
   }
 
-  // async logout() {
-  //   this.oktaSignIn.signOut(() => {
-  //     this.user = undefined;
-  //     this.changeDetectorRef.detectChanges();
-  //     this.showLogin();
-  //   });
+  // login() {
+  //   this.oktaAuth.loginRedirect('/profile');
   // }
+
+  async logout() {
+    // Terminates the session with Okta and removes current tokens.
+    await this.oktaAuth.logout();
+    this.router.navigateByUrl('/home');
+  }
+
 }

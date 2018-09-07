@@ -1,6 +1,7 @@
 import {Component, EventEmitter, OnInit} from '@angular/core';
 import {humanizeBytes, UploaderOptions, UploadFile, UploadInput, UploadOutput, UploadStatus} from "ngx-uploader";
 import {JobState, JobStats, JobStatusService} from "../../job-status.service";
+import {AppStateService} from "../../app-state.service";
 
 @Component({
   selector: 'app-player-import',
@@ -48,7 +49,10 @@ export class PlayerImportComponent implements OnInit {
   canUploadFile:boolean;
   canSelectFile: boolean;
 
-  constructor(private jobStatusService: JobStatusService ) {
+  constructor(
+      private jobStatusService: JobStatusService,
+      private appState:AppStateService,
+    ) {
     this.options = { concurrency: 1};
     this.files = [];
     this.file = null;
@@ -58,6 +62,7 @@ export class PlayerImportComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.appState.setActiveTool("Player Importer");
     // When initializing, check if there is already an upload in progress
     // If so, just join in to get status updates.
     this.jobStatusService.getPlayerImportJobStatus().subscribe(
