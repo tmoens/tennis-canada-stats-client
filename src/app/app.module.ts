@@ -10,7 +10,7 @@ import {
   MatProgressSpinnerModule, MatSelectModule, MatSlideToggleModule, MatStepperModule,
   MatTableModule, MatToolbarModule, MatSidenavModule, MatSortModule
 } from "@angular/material";
-import {HttpClientModule} from "@angular/common/http";
+import {HTTP_INTERCEPTORS, HttpClientModule} from "@angular/common/http";
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 
 import { AppComponent } from './app.component';
@@ -24,12 +24,13 @@ import { PlayerImportComponent } from './vr/player-import/player-import.componen
 import {NgxUploaderModule} from "ngx-uploader";
 import {PlayerMergeImportComponent} from "./vr/player-merge-import/player-merge-import.component";
 
-import {OktaAuthGuard, OktaAuthModule, OktaCallbackComponent} from "@okta/okta-angular";
+import {OktaAuthGuard, OktaAuthModule, OktaCallbackComponent, OktaLoginRedirectComponent} from "@okta/okta-angular";
 
 
 import { environment } from '../environments/environment';
 import {LoginComponent} from "./auth/login.component";
 import { HomeComponent } from './home/home.component';
+import {AuthTokenInterceptor} from "./auth/AuthTokenInterceptor";
 
 export function onAuthRequired({ oktaAuth, router }) {
   // Redirect the user to your custom login page
@@ -38,13 +39,14 @@ export function onAuthRequired({ oktaAuth, router }) {
 
 const routes: Routes = [
   {
-    path: 'home',
+    path: '',
     component: HomeComponent,
   },
   {
     path: 'implicit/callback',
     component: OktaCallbackComponent,
   },
+
   {
     path: 'login',
     component: LoginComponent,
@@ -52,32 +54,23 @@ const routes: Routes = [
   { path: 'vr_license_manager',
     component: VRLicenseManagerComponent,
     canActivate: [ OktaAuthGuard ],
-    data: {
-      onAuthRequired
-    }
   },
   { path: 'vr_license_reporter',
     component: VRLicenseReporterComponent,
     canActivate: [ OktaAuthGuard ],
-    data: {
-      onAuthRequired
-    }
   },
   { path: 'player_import',
     component: PlayerImportComponent,
     canActivate: [ OktaAuthGuard ],
-    data: {
-      onAuthRequired
-    }
   },
   { path: 'player_merge_import',
     component: PlayerMergeImportComponent,
     canActivate: [ OktaAuthGuard ],
-    data: {
-      onAuthRequired
-    }
   },
 ];
+
+// Shorthand for always using the onAuthRequired function for every guarded route
+environment.oktaEnv['onAuthRequired'] = onAuthRequired;
 
 @NgModule({
   declarations: [
@@ -110,6 +103,7 @@ const routes: Routes = [
     RouterModule.forRoot(routes),
   ],
   providers: [
+    { provide: HTTP_INTERCEPTORS, useClass: AuthTokenInterceptor, multi: true },
   ],
   bootstrap: [AppComponent]
 })

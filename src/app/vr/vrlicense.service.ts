@@ -4,6 +4,7 @@ import {MessageService} from "../messages/message.service";
 import {Observable, of} from "rxjs/index";
 import {VRLicense} from "./vrlicense-manager/VRLicense";
 import { environment } from '../../environments/environment';
+import {OktaAuthService} from "@okta/okta-angular";
 
 const httpOptions = {
   headers: new HttpHeaders({ 'Content-Type': 'application/json' })
@@ -17,6 +18,7 @@ export class VRLicenseService {
 
   constructor(
     private http: HttpClient,
+    private authService: OktaAuthService,  // this is needed to get the access token in the interceptor.
     private messageService: MessageService)
   { }
 
@@ -50,7 +52,6 @@ export class VRLicenseService {
       return of(result as T);
     };
   }
-
   private log(message: string) {
     this.messageService.add('LicenseService: ' + message);
   }

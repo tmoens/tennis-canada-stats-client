@@ -6,7 +6,8 @@ export const environment = {
   oktaEnv: {
     issuer: 'https://dev-574317.oktapreview.com/oauth2/default',
     redirectUri: 'http://localhost:4201/implicit/callback',
-    clientId: '0oaf4igrrdiZLXT1Q0h7'
+    clientId: '0oaf4igrrdiZLXT1Q0h7',
+    scope: 'openid email phone groups',
   },
   serverPrefix: 'http://localhost:3002'
 

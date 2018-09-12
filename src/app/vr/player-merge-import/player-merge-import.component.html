@@ -6,7 +6,7 @@
   </mat-card-header>
   <mat-card-content>
     <p *ngFor="let note of notes">{{note}}</p>
-    <mat-horizontal-stepper>
+    <mat-vertical-stepper>
       <mat-step>
         <form >
           <ng-template matStepLabel>Get VR Player Merge Data Ready</ng-template>
@@ -15,12 +15,13 @@
               {{instruction}}
             </li>
           </ul>
+          <mat-divider></mat-divider>
           <div>
             <button mat-button matStepperNext color="primary">Next</button>
           </div>
         </form>
       </mat-step>
-      <mat-step>
+      <mat-step [completed]="state == 'done'">
         <form>
           <ng-template matStepLabel>Do Merges</ng-template>
           <div>
@@ -30,12 +31,14 @@
             </button>
             <input id="mergeFile" type="file" style="display:none"
             (change)="onFileChange($event)" multiple="false">
-            <span *ngIf="fileName">{{fileName}}</span>
-            <span>
+            <div>
               <button mat-button color="primary" type="button" (click)="processFile()" [disabled]="!canProcessFile">
-                Process merges...
+                Process <span *ngIf="fileName">{{fileName}}</span>...
               </button>
-            </span>
+                <span class="mat-h4" [hidden]="!canProcessFile">
+                  Warning, these changes are permanent and cannot be undone!
+                </span>
+            </div>
           </div>
           <div *ngIf="error">Error: {{error}}</div>
           <mat-card *ngIf="canShowResults">
@@ -59,9 +62,28 @@
             </mat-card-content>
           </mat-card>
         </form>
-
+        <mat-divider></mat-divider>
+        <div>
+          <button mat-button matStepperPrevious color="primary">Previous</button>
+          <button mat-button matStepperNext color="primary" [disabled]="state != 'done'">Next</button>
+        </div>
       </mat-step>
-    </mat-horizontal-stepper>
+      <mat-step>
+        <form >
+          <ng-template matStepLabel>Tidy Up</ng-template>
+          <ul>
+            <li *ngFor="let instruction of tidyUp">
+              {{instruction}}
+            </li>
+          </ul>
+          <mat-divider></mat-divider>
+          <div>
+            <button mat-button matStepperPrevious color="primary">Previous</button>
+          </div>
+        </form>
+      </mat-step>
+
+    </mat-vertical-stepper>
 
   </mat-card-content>
   <mat-card-footer>

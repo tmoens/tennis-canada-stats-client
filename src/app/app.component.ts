@@ -1,10 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {MessageService} from "./messages/message.service";
 
-import { environment } from '../environments/environment';
-import {Observable} from "rxjs";
-import {BreakpointObserver, Breakpoints} from "../../node_modules/@angular/cdk/layout";
-import {map} from "rxjs/operators";
 import {Router} from "@angular/router";
 import {AppStateService} from "./app-state.service";
 import {OktaAuthService} from "@okta/okta-angular";
@@ -16,29 +11,36 @@ import {OktaAuthService} from "@okta/okta-angular";
 })
 export class AppComponent {
   isAuthenticated:boolean;
+  user: any;
 
   constructor(
     public router: Router,
     public appState: AppStateService,
     public oktaAuth: OktaAuthService,
   ){
+    // subscribe to authentication state changes
     this.oktaAuth.$authenticationState.subscribe(
-      (isAuthenticated: boolean)  => this.isAuthenticated = isAuthenticated
+      (isAuthenticated: boolean)  => {
+        this.isAuthenticated = isAuthenticated;
+        this.onLoginStateChange(isAuthenticated);
+      }
     );
   }
 
-  async ngOnInit() {
-    this.isAuthenticated = await this.oktaAuth.isAuthenticated();
+  async onLoginStateChange (newLoginState:boolean) {
+    this.isAuthenticated = newLoginState;
+    this.user = await this.oktaAuth.getUser();
   }
 
-  // login() {
-  //   this.oktaAuth.loginRedirect('/profile');
-  // }
+  async ngOnInit() {
+    // get authentication state for immediate use
+    this.onLoginStateChange(await this.oktaAuth.isAuthenticated());
+  }
 
   async logout() {
     // Terminates the session with Okta and removes current tokens.
     await this.oktaAuth.logout();
-    this.router.navigateByUrl('/home');
+    this.router.navigateByUrl('/');
   }
 
 }

@@ -2,6 +2,7 @@ import {Component, EventEmitter, OnInit} from '@angular/core';
 import {humanizeBytes, UploaderOptions, UploadFile, UploadInput, UploadOutput, UploadStatus} from "ngx-uploader";
 import {JobState, JobStats, JobStatusService} from "../../job-status.service";
 import {AppStateService} from "../../app-state.service";
+import {OktaAuthService} from "@okta/okta-angular";
 
 @Component({
   selector: 'app-player-import',
@@ -30,13 +31,13 @@ export class PlayerImportComponent implements OnInit {
     "IMPORTANT: save the file with the type: CSV UTF-8 (Comma delimited) (*.csv) " +
     "The UTF-8 is critical or else all of accented characters will " +
     "become garbled in the player database.",
-    "Save and !important! close the file. ",
+    "Save and close the file. ",
     "Once you have done all of this, move to the next step."
   ];
   public step3:string[] = [
-    "Please delete the .xlsx file you downloaded and .csv file you saved " +
-    "(you have a lot of personal information on your computer and you do not " +
-    "want it hanging around)."
+    "Please delete the .xlsx file you downloaded from VR.",
+    "Please delete the .csv file you saved",
+    "(you have a lot of personal information on your computer which should not stay around)."
   ];
 
   options: UploaderOptions;
@@ -52,6 +53,7 @@ export class PlayerImportComponent implements OnInit {
   constructor(
       private jobStatusService: JobStatusService,
       private appState:AppStateService,
+      private auth: OktaAuthService,
     ) {
     this.options = { concurrency: 1};
     this.files = [];
@@ -104,11 +106,12 @@ export class PlayerImportComponent implements OnInit {
     }
   }
 
-  startUpload(): void {
+  async startUpload(): Promise<any | null> {
     const event: UploadInput = {
       type: 'uploadAll',
       url: 'http://localhost:3002/Player/importVRPersonsCSV',
       method: 'POST',
+      headers: { 'Authorization': 'bearer ' + await this.auth.getAccessToken() },
       data: { }
     };
     this.setState("uploading");

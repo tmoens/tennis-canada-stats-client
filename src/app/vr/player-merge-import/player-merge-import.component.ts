@@ -10,6 +10,9 @@ import {AppStateService} from "../../app-state.service";
   styleUrls: ['./player-merge-import.component.css']
 })
 export class PlayerMergeImportComponent implements OnInit {
+  public expectedHeaders:string[] = ["fromPlayerId", "fromFirstName",
+    "fromLastName",	"toPlayerId", "toFirstName",	"toLastName",	"date"];
+
   public notes:string[] = [
     "When Player IDs get merged in the VR system, the merge is not sent " +
     "out via the VR API.  Instead we have to load the merge information here.",
@@ -17,10 +20,14 @@ export class PlayerMergeImportComponent implements OnInit {
     "so that if we encounter a merged Id in the future, we renumber it."
   ];
   public step1:string[] = [
-    "Create a simple .csv file (using Excel and Save As file type csv.",
-    'Columns must contain blah blah blah',
-    "Warning, these changes are permanent and cannot be undone - so dn't screw up."
+    "Create a simple .csv file (using Excel and Save As file type csv).",
+    'Columns must be: ' + this.expectedHeaders.join(", ") + ".",
+    "Of these, only the fromPlayerId and the toPlayerId are absolutely required, the others are informational."
   ];
+  public tidyUp:string[] = ['The merge process is complete.',
+  'While you can re-run the merges, they will have no further effect.',
+  'You can delete the merge file, but it is probably a good idea to keep it for your records.'];
+
 
   state: string;
   canProcessFile: boolean;

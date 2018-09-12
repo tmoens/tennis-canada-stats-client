@@ -6,7 +6,7 @@
   </mat-card-header>
   <mat-card-content>
     <p *ngFor="let note of notes">{{note}}</p>
-    <mat-horizontal-stepper>
+    <mat-vertical-stepper>
       <mat-step>
         <form >
           <ng-template matStepLabel>Get VR Player Data Ready</ng-template>
@@ -15,6 +15,7 @@
               {{instruction}}
             </li>
           </ul>
+          <mat-divider></mat-divider>
           <div>
             <button mat-button matStepperNext color="primary">Next</button>
           </div>
@@ -32,12 +33,12 @@
                    (uploadOutput)="onUploadOutput($event)"
                    [uploadInput]="uploadInput" required
                    [disabled]="!canSelectFile">
-            <span *ngIf="file">{{ file.name }}</span>
-            <span>
-              <button mat-button color="primary" type="button" (click)="startUpload()" [disabled]="!canSelectFile">
-                Import File
+
+            <div>
+              <button mat-button color="primary" type="button" (click)="startUpload()" [disabled]="!canUploadFile">
+                Import <span *ngIf="file">{{ file.name }}</span>...
               </button>
-            </span>
+            </div>
           </div>
           <mat-card *ngIf='state == "uploading"'>
             <mat-card-header class="mat-h3">Uploading file...</mat-card-header>
@@ -80,20 +81,28 @@
               {{file.response.message}}
             </mat-card-content>
           </mat-card>
-          <mat-card *ngIf="state == 'done'">
-            <mat-card-header class="mat-h3">Tidy up</mat-card-header>
-            <mat-card-content>
-              <p *ngFor="let instruction of step3" i = index>
-                {{instruction}}
-              </p>
-            </mat-card-content>
-          </mat-card>
+          <mat-divider></mat-divider>
+          <div>
+            <button mat-button matStepperPrevious color="primary">Previous</button>
+            <button mat-button matStepperNext color="primary" [disabled]="state != 'done'">Next</button>
+          </div>
 
         </form>
-
       </mat-step>
-    </mat-horizontal-stepper>
 
+      <mat-step>
+        <ng-template matStepLabel>Tidy Up</ng-template>
+          <ul>
+            <li *ngFor="let instruction of step3" i = index>
+              {{instruction}}
+            </li>
+          </ul>
+          <mat-divider></mat-divider>
+          <div>
+            <button mat-button matStepperPrevious color="primary">Previous</button>
+          </div>
+      </mat-step>
+    </mat-vertical-stepper>
   </mat-card-content>
   <mat-card-footer>
   </mat-card-footer>

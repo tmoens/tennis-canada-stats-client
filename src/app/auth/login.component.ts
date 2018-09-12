@@ -4,7 +4,6 @@ import { Router, NavigationStart} from '@angular/router';
 import { OktaAuthService } from '@okta/okta-angular';
 import * as OktaSignIn from '@okta/okta-signin-widget';
 import {MessageService} from "../messages/message.service";
-import {environment} from "../../environments/environment";
 
 @Component({
   selector: 'app-secure',
@@ -13,8 +12,7 @@ import {environment} from "../../environments/environment";
     <div id="okta-signin-container"></div>
   `
 })
-export class LoginComponent {
-  signIn;
+export class LoginComponent implements OnInit {
 
   widget = new OktaSignIn({
     baseUrl: 'https://dev-574317.oktapreview.com'
@@ -25,31 +23,19 @@ export class LoginComponent {
     public router: Router,
     public messageService: MessageService,
     ) {
-    this.signIn = oktaAuth;
-
-    // Show the widget when prompted, otherwise remove it from the DOM.
-    router.events.forEach(event => {
-      if (event instanceof NavigationStart) {
-        switch(event.url) {
-          case '/login':
-            break;
-          case '/vr_license_reporter':
-            break;
-          default:
-            this.widget.remove();
-            break;
-        }
-      }
-    });
   }
 
-  ngOnInit() {
+  async ngOnInit() {
     this.widget.renderEl(
       { el: '#okta-signin-container'},
       (res) => {
         this.messageService.add(JSON.stringify(res));
         if (res.status === 'SUCCESS') {
-          this.signIn.loginRedirect('/', { sessionToken: res.session.token });
+          // Redirect to whatever the link was when the login was called.
+          // the "fromURI" in oktaAuth get set automatically when using OktaAuthGuard
+          // Geeze - none of the demos had this tid-bit of code.
+          let fromURI = this.oktaAuth.getFromUri();
+          this.oktaAuth.loginRedirect( fromURI.uri,{ sessionToken: res.session.token });
           // Hide the widget
           this.widget.hide();
         }

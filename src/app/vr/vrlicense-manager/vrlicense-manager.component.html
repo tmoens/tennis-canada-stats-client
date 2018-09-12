@@ -1,11 +1,14 @@
-<mat-card>
+<mat-card *ngIf="licensesWithoutProvince.length == 0">
+  <h3>All VR license have provinces associated with them. Nothing needs to be done at this time.</h3>
+</mat-card>
+<mat-card *ngIf="licensesWithoutProvince.length > 0">
   <mat-card-header>
     <mat-card-title>
       <h3>Fix VR licenses with missing Provincial Tennis Association</h3>
     </mat-card-title>
   </mat-card-header>
   <form [formGroup]="licenseUpdateForm" (ngSubmit)="onSubmit()">
-    <mat-card-content *ngIf="licensesWithoutProvince.length > 0">
+    <mat-card-content >
       <div formArrayName="licenses">
         <mat-list>
           <mat-list-item *ngFor="let l of licenses.controls; let i=index"
@@ -25,13 +28,6 @@
           </mat-list-item>
         </mat-list>
       </div>
-      <!--For debugging -->
-      <!--<p>Form value: {{ licenseUpdateForm.value | json }}</p>-->
-      <!--<p>Form status: {{ licenseUpdateForm.status | json }}</p>-->
-
-    </mat-card-content>
-    <mat-card-content *ngIf="licensesWithoutProvince.length == 0">
-      <h4>All the VR license have provinces associated with them.</h4>
     </mat-card-content>
     <mat-card-footer>
       <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="start center">
