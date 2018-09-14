@@ -2,7 +2,7 @@ export const environment = {
   production: true,
   oktaEnv: {
     issuer: 'https://dev-574317.oktapreview.com/oauth2/default',
-    redirectUri: 'http://localhost/TCStatsClient/implicit/callback',
+    redirectUri: 'http://localhost/TCStatsAdminClient/implicit/callback',
     clientId: '0oaf4igrrdiZLXT1Q0h7',
     scope: 'openid email phone groups',
   },

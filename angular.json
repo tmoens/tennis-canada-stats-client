@@ -13,7 +13,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
-            "outputPath": "TCStatsClient",
+            "outputPath": "TCStatsAdminClient",
             "index": "src/index.html",
             "main": "src/main.ts",
             "polyfills": "src/polyfills.ts",
@@ -45,21 +45,14 @@
               "extractLicenses": true,
               "vendorChunk": false,
               "buildOptimizer": true
-            },
-            "dev": {
-              "fileReplacements": [
-                {
-                  "replace": "src/environments/environment.ts",
-                  "with": "src/environments/environment.dev.ts"
-                }
-              ]
             }
           }
         },
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "browserTarget": "statsadmin:build"
+            "browserTarget": "statsadmin:build",
+            "port": 4201
           },
           "configurations": {
             "production": {

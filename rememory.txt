@@ -1,13 +1,23 @@
 read the README.md
 
-Deployment
+This is where the code lives for now.  Any access requires a user id
+and ssh setup on the git server.
+ssh://git@tswebwork.com:6022/home/git/tcNodeAdminClient.git
 
 To make a production build
-> ng build --base-href=/TCStatsClient/ --configuration=production
-which will create a directory called TCStatsAdmin
 
-To deploy it, copy the TCStatsClient directory to path/to/your/server/TCStatsClient.
-For a local xampp deployment, put the TCStatsClient in the htdocs directory under xampp.
+ng build --base-href=/TCStatsAdminClient/ --configuration=production
+
+which will create a directory called TCStatsAdminClient
+
+Deployment
+To deploy the production build locally, copy the TCStatsAdminClient directory to
+path/to/your/server/TCStatsAdminClient. For a local xampp deployment,
+put the TCStatsAdminClient in the htdocs directory under xampp.
+
+TO deploy it on the server - two choices:  1) just copy the TCStatsAdminClient to the appropriate
+directory on the server or 2) on the server: git clone, then build and deploy on the server.
+I am generally doing 2) so I can tweak the code on the server while I work out the bugs for now.
 
 Generally
 1) deploy it locally and test it out
