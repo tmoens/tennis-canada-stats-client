@@ -2,11 +2,12 @@
  * 2018-02-17 Ted Moens
  * This just intercepts the outbound http requests and inserts the jwt
  * More efficient than doing it in every single http request.
+ *
  */
 import { Injectable } from '@angular/core';
 import { HttpRequest, HttpHandler, HttpEvent, HttpInterceptor} from '@angular/common/http';
 import { OktaAuthService } from '@okta/okta-angular';
-import { Observable } from 'rxjs/Observable';
+import { Observable, from } from 'rxjs';
 @Injectable()
 export class AuthTokenInterceptor implements HttpInterceptor {
   constructor( private auth: OktaAuthService ) {}
@@ -18,7 +19,7 @@ export class AuthTokenInterceptor implements HttpInterceptor {
     // Observable which is merged in the output Observable". In effect,
     // it allows us to wait for the getAccessToken to happen before we
     // clone and amend the request header.
-    return Observable.fromPromise(this.auth.getAccessToken())
+    return from(this.auth.getAccessToken())
       .mergeMap ((token: string) => {
         if (token) {
           // If there is a token available, stick it in the request header.
