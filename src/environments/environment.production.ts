@@ -6,5 +6,5 @@ export const environment = {
     clientId: '0oaf4igrrdiZLXT1Q0h7',
     scope: 'openid email phone groups',
   },
-  serverPrefix: 'http://rogersrankings.com:3002'
+  serverPrefix: 'http://rogersrankings.com/stats'
 };
