@@ -21,7 +21,6 @@ export class VRPlayerService {
     private messageService: MessageService)
   { }
 
-  /** POST: a list of licenses with provinces */
   //TODO Handle error;
   mergePlayers(mergeRecord: PlayerMergeRecord):Observable<string[]> {
     let url = `${this.serverURL}/Player/renumber`;

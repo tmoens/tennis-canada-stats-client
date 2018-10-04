@@ -3,6 +3,7 @@ import {humanizeBytes, UploaderOptions, UploadFile, UploadInput, UploadOutput, U
 import {JobState, JobStats, JobStatusService} from "../../job-status.service";
 import {AppStateService} from "../../app-state.service";
 import {OktaAuthService} from "@okta/okta-angular";
+import {environment} from "../../../environments/environment";
 
 @Component({
   selector: 'app-player-import',
@@ -107,9 +108,10 @@ export class PlayerImportComponent implements OnInit {
   }
 
   async startUpload(): Promise<any | null> {
+    const serverURL: string = environment.serverPrefix;
     const event: UploadInput = {
       type: 'uploadAll',
-      url: 'http://localhost:3002/Player/importVRPersonsCSV',
+      url: `${serverURL}/Player/importVRPersonsCSV`,
       method: 'POST',
       headers: { 'Authorization': 'bearer ' + await this.auth.getAccessToken() },
       data: { }
