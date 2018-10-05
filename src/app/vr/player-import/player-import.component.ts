@@ -5,6 +5,18 @@ import {AppStateService} from "../../app-state.service";
 import {OktaAuthService} from "@okta/okta-angular";
 import {environment} from "../../../environments/environment";
 
+/* Note to self about the ngx-uploader 2018-10-05 on account of it having no
+ * documentation.  The uploader maintains a queue of files which gets
+ * built by a <input type=file ngFileSelect> in your html.
+ *
+ * You communicate with the uploader by a) fielding events it sends you
+ * (see onUploadOutput()) and sending events to it (see uploadInput.emit()).
+ *
+ * All I really bought with this is a nice progress bar for the process of
+ * uploading the big VR "All Persons" report.
+ *
+ */
+
 @Component({
   selector: 'app-player-import',
   templateUrl: './player-import.component.html',
@@ -80,11 +92,33 @@ export class PlayerImportComponent implements OnInit {
     );
   }
 
+  /* Note to future self that cost me about three hours 2018-10-05.
+   * This next bit is a work-around for the fact that angular buttons do not
+   * mix well with <input type=file>, so the html has an angular button and
+   * a hidden <input type=file>. When the button is pushed it calls this
+   * function which programmatically clicks the file chooser which results
+   * in the file chooser showing up.
+   * Further note to self - if the Angular button label uses the
+   * label-for="fileToUpload" attribute, then the Chrome browser is smart
+   * enough to know what you are trying to do and it automatically pops up the
+   * file chooser - meaning that it shows up twice.  Firefox is not so smart.
+   * So do not use the label-for and both browsers work.
+   */
+  /* In spite of what tslint says, this breaks if made static */
   openFileChooser() {
     document.getElementById('fileToUpload').click();
   }
 
   // Handle events issued by the file uploader - mostly the upload progress.
+  /* Note to future self: Every time you select a file, it gets pushed into the
+   * upload queue (that is what ngx-uploader does).  So if you select a file then
+   * select a different one, they are both in the queue.
+   *
+   * So what? Well when the user decides to do the upload, it is best if you
+   * sen the "uploadFile" event with the last file chosen, and not the
+   * "uploadAll" event, which will send every file the user had selected
+   * at any point.
+   */
   onUploadOutput(output: UploadOutput): void {
     console.log(JSON.stringify(output));
     if (output.type === 'allAddedToQueue') {
