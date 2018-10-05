@@ -1,20 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { PlayerImportComponent } from './player-merge-import.component';
+import { PlayerMergeImportComponent } from './player-merge-import.component';
 
 describe('PlayerImportComponent', () => {
-  let component: PlayerImportComponent;
-  let fixture: ComponentFixture<PlayerImportComponent>;
+  let component: PlayerMergeImportComponent;
+  let fixture: ComponentFixture<PlayerMergeImportComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ PlayerImportComponent ]
+      declarations: [ PlayerMergeImportComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(PlayerImportComponent);
+    fixture = TestBed.createComponent(PlayerMergeImportComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
