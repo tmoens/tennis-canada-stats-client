@@ -55,6 +55,10 @@ export class PlayerMergeImportComponent implements OnInit {
     }
   }
 
+  openFileChooser() {
+    document.getElementById('mergeFile').click();
+  }
+
   processFile() {
     let mergeRecord: PlayerMergeRecord;
     this.mergeStatus =  {

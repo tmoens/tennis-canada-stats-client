@@ -7,7 +7,7 @@ export const environment = {
     clientId: '0oaf4igrrdiZLXT1Q0h7',
     scope: 'openid email phone groups',
   },
-  serverPrefix: 'http://localhost:3002'
+  serverPrefix: 'http://feb2017/node'
 };
 
 /*

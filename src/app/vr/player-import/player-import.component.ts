@@ -80,7 +80,11 @@ export class PlayerImportComponent implements OnInit {
     );
   }
 
-  // Handle events isssed by the file uploader - mostly the upload progress.
+  openFileChooser() {
+    document.getElementById('fileToUpload').click();
+  }
+
+  // Handle events issued by the file uploader - mostly the upload progress.
   onUploadOutput(output: UploadOutput): void {
     console.log(JSON.stringify(output));
     if (output.type === 'allAddedToQueue') {
@@ -110,10 +114,11 @@ export class PlayerImportComponent implements OnInit {
   async startUpload(): Promise<any | null> {
     const serverURL: string = environment.serverPrefix;
     const event: UploadInput = {
-      type: 'uploadAll',
+      type: 'uploadFile',
       url: `${serverURL}/Player/importVRPersonsCSV`,
       method: 'POST',
       headers: { 'Authorization': 'bearer ' + await this.auth.getAccessToken() },
+      file: this.file,
       data: { }
     };
     this.setState("uploading");

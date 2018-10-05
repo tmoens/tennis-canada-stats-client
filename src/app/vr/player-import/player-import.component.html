@@ -25,10 +25,10 @@
         <form>
           <ng-template matStepLabel>Upload and Process Player Data</ng-template>
           <div>
-            <button mat-button color="primary" onclick="document.getElementById('fileToUpload')">
-              <label for="fileToUpload" disabled="!canSelectFile">Select VR All Persons File...</label>
+            <button mat-button color="primary" (click)="openFileChooser()">
+              <label disabled="!canSelectFile">Select VR All Persons File...</label>
             </button>
-            <input id="fileToUpload" type="file" style="display:none"
+            <input id="fileToUpload" type="file" hidden
                    ngFileSelect [options]="options"
                    (uploadOutput)="onUploadOutput($event)"
                    [uploadInput]="uploadInput" required

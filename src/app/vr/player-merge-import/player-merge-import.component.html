@@ -25,12 +25,10 @@
         <form>
           <ng-template matStepLabel>Do Merges</ng-template>
           <div>
-            <button mat-button color="primary" >
-                    <!--onclick="document.getElementById('mergeFile')">-->
-              <label for="mergeFile" disabled="!canSelectFile">Select Player Merge file...</label>
+            <button mat-button color="primary" (click)="openFileChooser()" >
+              <label disabled="!canSelectFile">Select Player Merge file...</label>
             </button>
-            <input id="mergeFile" type="file" style="display:none"
-            (change)="onFileChange($event)" multiple="false">
+            <input id="mergeFile" type="file" hidden (change)="onFileChange($event)" multiple="false">
             <div>
               <button mat-button color="primary" type="button" (click)="processFile()" [disabled]="!canProcessFile">
                 Process <span *ngIf="fileName">{{fileName}}</span>...
