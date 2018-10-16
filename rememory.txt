@@ -7,6 +7,8 @@ ssh://git@tswebwork.com:6022/home/git/tcNodeAdminClient.git
 To make a production build
 
 ng build --base-href=/TCStatsAdminClient/ --configuration=production
+Note: when building on the production server in git-bash, it builds the base href
+wrong in the dist/index file - so you need to manually fix it.
 
 which will create a directory called TCStatsAdminClient
 
