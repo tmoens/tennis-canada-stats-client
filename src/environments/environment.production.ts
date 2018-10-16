@@ -1,4 +1,4 @@
-exporexport const environment = {
+export const environment = {
   production: true,
   oktaEnv: {
     issuer: 'https://dev-574317.oktapreview.com/oauth2/default',
