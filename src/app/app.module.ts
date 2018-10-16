@@ -6,7 +6,7 @@ import { RouterModule, Routes} from "@angular/router";
 import {
   MatButtonModule, MatCardModule, MatCheckboxModule,
   MatDatepickerModule, MatFormFieldModule, MatGridListModule, MatIconModule,
-  MatInputModule, MatListModule, MatOptionModule, MatProgressBarModule,
+  MatInputModule, MatListModule, MatOptionModule, MatRadioModule, MatProgressBarModule,
   MatProgressSpinnerModule, MatSelectModule, MatSlideToggleModule, MatStepperModule,
   MatTableModule, MatToolbarModule, MatSidenavModule, MatSortModule
 } from "@angular/material";
@@ -31,6 +31,7 @@ import { environment } from '../environments/environment';
 import {LoginComponent} from "./auth/login.component";
 import { HomeComponent } from './home/home.component';
 import {AuthTokenInterceptor} from "./auth/AuthTokenInterceptor";
+import { TournamentStrengthComponent } from './tournament-strength/tournament-strength.component';
 
 export function onAuthRequired({ oktaAuth, router }) {
   // Redirect the user to your custom login page
@@ -66,6 +67,10 @@ const routes: Routes = [
     component: PlayerMergeImportComponent,
     canActivate: [ OktaAuthGuard ],
   },
+  { path: 'tournament_strength',
+    component: TournamentStrengthComponent,
+    canActivate: [ OktaAuthGuard ],
+  },
 ];
 
 // Shorthand for always using the onAuthRequired function for every guarded route
@@ -81,6 +86,7 @@ environment.oktaEnv['onAuthRequired'] = onAuthRequired;
     PlayerMergeImportComponent,
     VRLicenseManagerComponent,
     VRLicenseReporterComponent,
+    TournamentStrengthComponent,
   ],
   imports: [
     BrowserModule,
@@ -92,7 +98,7 @@ environment.oktaEnv['onAuthRequired'] = onAuthRequired;
     MomentDateModule,
     MatButtonModule, MatCardModule, MatCheckboxModule,
     MatDatepickerModule, MatIconModule, MatFormFieldModule, MatGridListModule,
-    MatInputModule, MatListModule, MatOptionModule,
+    MatInputModule, MatListModule, MatOptionModule, MatRadioModule,
     MatSelectModule, MatStepperModule, MatTableModule,
     MatSidenavModule, MatProgressBarModule, MatProgressSpinnerModule,
     MatSlideToggleModule, MatSortModule, MatToolbarModule,

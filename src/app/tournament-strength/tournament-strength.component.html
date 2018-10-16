@@ -1,0 +1,86 @@
+<mat-card>
+  <mat-card-content fxLayout="column" fxLayoutAlign="center" fxLayoutGap="50px">
+    <p class="mat-title" align="center">Evaluate strengths of events which match the criteria below.</p>
+    <div fxLayout="row"  fxLayoutAlign="center" fxLayoutGap="20px">
+      <button mat-button  color="primary"  (click)="buildReport()">
+        <mat-icon>build</mat-icon> Build Ratings
+      </button>
+      <a mat-button color="primary" type="button" [href]="downloadURL" [disabled]="!state.ratingsReady">
+        <mat-icon>cloud_download</mat-icon> Download Ratings
+      </a>
+    </div>
+    <mat-progress-bar fxFlex="50%" mode="indeterminate" *ngIf="state.buildingRatings">
+      <div>Please wait while we build your ratings data.</div>
+    </mat-progress-bar>
+    <form class="form-inline " fxLayout="column" fxLayoutAlign="center" fxLayoutGap="20px">
+      <div fxLayout="row" fxLayoutAlign="center" fxLayoutGap="20px">
+        <mat-form-field>
+          <mat-select name="jurisdictionSelector"
+                      [(ngModel)]="filterCriteria.jurisdiction"
+                      (selectionChange)="filterChange()"
+                      placeholder="Jurisdiction">
+            <mat-option *ngFor="let j of jurisdictions" [value]="j">{{j.label}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field>
+          <mat-select name="genderSelector"
+                      [(ngModel)]="filterCriteria.gender"
+                      (selectionChange)="filterChange()"
+                      placeholder="Gender">
+            <mat-option *ngFor="let g of genders" [value]="g">{{g.label}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field>
+          <input matInput [matDatepicker]="todateDP" placeholder="Until" [formControl]="toDateFC"
+                 [min]="beginningOfTime"
+                 [max]="today">
+          <mat-datepicker-toggle matSuffix [for]="todateDP"></mat-datepicker-toggle>
+          <mat-datepicker #todateDP></mat-datepicker>
+        </mat-form-field>
+        <mat-form-field>
+          <mat-select name="periodSelector"
+                      placeholder="Period"
+                      [(ngModel)]="filterCriteria.period"
+                      (selectionChange)="filterChange()">
+            <mat-option *ngFor="let p of periods" [value]="p">{{p.label}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+      <div fxLayout="row" fxLayoutGap="20px" fxLayoutAlign="center">
+        <mat-card>
+          <mat-card-content fxLayout="column">
+            <mat-checkbox (change)="allJuniorsSelected()" color="primary"
+                          [(ngModel)]="filterCriteria.categories.allJuniorCategories"
+                          name="allJuniors">All Junior Categories</mat-checkbox>
+            <mat-checkbox *ngFor="let c of filterCriteria.categories.juniorCategories"
+                          [(ngModel)]="c.value" (change)="juniorCategorySelected(c)"
+                          [name]="c.id" color="primary">{{c.id}}</mat-checkbox>
+          </mat-card-content>
+        </mat-card>
+
+        <mat-card >
+          <mat-card-content fxLayout="column">
+            <mat-checkbox (change)="allAdultsSelected()" color="primary"
+                          [(ngModel)]="filterCriteria.categories.allAdultCategories"
+                          name="allAdults">All Adult Categories</mat-checkbox>
+            <mat-checkbox *ngFor="let c of filterCriteria.categories.adultCategories"
+                          [(ngModel)]="c.value" (change)="adultCategorySelected(c)"
+                          [name]="c.id" color="primary">{{c.id}}</mat-checkbox>
+          </mat-card-content>
+        </mat-card>
+
+        <mat-card>
+          <mat-card-content fxLayout="column">
+            <mat-checkbox (change)="allSeniorsSelected()" color="primary"
+                          [(ngModel)]="filterCriteria.categories.allSeniorCategories"
+                          name="allSeniors">All Senior Categories</mat-checkbox>
+            <mat-checkbox *ngFor="let c of filterCriteria.categories.seniorCategories"
+                          [(ngModel)]="c.value" (change)="seniorCategorySelected(c)"
+                          [name]="c.id" color="primary">{{c.id}}</mat-checkbox>
+          </mat-card-content>
+        </mat-card>
+      </div>
+
+    </form>
+  </mat-card-content>
+</mat-card>
