@@ -1,5 +1,5 @@
 import {Component, EventEmitter, OnInit} from '@angular/core';
-import {humanizeBytes, UploaderOptions, UploadFile, UploadInput, UploadOutput, UploadStatus} from "ngx-uploader";
+import {humanizeBytes, UploaderOptions, UploadFile, UploadInput, UploadOutput} from "ngx-uploader";
 import {JobState, JobStats, JobStatusService} from "../../job-status.service";
 import {AppStateService} from "../../app-state.service";
 import {OktaAuthService} from "@okta/okta-angular";
@@ -14,14 +14,16 @@ import {environment} from "../../../environments/environment";
  *
  * All I really bought with this is a nice progress bar for the process of
  * uploading the big VR "All Persons" report.
- *
  */
+
+const PLAYER_IMPORT_ROUTE_ON_SERVER = '/Player/importVRPersonsCSV';
 
 @Component({
   selector: 'app-player-import',
   templateUrl: './player-import.component.html',
   styleUrls: ['./player-import.component.css']
 })
+
 export class PlayerImportComponent implements OnInit {
   fileToUpload:File = null;
   public notes:string[] = [
@@ -80,7 +82,7 @@ export class PlayerImportComponent implements OnInit {
     this.appState.setActiveTool("Player Importer");
     // When initializing, check if there is already an upload in progress
     // If so, just join in to get status updates.
-    this.jobStatusService.getPlayerImportJobStatus().subscribe(
+    this.jobStatusService.getStatus(PLAYER_IMPORT_ROUTE_ON_SERVER).subscribe(
       data => {
         this.importStatus = data;
         if (this.importStatus.status == JobState.IN_PROGRESS  ) {
@@ -105,7 +107,7 @@ export class PlayerImportComponent implements OnInit {
    * So do not use the label-for and both browsers work.
    */
   /* In spite of what tslint says, this breaks if made static */
-  openFileChooser() {
+  static openFileChooser() {
     document.getElementById('fileToUpload').click();
   }
 
@@ -160,7 +162,7 @@ export class PlayerImportComponent implements OnInit {
   }
 
   pollStatus():void {
-    this.jobStatusService.getPlayerImportJobStatus().subscribe(
+    this.jobStatusService.getStatus(PLAYER_IMPORT_ROUTE_ON_SERVER).subscribe(
       data => {
         this.importStatus = data;
         if (this.importStatus.status == JobState.IN_PROGRESS  ) {
@@ -175,16 +177,7 @@ export class PlayerImportComponent implements OnInit {
 
   setState(state:string) {
     this.state = state;
-    if ("uploading" == this.state || "processing" == this.state) {
-      this.canSelectFile = false;
-    } else {
-      this.canSelectFile = true;
-    }
-    if (this.state != "selected") {
-      this.canUploadFile = false;
-    } else {
-      this.canUploadFile = true;
-    }
+    this.canSelectFile = !("uploading" == this.state || "processing" == this.state);
+    this.canUploadFile = this.state == "selected";
   }
 }
-

@@ -1,1 +1,17 @@
-<p class="mat-display-1">Tennis Canada Competition Data</p>
+<mat-card fxFlexAlign="center">
+  <mat-card-header>
+    <h2 class="mat-title">Tennis Canada Competition Data</h2>
+  </mat-card-header>
+  <mat-card-content>
+    <mat-list *ngFor="let app of statsApps">
+      <mat-list-item>
+        <p mat-line >
+          <button mat-button color="primary"
+                  routerLink="{{app.route}}">{{app.name}}
+          </button>
+        </p>
+        <p mat-line>{{app.description}}</p>
+      </mat-list-item>
+    </mat-list>
+  </mat-card-content>
+</mat-card>

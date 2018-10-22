@@ -14,7 +14,6 @@ import {HTTP_INTERCEPTORS, HttpClientModule} from "@angular/common/http";
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 
 import { AppComponent } from './app.component';
-import {MessagesComponent} from "./messages/messages.component";
 import { VRLicenseManagerComponent } from './vr/vrlicense-manager/vrlicense-manager.component';
 
 import { LayoutModule } from '@angular/cdk/layout';
@@ -32,6 +31,7 @@ import {LoginComponent} from "./auth/login.component";
 import { HomeComponent } from './home/home.component';
 import {AuthTokenInterceptor} from "./auth/AuthTokenInterceptor";
 import { TournamentStrengthComponent } from './tournament-strength/tournament-strength.component';
+import { UtrReportComponent } from './utr-report/utr-report.component';
 
 export function onAuthRequired({ oktaAuth, router }) {
   // Redirect the user to your custom login page
@@ -71,6 +71,10 @@ const routes: Routes = [
     component: TournamentStrengthComponent,
     canActivate: [ OktaAuthGuard ],
   },
+  { path: 'utr_report',
+    component: UtrReportComponent,
+    canActivate: [ OktaAuthGuard ],
+  },
 ];
 
 // Shorthand for always using the onAuthRequired function for every guarded route
@@ -81,12 +85,12 @@ environment.oktaEnv['onAuthRequired'] = onAuthRequired;
     AppComponent,
     HomeComponent,
     LoginComponent,
-    MessagesComponent,
     PlayerImportComponent,
     PlayerMergeImportComponent,
     VRLicenseManagerComponent,
     VRLicenseReporterComponent,
     TournamentStrengthComponent,
+    UtrReportComponent,
   ],
   imports: [
     BrowserModule,

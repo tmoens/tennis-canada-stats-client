@@ -3,7 +3,6 @@ import { Router, NavigationStart} from '@angular/router';
 
 import { OktaAuthService } from '@okta/okta-angular';
 import * as OktaSignIn from '@okta/okta-signin-widget';
-import {MessageService} from "../messages/message.service";
 
 @Component({
   selector: 'app-secure',
@@ -21,7 +20,6 @@ export class LoginComponent implements OnInit {
   constructor(
     public oktaAuth: OktaAuthService,
     public router: Router,
-    public messageService: MessageService,
     ) {
   }
 
@@ -29,7 +27,6 @@ export class LoginComponent implements OnInit {
     this.widget.renderEl(
       { el: '#okta-signin-container'},
       (res) => {
-        this.messageService.add(JSON.stringify(res));
         if (res.status === 'SUCCESS') {
           // Redirect to whatever the link was when the login was called.
           // the "fromURI" in oktaAuth get set automatically when using OktaAuthGuard

@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams} from '@angular/common/http';
-import { MessageService} from "../messages/message.service";
 import { Observable, of} from "rxjs/index";
 // @ts-ignore
 import { environment } from '../../environments/environment';
@@ -18,7 +17,7 @@ export class VRPlayerService {
 
   constructor(
     private http: HttpClient,
-    private messageService: MessageService)
+    )
   { }
 
   //TODO Handle error;
@@ -37,16 +36,9 @@ export class VRPlayerService {
     return (error: any): Observable<T> => {
 
       // TODO: better job of transforming error for user consumption
-      this.log(`${operation} failed: ${error.message}`);
 
       // Let the app keep running by returning an empty result.
       return of(result as T);
     };
   }
-
-
-  private log(message: string) {
-    this.messageService.add('Player Service: ' + message);
-  }
-
 }

@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams} from '@angular/common/http';
-import {MessageService} from "../messages/message.service";
 import {Observable, of} from "rxjs/index";
 import {VRLicense} from "./vrlicense-manager/VRLicense";
 import { environment } from '../../environments/environment';
@@ -19,7 +18,7 @@ export class VRLicenseService {
   constructor(
     private http: HttpClient,
     private authService: OktaAuthService,  // this is needed to get the access token in the interceptor.
-    private messageService: MessageService)
+    )
   { }
 
   /** POST: a list of licenses with provinces */
@@ -45,15 +44,11 @@ export class VRLicenseService {
   private handleError<T> (operation = 'operation', result?: T) {
     return (error: any): Observable<T> => {
 
-      // TODO: better job of transforming error for user consumption
-      this.log(`${operation} failed: ${error.message}`);
+      // TODO:  transforming error for user consumption
 
       // Let the app keep running by returning an empty result.
       return of(result as T);
     };
-  }
-  private log(message: string) {
-    this.messageService.add('LicenseService: ' + message);
   }
 
 }

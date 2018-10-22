@@ -20,10 +20,11 @@ export class JobStatusService {
   { }
 
 
-  /** GET: list of licenses with missing province */
-  //TODO Handle error;
-  getPlayerImportJobStatus():Observable<JobStats> {
-    let url = `${this.serverURL}/Player/importVRPersonsCSV/status`;
+  /* By my convention, if the job is at some route, the status of that job is
+   * at the same route appended by '/status'
+   */
+  getStatus(jobRoute):Observable<JobStats> {
+    let url = `${this.serverURL}${jobRoute}/status`;
     return this.http.get<JobStats>(url , httpOptions);
   }
 
@@ -55,9 +56,8 @@ export interface JobStats {
   endTime?: Date;
   status: JobState;
   currentActivity?: string;
-  message?: string;
+  history?: string[];
   toDo?: number;
-  // anything the client wants to remember about the job
   counters?: any;
   data?: any;
   percentComplete?: number;
