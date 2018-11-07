@@ -107,7 +107,7 @@ export class PlayerImportComponent implements OnInit {
    * So do not use the label-for and both browsers work.
    */
   /* In spite of what tslint says, this breaks if made static */
-  static openFileChooser() {
+  openFileChooser() {
     document.getElementById('fileToUpload').click();
   }
 
