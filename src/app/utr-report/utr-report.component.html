@@ -1,45 +1,52 @@
-<mat-card>
-  <mat-card-content fxLayout="column" fxLayoutAlign="center" fxLayoutGap="50px">
-    <div fxLayout="column"  fxLayoutAlign="center" fxLayoutGap="20px">
-      <div fxLayoutAlign="center">
-        <mat-card fxFlex="50">
-          <mat-card-header>
-            <p class="mat-title">Generate UTR Report</p>
-          </mat-card-header>
-          <mat-card-content>
-            <p class="mat-subheading-2">Generate a report of competitive matches for export to UTR</p>
-            <p>
-              The UTR Report is generated automatically every second day.
-              You should not have to run it manually unless there was a recently
-              corrected tournament or ranking and the UTR report has to be
-              generated immediately.
-            </p>
-            <p>
-              Even then you need to wait at least two hours after
-              the correction has been made to ensure that the automated
-              loaders have pulled in the corrected tournaments and rankings
-              into the Tennis Canada database from te VR API.
-            </p>
-            <p>
-              Even then, it is not clear that once you correct the rankings
-              in the VR system, that they will be available through the VR API
-              immediately.
-            </p>
-            <p>
-              Bottom line - probably it is best just to wait for the system to
-              generate the next automated UTR report.
-            </p>
-          </mat-card-content>
-          <mat-card-footer fxFlexAlign="center">
-            <button mat-button  fxFlexAlign="center" color="primary"  (click)="buildReport()">
-              <mat-icon>build</mat-icon> Build UTR Report (if you have read the above and still really need to)
-            </button>
-          </mat-card-footer>
-        </mat-card>
-        <mat-progress-bar fxFlex="50%" mode="indeterminate" *ngIf="buildingReport">
-        </mat-progress-bar>
-      </div>
-      <p>{{test}}</p>
-    </div>
-  </mat-card-content>
-</mat-card>
+<div fxLayout="column" class="mat-elevation-z3 app-box">
+  <div fxLayout="column"  fxLayoutAlign="center center" fxLayoutGap="20px">
+    <mat-card style="max-width: 500px">
+      <mat-card-header>
+        <h2>Generate competitive match report for UTR</h2>
+      </mat-card-header>
+      <mat-card-content>
+        <p>
+          The UTR Report is generated automatically every second day.
+          You should not have to run it manually unless there was a recently
+          corrected tournament or ranking and the UTR report has to be
+          generated immediately.
+        </p>
+        <p>
+          Even then you need to wait at least two hours after
+          the correction has been made to ensure that the automated
+          loaders have pulled in the corrected tournaments and rankings
+          into the Tennis Canada database from te VR API.
+        </p>
+        <p>
+          Even then, it is not clear that once you correct the rankings
+          in the VR system, that they will be available through the VR API
+          immediately.
+        </p>
+        <p>
+          Bottom line - probably it is best just to wait for the system to
+          generate the next automated UTR report.
+        </p>
+        <p>
+          <mat-progress-bar mode="indeterminate" *ngIf="buildingReport">
+          </mat-progress-bar>
+        </p>
+      </mat-card-content>
+      <mat-card *ngIf="showResult">
+        <mat-card-content>
+          <p>UTR Report: {{result.data.filename}} generated in {{duration}} seconds and sent to Seafile server.</p>
+        </mat-card-content>
+        <mat-card-footer>
+          <span class="fill-remaining-space"></span>
+          <button fxFlex="150px" mat-button fxFlexAlign="right" (click)="dismissResult()" color="primary">
+            Got it
+          </button>
+        </mat-card-footer>
+      </mat-card>
+      <mat-card-footer>
+        <button mat-button color="primary" (click)="buildReport()">
+          <mat-icon>build</mat-icon> Build UTR Report (if you have read the above and still really need to)
+        </button>
+      </mat-card-footer>
+    </mat-card>
+  </div>
+</div>

@@ -8,7 +8,7 @@ import {
   MatDatepickerModule, MatFormFieldModule, MatGridListModule, MatIconModule,
   MatInputModule, MatListModule, MatOptionModule, MatRadioModule, MatProgressBarModule,
   MatProgressSpinnerModule, MatSelectModule, MatSlideToggleModule, MatStepperModule,
-  MatTableModule, MatToolbarModule, MatSidenavModule, MatSortModule
+  MatTableModule, MatToolbarModule, MatSidenavModule, MatSortModule, MatExpansionModule
 } from "@angular/material";
 import {HTTP_INTERCEPTORS, HttpClientModule} from "@angular/common/http";
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
@@ -101,7 +101,8 @@ environment.oktaEnv['onAuthRequired'] = onAuthRequired;
     LayoutModule,
     MomentDateModule,
     MatButtonModule, MatCardModule, MatCheckboxModule,
-    MatDatepickerModule, MatIconModule, MatFormFieldModule, MatGridListModule,
+    MatDatepickerModule, MatIconModule, MatExpansionModule,
+    MatFormFieldModule, MatGridListModule,
     MatInputModule, MatListModule, MatOptionModule, MatRadioModule,
     MatSelectModule, MatStepperModule, MatTableModule,
     MatSidenavModule, MatProgressBarModule, MatProgressSpinnerModule,

@@ -25,7 +25,6 @@ const PLAYER_IMPORT_ROUTE_ON_SERVER = '/Player/importVRPersonsCSV';
 })
 
 export class PlayerImportComponent implements OnInit {
-  fileToUpload:File = null;
   public notes:string[] = [
     "The VR loader automatically pulls in players from " +
     "the VR API whenever a new player is encountered. " +
@@ -60,6 +59,7 @@ export class PlayerImportComponent implements OnInit {
   file: UploadFile;
   uploadInput: EventEmitter<UploadInput>;
   humanizeBytes: Function;
+
   state: string;
   importStatus: JobStats;
   canUploadFile:boolean;
@@ -106,7 +106,7 @@ export class PlayerImportComponent implements OnInit {
    * file chooser - meaning that it shows up twice.  Firefox is not so smart.
    * So do not use the label-for and both browsers work.
    */
-  /* In spite of what tslint says, this breaks if made static */
+  /* Note: in spite of what tslint says, this breaks if made static */
   openFileChooser() {
     document.getElementById('fileToUpload').click();
   }
@@ -117,7 +117,7 @@ export class PlayerImportComponent implements OnInit {
    * select a different one, they are both in the queue.
    *
    * So what? Well when the user decides to do the upload, it is best if you
-   * sen the "uploadFile" event with the last file chosen, and not the
+   * send the "uploadFile" event with the last file chosen, and not the
    * "uploadAll" event, which will send every file the user had selected
    * at any point.
    */

@@ -1,16 +1,11 @@
-@import '../node_modules/@angular/material/theming';
-//@import '~@okta/okta-signin-widget/dist/css/okta-sign-in.min.css';
-//@import '~@okta/okta-signin-widget/dist/css/okta-theme.css';
+.fill-remaining-space {
+  // This fills the remaining space, by using flexbox.
+  // Every toolbar row uses a flexbox row layout.
+  flex: 1 1 auto;
+}
 
-// always include only once per project
-@include mat-core();
-
-// import our custom theme
-@import 'tc-tools-theme';
-
-// specify theme class eg: <body class="my-theme"> ... </body>
-.tc-tools-theme {
-
-  // use our theme with angular-material-theme mixin
-  @include angular-material-theme($tc-tools);
+.app-box {
+  padding: 8px;
+  margin: 5px;
+  max-width: 700px;
 }

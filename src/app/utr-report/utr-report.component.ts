@@ -10,13 +10,19 @@ import {environment} from "../../environments/environment";
 })
 export class UtrReportComponent implements OnInit {
   buildingReport = false;
-  test: string = '';
+  result: any;
+  showResult: boolean = false;
+  duration: number;
 
   constructor( private appState: AppStateService,
                private http: HttpClient) { }
 
   ngOnInit() {
     this.appState.setActiveTool('UTR Report Tool');
+  }
+
+  dismissResult() {
+    this.showResult = false;
   }
 
   buildReport() {
@@ -30,7 +36,11 @@ export class UtrReportComponent implements OnInit {
     this.http.get<string>(reportURL, httpOptions)
       .subscribe((res: any) => {
         this.buildingReport = false;
-        this.test = JSON.stringify(res);
+        this.showResult = true;
+        this.result = res;
+        this.duration = (new Date(res.endTime).getTime() - new Date(res.startTime).getTime())/1000;
       });
   }
+
+  // TODO more robust error handling :-)
 }

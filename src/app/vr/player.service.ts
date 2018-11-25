@@ -3,7 +3,7 @@ import { HttpClient, HttpHeaders, HttpParams} from '@angular/common/http';
 import { Observable, of} from "rxjs/index";
 // @ts-ignore
 import { environment } from '../../environments/environment';
-import {PlayerMergeRecord} from "./player-merge-import/player-merge-import.component";
+import {PlayerMergeRecord, PlayerMergeResult} from "./player-merge-import/player-merge-import.component";
 
 const httpOptions = {
   headers: new HttpHeaders({ 'Content-Type': 'application/json' })
@@ -21,9 +21,9 @@ export class VRPlayerService {
   { }
 
   //TODO Handle error;
-  mergePlayers(mergeRecord: PlayerMergeRecord):Observable<string[]> {
+  mergePlayers(mergeRecord: PlayerMergeRecord):Observable<PlayerMergeResult> {
     let url = `${this.serverURL}/Player/renumber`;
-    return this.http.post<string[]>(url , mergeRecord, httpOptions);
+    return this.http.post<PlayerMergeResult>(url , mergeRecord, httpOptions);
   }
 
   /**

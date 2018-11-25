@@ -1,90 +1,132 @@
-<mat-card >
-  <mat-card-header>
-    <mat-card-title>
-      <h2>VR Merge Player Importer</h2>
-    </mat-card-title>
-  </mat-card-header>
-  <mat-card-content>
-    <p *ngFor="let note of notes">{{note}}</p>
-    <mat-vertical-stepper>
-      <mat-step>
-        <form >
-          <ng-template matStepLabel>Get VR Player Merge Data Ready</ng-template>
-          <ul>
-            <li *ngFor="let instruction of step1">
-              {{instruction}}
-            </li>
-          </ul>
-          <mat-divider></mat-divider>
+<div fxLayout="column" class="mat-elevation-z3 app-box">
+  <h2 fxFlexAlign="center">VR Player Merge Importer</h2>
+  <p style="margin-left: 20px" *ngFor="let note of notes">{{note}}</p>
+  <mat-vertical-stepper class="mat-elevation-z1">
+    <mat-step>
+      <form >
+        <ng-template matStepLabel>Get VR Player Merge Data Ready</ng-template>
+        <ul>
+          <li *ngFor="let instruction of step1">
+            {{instruction}}
+          </li>
+        </ul>
+        <mat-divider></mat-divider>
+        <div>
+          <button mat-button matStepperNext color="primary">Next</button>
+        </div>
+      </form>
+    </mat-step>
+    <mat-step [completed]="state == 'done'">
+      <form>
+        <ng-template matStepLabel>Upload and Process Merges</ng-template>
+        <div>
+          <button mat-button color="primary" (click)="openFileChooser()" >
+            <label disabled="!canSelectFile">Select Player Merge file...</label>
+          </button>
+          <input id="fileToUpload" type="file" hidden
+                 ngFileSelect [options]="options"
+                 (uploadOutput)="onUploadOutput($event)"
+                 [uploadInput]="uploadInput" required
+                 [disabled]="!canSelectFile">
           <div>
-            <button mat-button matStepperNext color="primary">Next</button>
-          </div>
-        </form>
-      </mat-step>
-      <mat-step [completed]="state == 'done'">
-        <form>
-          <ng-template matStepLabel>Do Merges</ng-template>
-          <div>
-            <button mat-button color="primary" (click)="openFileChooser()" >
-              <label disabled="!canSelectFile">Select Player Merge file...</label>
+            <button mat-button color="primary" type="button" (click)="startUpload()" [disabled]="!canUploadFile">
+              Process <span *ngIf="file">{{file.name}}</span>...
             </button>
-            <input id="mergeFile" type="file" hidden (change)="onFileChange($event)" multiple="false">
-            <div>
-              <button mat-button color="primary" type="button" (click)="processFile()" [disabled]="!canProcessFile">
-                Process <span *ngIf="fileName">{{fileName}}</span>...
-              </button>
-                <span class="mat-h4" [hidden]="!canProcessFile">
+            <span class="mat-h4" [hidden]="!canUploadFile">
                   Warning, these changes are permanent and cannot be undone!
                 </span>
-            </div>
           </div>
-          <div *ngIf="error">Error: {{error}}</div>
-          <mat-card *ngIf="canShowResults">
-            <mat-card-header class="mat-h3">Processing player merges...</mat-card-header>
-            <mat-card-content>
-              <div fxLayout="row" fxLayoutAlign="space-between center">
-                <div>Done: {{mergeStatus.counters['done']}}</div>
-                <div class="fill-remaining-space"></div>
-                <div>To Do: {{mergeStatus.toDo}}</div>
-              </div>
-              <mat-progress-bar
-                color="primary"
-                mode="determinate"
-                [value]="mergeStatus.percentComplete">
-              </mat-progress-bar>
-              <ul>
-                <li *ngFor="let result of results">
-                  <div>{{ result }}</div>
-                </li>
-              </ul>
-            </mat-card-content>
-          </mat-card>
-        </form>
+        </div>
+        <mat-card *ngIf='state == "uploading"'>
+          <mat-card-header class="mat-h3">Uploading file...</mat-card-header>
+          <mat-progress-bar
+            color="primary"
+            mode="determinate"
+            [value]="file.progress?.data?.percentage">
+          </mat-progress-bar>
+
+          <div class="progress-text-content">
+                    <span class="progress-text" [class.is-done]="file?.progress?.data?.percentage === 100">
+                      <span>{{ file.progress?.data?.percentage }}% </span>
+                      <span *ngIf="file.progress?.data?.percentage !== 100">Uploading...</span>
+                      <span *ngIf="file.progress?.data?.percentage === 100">Done</span>
+                    </span>
+            <span class="speed-and-eta-text" *ngIf="file.progress?.data?.percentage !== 0 && file.progress?.data?.percentage !== 100">
+                      <span>{{ file.progress?.data?.speedHuman }} </span>
+                      <span>ETA {{ file.progress?.data?.etaHuman }}</span>
+                    </span>
+          </div>
+        </mat-card>
+        <mat-card *ngIf="state == 'processing'">
+          <mat-card-header class="mat-h3">File uploaded, now processing players...</mat-card-header>
+          <mat-card-content>
+            <div fxLayout="row" fxLayoutAlign="space-between center">
+              <div>Done: {{mergeStats.counters['done']}}</div>
+              <div class="fill-remaining-space"></div>
+              <div>To Do: {{mergeStats.toDo}}</div>
+            </div>
+            <mat-progress-bar
+              color="primary"
+              mode="determinate"
+              [value]="mergeStats.percentComplete">
+            </mat-progress-bar>
+          </mat-card-content>
+        </mat-card>
+        <div *ngIf="canShowResults">
+          <mat-accordion>
+            <div *ngFor="let s of possibleMergeResultTypes">
+              <mat-expansion-panel *ngIf="mergeStats.counters[s.name] > 0">
+                <mat-expansion-panel-header >
+                  <mat-panel-title>
+                    {{s.name}}({{mergeStats.counters[s.name]}})
+                  </mat-panel-title>
+                </mat-expansion-panel-header>
+                <p>{{s.description}}</p>
+                <mat-list dense>
+                  <div *ngFor="let r of allResults;">
+                    <mat-list-item *ngIf="r.status == s.name">
+                      {{r.request.fromFirstName}} {{r.request.fromLastName}} ({{r.request.fromPlayerId}})
+                      <mat-icon>arrow_right_alt</mat-icon>
+                      {{r.request.toFirstName}} {{r.request.toLastName}} ({{r.request.toPlayerId}})
+                      <p *ngIf="s.name == 'Success'">
+                        Matches renumbered: {{r.merges.matches}}
+                        Event Entries renumbered: {{r.merges.event_entries}}
+                        Rankings renumbered: {{r.merges.ranking_entries}}
+                      </p>
+                    </mat-list-item>
+                  </div>
+                </mat-list>
+              </mat-expansion-panel>
+            </div>
+          </mat-accordion>
+        </div>
+        <mat-card *ngIf="state == 'error'">
+          <mat-card-header class="mat-h3">Error uploading file...</mat-card-header>
+          <mat-card-content>
+            {{file.response.message}}
+          </mat-card-content>
+        </mat-card>
+      </form>
+      <mat-divider></mat-divider>
+      <div>
+        <button mat-button matStepperPrevious color="primary">Previous</button>
+        <button mat-button matStepperNext color="primary" [disabled]="state != 'done'">Next</button>
+      </div>
+    </mat-step>
+    <mat-step>
+      <form >
+        <ng-template matStepLabel>Tidy Up</ng-template>
+        <ul>
+          <li *ngFor="let instruction of tidyUp">
+            {{instruction}}
+          </li>
+        </ul>
         <mat-divider></mat-divider>
         <div>
           <button mat-button matStepperPrevious color="primary">Previous</button>
-          <button mat-button matStepperNext color="primary" [disabled]="state != 'done'">Next</button>
         </div>
-      </mat-step>
-      <mat-step>
-        <form >
-          <ng-template matStepLabel>Tidy Up</ng-template>
-          <ul>
-            <li *ngFor="let instruction of tidyUp">
-              {{instruction}}
-            </li>
-          </ul>
-          <mat-divider></mat-divider>
-          <div>
-            <button mat-button matStepperPrevious color="primary">Previous</button>
-          </div>
-        </form>
-      </mat-step>
+      </form>
+    </mat-step>
 
-    </mat-vertical-stepper>
-
-  </mat-card-content>
-  <mat-card-footer>
-  </mat-card-footer>
-</mat-card>
-
+  </mat-vertical-stepper>
+</div>

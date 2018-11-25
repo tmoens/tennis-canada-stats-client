@@ -9,6 +9,8 @@ To make a production build
 ng build --base-href=/TCStatsAdminClient/ --configuration=production
 Note: when building on the production server in git-bash, it builds the base href
 wrong in the dist/index file - so you need to manually fix it.
+OR if using git-bash - this seems to work...
+ng build --base-href="//TCStatsAdminClient\\" --configuration=production
 
 which will create a directory called TCStatsAdminClient
 

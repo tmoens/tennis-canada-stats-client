@@ -1,47 +1,40 @@
 <mat-card *ngIf="licensesWithoutProvince.length == 0">
   <h3>All VR license have provinces associated with them. Nothing needs to be done at this time.</h3>
 </mat-card>
-<mat-card *ngIf="licensesWithoutProvince.length > 0">
-  <mat-card-header>
-    <mat-card-title>
-      <h3>Fix VR licenses with missing Provincial Tennis Association</h3>
-    </mat-card-title>
-  </mat-card-header>
+<div *ngIf="licensesWithoutProvince.length > 0"
+     fxLayout="column" class="mat-elevation-z3 app-box">
+  <h2>Fix VR licenses with missing Provincial Tennis Association</h2>
   <form [formGroup]="licenseUpdateForm" (ngSubmit)="onSubmit()">
-    <mat-card-content >
-      <div formArrayName="licenses">
-        <mat-list>
-          <mat-list-item *ngFor="let l of licenses.controls; let i=index"
-                         [formGroupName]="i" style="padding: 15px">
-            <mat-form-field style="width: 400px">
-              <input matInput placeholder="License Name"
-                     class="form-control"
-                     formControlName="licenseName">
-            </mat-form-field>
-            <mat-form-field style="padding-left: 15px; width: 200px">
-              <mat-select formControlName="province" placeholder="Tennis Association">
-                <mat-option value="TBD">--select--</mat-option>
-                <mat-option *ngFor="let ta of tennisAssociations" [value]="ta.abbrv">{{ta.ptaName}}</mat-option>
-              </mat-select>
-            </mat-form-field>
-            <span class="fill-remaining-space"></span>
-          </mat-list-item>
-        </mat-list>
-      </div>
-    </mat-card-content>
-    <mat-card-footer>
-      <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="start center">
-        <button mat-button color="primary" type="button" (click)="getLicensesWithoutProvinces()">
-          Reload List
-        </button>
-        <button mat-button color="primary" type="button" (click)="rebuildForm()"
-                [disabled]="licenseUpdateForm.pristine">
-          Revert
-        </button>
-        <button mat-button color="primary" type="submit" [disabled]="licenseUpdateForm.pristine">
-          Save Changes
-        </button>
-      </div>
-    </mat-card-footer>
+    <div formArrayName="licenses">
+      <mat-list>
+        <mat-list-item *ngFor="let l of licenses.controls; let i=index"
+                       [formGroupName]="i" style="padding: 15px">
+          <mat-form-field style="width: 400px">
+            <input matInput placeholder="License Name"
+                   class="form-control"
+                   formControlName="licenseName">
+          </mat-form-field>
+          <mat-form-field style="padding-left: 15px; width: 200px">
+            <mat-select formControlName="province" placeholder="Tennis Association">
+              <mat-option value="TBD">--select--</mat-option>
+              <mat-option *ngFor="let ta of tennisAssociations" [value]="ta.abbrv">{{ta.ptaName}}</mat-option>
+            </mat-select>
+          </mat-form-field>
+          <span class="fill-remaining-space"></span>
+        </mat-list-item>
+      </mat-list>
+    </div>
+    <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="start center">
+      <button mat-button color="primary" type="button" (click)="getLicensesWithoutProvinces()">
+        Reload List
+      </button>
+      <button mat-button color="primary" type="button" (click)="rebuildForm()"
+              [disabled]="licenseUpdateForm.pristine">
+        Revert
+      </button>
+      <button mat-button color="primary" type="submit" [disabled]="licenseUpdateForm.pristine">
+        Save Changes
+      </button>
+    </div>
   </form>
-</mat-card>
+</div>
