@@ -1,0 +1,32 @@
+@import '../../../node_modules/@angular/material/theming';
+
+/*
+   This allows me to use the tc-tools-theme to override some of the bits of the
+   login widget.  See the base styles.css to see how this file is brought into play.
+ */
+@mixin login-theme($theme) {
+  $primary: map-get($theme, primary);
+  $warn: map-get($theme, warn);
+  $accent: map-get($theme, accent);
+  $background: map-get($theme, background);
+  $foreground: map-get($theme, foreground);
+
+  .auth-org-logo {
+    max-height: 80px!important;
+  }
+
+  .button.button-primary {
+    background: none!important;
+    color: mat-color($primary)!important;
+    box-shadow: none!important;
+    border: none!important;
+  }
+  .button.button-primary:hover, .button.button-primary:focus {
+    background: mat-color($accent)!important;
+    color: mat-color($primary)!important;
+  }
+
+}
+
+
+

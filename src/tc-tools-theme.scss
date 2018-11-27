@@ -1,12 +1,6 @@
 // A theme for tennis canada tools
-@import '../node_modules/@angular/material/theming';
-@import './app/app.component';
-// Note to self - import component .scss files here if you have component specific scss
 
-// From the documentation - mat-core should not be imported in other scss files
-@include mat-core();
-
-$tcred: (
+$tc-red: (
   50 : #ffe1e2,
   100 : #feb4b7,
   200 : #fd8288,
@@ -39,7 +33,7 @@ $tcred: (
   )
 );
 
-$tcbrown: (
+$tc-brown: (
   50 : #f1e6e4,
   100 : #dcc0bb,
   200 : #c5968e,
@@ -72,10 +66,8 @@ $tcbrown: (
   )
 );
 
-$tc-tools-primary: mat-palette($tcbrown);
-$tc-tools-accent: mat-palette($tcred, A200, A100, A400);
+$tc-tools-primary: mat-palette($tc-brown);
+$tc-tools-accent: mat-palette($tc-red, A200, A100, A400);
 $tc-tools-warn: mat-palette($mat-red);
 
-$tc-tools: mat-light-theme($tc-tools-primary, $tc-tools-accent, $tc-tools-warn);
-@include angular-material-theme($tc-tools);
-@include tc-stats-app($tc-tools);
+$tc-tools-theme: mat-light-theme($tc-tools-primary, $tc-tools-accent, $tc-tools-warn);

@@ -10,7 +10,7 @@ import {AppStateService} from "../../app-state.service";
 @Component({
   selector: 'app-vrlicense-manager',
   templateUrl: './vrlicense-manager.component.html',
-  styleUrls: ['./vrlicense-manager.component.css']
+  styleUrls: ['./vrlicense-manager.component.scss']
 })
 export class VRLicenseManagerComponent implements OnInit {
   tennisAssociations = TENNIS_ASSOCIATIONS;
