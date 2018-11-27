@@ -16,7 +16,7 @@ export class LoginComponent implements OnInit {
 
   widget = new OktaSignIn({
     baseUrl: 'https://dev-574317.oktapreview.com',
-    logo: '../assets/images/tc-logo.jpg'
+    logo: 'assets/images/tc-logo.jpg'
   });
 
   constructor(
