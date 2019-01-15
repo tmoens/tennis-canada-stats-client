@@ -42,8 +42,8 @@ export class TournamentDetailEditorComponent implements OnInit {
   // various bits of state.
   disabled:boolean;
   tYear: string;
-  private endFC: FormControl;
-  private startFC: FormControl;
+  endFC: FormControl;
+  startFC: FormControl;
 
 
   // These are for populating drop-downs.  The supported values in each subsequent

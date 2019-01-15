@@ -1,7 +1,5 @@
 @import '../node_modules/@angular/material/theming';
 @import './app/app.component';
-@import './app/external-tournaments/external-player-manager/external-player-manager.component';
-@import './app/auth/login.component.css';
 // Note to self - import component .scss files here if you have component specific scss
 
 // From the documentation - mat-core should not be imported in other scss files
@@ -10,6 +8,7 @@
 @import "tc-tools-theme.scss";
 
 @import "./app/auth/login.component.scss-theme";
+@import './app/external-tournaments/external-player-manager/external-player-manager.component.theme';
 @include login-theme($tc-tools-theme);
 @include angular-material-theme($tc-tools-theme);
 @include itf-player-list-theme($tc-tools-theme);

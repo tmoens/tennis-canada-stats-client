@@ -4,8 +4,8 @@ import { VRPlayer } from '../VRPlayer';
 import { ExternalPlayer } from './external-player';
 import { ExternalTournamentService } from '../external-tournament.service';
 
-import { Observable }        from 'rxjs/Observable';
-import { BehaviorSubject }   from 'rxjs/BehaviorSubject';
+import { Observable } from 'rxjs/Observable';
+import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 
 // Observable class extensions
 import 'rxjs/add/observable/of';
@@ -16,8 +16,8 @@ import 'rxjs/add/operator/switchMap';
 import 'rxjs/add/operator/debounceTime';
 import 'rxjs/add/operator/distinctUntilChanged';
 import 'rxjs/add/operator/count';
-import {of} from "rxjs";
-import {debounceTime, distinctUntilChanged, switchMap} from "rxjs/operators";
+import {of} from 'rxjs';
+import {debounceTime, switchMap} from 'rxjs/operators';
 
 @Component({
   selector: 'app-itf-player-list',
@@ -61,12 +61,12 @@ export class ExternalPlayerManagerComponent implements OnInit {
   // which in turn causes the ITFPLayers Observable to be updated.
   // Note if it is a Subject (as per the Angular demo) and not a BehaviorSubject,
   // Then the initial http response from the server does not make it to the GUI
-  private ITFSearchTerms = new BehaviorSubject("nothing");
+  private ITFSearchTerms = new BehaviorSubject('nothing');
 
   // Similar thing for keeping the VR Player List updated.
   // It effectively holds an observable steam of the selected ITF player IDs
   // When it changes, it triggers a new request for VR Players.
-  private VRSearchTerms = new BehaviorSubject<string>("");
+  private VRSearchTerms = new BehaviorSubject<string>('');
 
   // An Observable for the response to an update request
   private updateStatus$ = new Observable<number>();
@@ -124,7 +124,7 @@ export class ExternalPlayerManagerComponent implements OnInit {
   // a new ITF Player Search was requested.
   onITFPlayerFilterChange(): void {
     this.externalPlayersLoading = true;
-    this.ITFSearchTerms.next("nothing");
+    this.ITFSearchTerms.next('nothing');
     this.selectedITFPlayer = null;
     // We need to clear anything that was in progress when the search was done
     // Wipe the vrIdentifier that was being entered.

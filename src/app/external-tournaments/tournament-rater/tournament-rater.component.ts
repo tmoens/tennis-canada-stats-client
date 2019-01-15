@@ -46,7 +46,7 @@ export class TournamentRaterComponent implements OnInit {
   supportedSubCategories: string[][];
 
   // For filtering the list of tournaments
-  private filter: TournamentFilter;
+  filter: TournamentFilter;
 
   // FOr presenting the tournaments in a material table
   ut: MatTableDataSource<ExternalTournament>;
@@ -55,10 +55,10 @@ export class TournamentRaterComponent implements OnInit {
   todoCount: number;
   loadingTournaments:boolean;
 
-  private endFilterPeriodFC: FormControl;
-  private startFilterPeriodFC: FormControl;
+  endFilterPeriodFC: FormControl;
+  startFilterPeriodFC: FormControl;
 
-  private sanctioningBodies = [
+  sanctioningBodies = [
     {name: 'Any', value: null},
     {name: 'ITF', value: 'ITF'},
     {name: 'ATP', value: 'ATP'},
@@ -67,13 +67,13 @@ export class TournamentRaterComponent implements OnInit {
     {name: 'USTA', value: 'USTA'},
   ];
 
-  private sortOrders = [
+  sortOrders = [
     {name: 'Name/Date', value: 1},
     {name: 'Date/Tournament/Name', value: 2},
   ];
 
-  private selectedSanctioningBody;
-  private selectedSortOrder;
+  selectedSanctioningBody;
+  selectedSortOrder;
 
   constructor(
     private tournamentService: ExternalTournamentService,
