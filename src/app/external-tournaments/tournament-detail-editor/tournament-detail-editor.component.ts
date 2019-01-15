@@ -24,7 +24,7 @@ const TEST_FORMATS = {
 @Component({
   selector: 'app-tournament-detail-editor',
   templateUrl: './tournament-detail-editor.component.html',
-  styleUrls: ['./tournament-detail-editor.component.css'],
+  styleUrls: ['./tournament-detail-editor.component.scss'],
   providers: [
     {provide: MAT_DATE_FORMATS, useValue: TEST_FORMATS},
   ]

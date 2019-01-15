@@ -8,7 +8,7 @@ import {RatingService} from "../rating-service.service";
 @Component({
   selector: 'app-event-detail-editor',
   templateUrl: './event-detail-editor.component.html',
-  styleUrls: ['./event-detail-editor.component.css']
+  styleUrls: ['./event-detail-editor.component.scss']
 })
 export class EventDetailEditorComponent implements OnInit {
   @Input() tournament: ExternalTournament;
