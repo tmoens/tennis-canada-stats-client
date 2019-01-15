@@ -51,8 +51,8 @@
     <div *ngIf="!loadingTournaments && tournaments.length == 0">
       <h3 class="mat-title">No tournaments match the filter criteria.</h3>
     </div>
-    <div *ngIf="!loadingTournaments && tournaments.length > 0" >
-      <mat-table #unratedTournamentsTable [dataSource]="ut">
+    <div fxFlex *ngIf="!loadingTournaments && tournaments.length > 0" >
+      <mat-table fxFlex #unratedTournamentsTable [dataSource]="ut">
         <ng-container matColumnDef="name">
           <mat-header-cell *matHeaderCellDef>Name</mat-header-cell>
           <mat-cell *matCellDef="let t"><a mat-button color="primary" [href]="makeURL(t)" target="_blank" >{{ t.name }}</a></mat-cell>
