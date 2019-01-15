@@ -1,7 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {VRLicenseService} from "../vrlicense.service";
 import {AppStateService} from "../../app-state.service";
-// @ts-ignore
 import {environment} from "../../../environments/environment";
 
 @Component({

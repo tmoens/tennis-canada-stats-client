@@ -1,0 +1,57 @@
+.mat-cell {
+  font-size: 12px
+}
+
+.mat-cell .mat-button {
+  font-size: 12px;
+  min-width: 30px;
+  padding: 0px;
+}
+
+.mat-column-startDate {
+  flex: 0 0 6%;
+}
+.mat-column-tournamentType {
+  flex: 0 0 8%;
+  padding-left: 4px;
+}
+.mat-column-eventType {
+  flex: 0 0 9%;
+}
+.mat-column-fullName {
+  flex: 0 0 12%;
+}
+.mat-column-id {
+  flex: 0 0 8%;
+}
+.mat-column-vrid {
+  flex: 0 0 7%;
+}
+.mat-column-fp {
+  justify-content: flex-end;
+  flex: 0 0 5%;
+}
+.mat-column-jrPts {
+  flex: 0 0 6%;
+  justify-content: flex-end;
+}
+.mat-column-openPts {
+  justify-content: flex-end;
+  flex: 0 0 6%;
+}
+.mat-column-externalPts {
+  justify-content: flex-end;
+  flex: 0 0 5%;
+}
+.mat-column-drawSize {
+  justify-content: flex-end;
+  flex: 0 0 4%;
+}
+.mat-table {
+  overflow: auto;
+}
+
+.filter-form-field {
+  width: 170px;
+}
+

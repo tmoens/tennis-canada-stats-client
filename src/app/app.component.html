@@ -7,7 +7,7 @@
   type="text/css"
   rel="stylesheet"/>
 
-<div class="mat-typography">
+<div class="mat-typography" fxLayout="column">
   <mat-sidenav-container class="sidenav-container">
     <mat-sidenav #drawer mode="over" hasBackdrop="true" role="navigation">
       <mat-nav-list>
@@ -25,6 +25,8 @@
            (click)="drawer.toggle()" color="primary">Tournament Strength Reporter</a>
         <a mat-list-item routerLink="/utr_report"
            (click)="drawer.toggle()" color="primary">UTR Report Generator</a>
+        <a mat-list-item routerLink="/external_data_admin"
+           (click)="drawer.toggle()" color="primary">External Competitive Data Administration</a>
       </mat-nav-list>
     </mat-sidenav>
     <mat-sidenav-content>

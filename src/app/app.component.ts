@@ -3,6 +3,7 @@ import {Component, OnInit} from '@angular/core';
 import {Router} from "@angular/router";
 import {AppStateService} from "./app-state.service";
 import {OktaAuthService} from "@okta/okta-angular";
+import {RatingService} from "./external-tournaments/rating-service.service";
 
 @Component({
   selector: 'tc-stats-app',

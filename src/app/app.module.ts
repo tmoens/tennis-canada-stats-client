@@ -2,12 +2,11 @@ import { BrowserModule } from '@angular/platform-browser';
 import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
 import {FlexLayoutModule} from "@angular/flex-layout";
 import { NgModule } from '@angular/core';
-import { RouterModule, Routes} from "@angular/router";
 import {
   MatButtonModule, MatCardModule, MatCheckboxModule,
   MatDatepickerModule, MatFormFieldModule, MatGridListModule, MatIconModule,
   MatInputModule, MatListModule, MatOptionModule, MatRadioModule, MatProgressBarModule,
-  MatProgressSpinnerModule, MatSelectModule, MatSlideToggleModule, MatStepperModule,
+  MatSelectModule, MatSlideToggleModule, MatStepperModule,
   MatTableModule, MatToolbarModule, MatSidenavModule, MatSortModule, MatExpansionModule
 } from "@angular/material";
 import {HTTP_INTERCEPTORS, HttpClientModule} from "@angular/common/http";
@@ -23,7 +22,7 @@ import { PlayerImportComponent } from './vr/player-import/player-import.componen
 import {NgxUploaderModule} from "ngx-uploader";
 import {PlayerMergeImportComponent} from "./vr/player-merge-import/player-merge-import.component";
 
-import {OktaAuthGuard, OktaAuthModule, OktaCallbackComponent, OktaLoginRedirectComponent} from "@okta/okta-angular";
+import { OktaAuthModule } from "@okta/okta-angular";
 
 
 import { environment } from '../environments/environment';
@@ -32,50 +31,13 @@ import { HomeComponent } from './home/home.component';
 import {AuthTokenInterceptor} from "./auth/AuthTokenInterceptor";
 import { TournamentStrengthComponent } from './tournament-strength/tournament-strength.component';
 import { UtrReportComponent } from './utr-report/utr-report.component';
+import { AppRoutingModule } from './app-routing.module';
+import { ExternalTournamentsModule } from './external-tournaments/external-tournaments.module';
 
 export function onAuthRequired({ oktaAuth, router }) {
   // Redirect the user to your custom login page
   router.navigate(['/login']);
 }
-
-const routes: Routes = [
-  {
-    path: '',
-    component: HomeComponent,
-  },
-  {
-    path: 'implicit/callback',
-    component: OktaCallbackComponent,
-  },
-  {
-    path: 'login',
-    component: LoginComponent,
-  },
-  { path: 'vr_license_manager',
-    component: VRLicenseManagerComponent,
-    canActivate: [ OktaAuthGuard ],
-  },
-  { path: 'vr_license_reporter',
-    component: VRLicenseReporterComponent,
-    canActivate: [ OktaAuthGuard ],
-  },
-  { path: 'player_import',
-    component: PlayerImportComponent,
-    canActivate: [ OktaAuthGuard ],
-  },
-  { path: 'player_merge_import',
-    component: PlayerMergeImportComponent,
-    canActivate: [ OktaAuthGuard ],
-  },
-  { path: 'tournament_strength',
-    component: TournamentStrengthComponent,
-    canActivate: [ OktaAuthGuard ],
-  },
-  { path: 'utr_report',
-    component: UtrReportComponent,
-    canActivate: [ OktaAuthGuard ],
-  },
-];
 
 // Shorthand for always using the onAuthRequired function for every guarded route
 environment.oktaEnv['onAuthRequired'] = onAuthRequired;
@@ -103,14 +65,15 @@ environment.oktaEnv['onAuthRequired'] = onAuthRequired;
     MatButtonModule, MatCardModule, MatCheckboxModule,
     MatDatepickerModule, MatIconModule, MatExpansionModule,
     MatFormFieldModule, MatGridListModule,
-    MatInputModule, MatListModule, MatOptionModule, MatRadioModule,
-    MatSelectModule, MatStepperModule, MatTableModule,
-    MatSidenavModule, MatProgressBarModule, MatProgressSpinnerModule,
+    MatInputModule, MatListModule, MatOptionModule, MatProgressBarModule,
+    MatRadioModule, MatSelectModule, MatStepperModule, MatTableModule,
+    MatSidenavModule,
     MatSlideToggleModule, MatSortModule, MatToolbarModule,
     NgxUploaderModule,
     OktaAuthModule.initAuth(environment.oktaEnv),
     ReactiveFormsModule,
-    RouterModule.forRoot(routes),
+    ExternalTournamentsModule,
+    AppRoutingModule,
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: AuthTokenInterceptor, multi: true },
