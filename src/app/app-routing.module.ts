@@ -49,10 +49,12 @@ const routes: Routes = [
   {
     path: 'external_data_admin',
     component: ExternalTournamentsComponent,
+    canActivate: [ OktaAuthGuard ],
   },
   {
     path: '',
     component: HomeComponent,
+    canActivate: [ OktaAuthGuard ],
   },
 ];
 

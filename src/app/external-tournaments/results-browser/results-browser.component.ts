@@ -63,7 +63,7 @@ export class ResultsBrowserComponent implements OnInit {
   {
     this.results = new MatTableDataSource([]);
     this.endFilterPeriodFC = new FormControl(moment());
-    this.startFilterPeriodFC = new FormControl(moment().subtract(1,'months'));
+    this.startFilterPeriodFC = new FormControl(moment().subtract(14,'days'));
     this.selectedSanctioningBody = this.sanctioningBodies[0];
     this.selectedSortOrder = this.sortOrders[0];
     this.filter = new ResultFilter();
@@ -117,6 +117,7 @@ export class ResultsBrowserComponent implements OnInit {
       this.results.data = data;
       this.resultCount = this.results.data.length;
     });
+    this.search();
   }
 
   search() {

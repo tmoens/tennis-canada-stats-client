@@ -7,6 +7,7 @@ import {TournamentNavigatorComponent} from "./tournament-navigator/tournament-na
 import {TournamentRaterComponent} from "./tournament-rater/tournament-rater.component";
 import {ResultsBrowserComponent} from "./results-browser/results-browser.component";
 import {ExternalTournamentsComponent} from "./external-tournaments.component";
+import {OktaAuthGuard} from '@okta/okta-angular';
 
 const routes: Routes = [
   { path: 'external_data_admin',
@@ -15,23 +16,25 @@ const routes: Routes = [
       {
         path: 'idmapping',
         component: ExternalPlayerManagerComponent,
-      },
-      {
-        path: 'tournamentDataManager',
-        component: TournamentNavigatorComponent,
+        canActivate: [ OktaAuthGuard ],
       },
       {
         path: 'tournamentRater',
         component: TournamentRaterComponent,
+        canActivate: [ OktaAuthGuard ],
       },
       {
         path: 'resultsBrowser',
         component: ResultsBrowserComponent,
+        canActivate: [ OktaAuthGuard ],
+      },
+      {
+        path: '',
+        component: ExternalPlayerManagerComponent,
+        canActivate: [ OktaAuthGuard ],
       },
     ]
   },
-
-
 ];
 
 @NgModule({

@@ -12,4 +12,8 @@
   .color-accent {
     color: mat-color($accent)
   }
+
+  .mat-nav-list .mat-list-item {
+    color: mat-color($primary)!important
+  }
 }
