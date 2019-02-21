@@ -214,6 +214,14 @@ export class ExternalTournamentService {
     //TODO catch erros
   }
 
+  // When the user sets the external points won in an external event.
+  overrideExternalPoints(er: ExternalEventResultDTO) {
+    return this.http.post<ExternalEventResultDTO>(
+      `${this.serverURL}/ExternalEventResult/overrideExternalPoints/`, er, httpOptions).pipe(
+      tap((t: ExternalEventResultDTO) => this.log('Set manual points: ' + JSON.stringify(er))),
+      catchError(this.handleError<EventResult>('updateEvent', null))
+    );
+  }
 
   /**
    * Handle Http operation that failed.
@@ -239,4 +247,5 @@ export class ExternalTournamentService {
   private log(message: string) {
     console.log('ExternalTournamentService: ' + message);
   }
+
 }

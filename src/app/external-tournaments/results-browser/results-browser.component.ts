@@ -25,8 +25,8 @@ import * as XLSX from 'xlsx';
 })
 export class ResultsBrowserComponent implements OnInit {
   // columns in the tournament table
-  displayColumns = ['startDate', 'name', 'tournamentType',
-    'eventType', 'fullName', 'id', 'vrid', 'drawSize', 'fp', 'jrPts', 'openPts', 'externalPts'];
+  displayColumns = ['endDate', 'name', 'tournamentType', 'fullName', 'vrid',
+     'drawSize', 'fp', 'pc', 'tcPts', 'externalPts', 'epOverride'];
 
   // The filtered set results
   results$: Observable<ExternalEventResultDTO[]>;
@@ -120,6 +120,13 @@ export class ResultsBrowserComponent implements OnInit {
     this.search();
   }
 
+  onPointOverride(er: ExternalEventResultDTO) {
+    this.dataService.overrideExternalPoints(er).subscribe(
+      data => {
+        console.log('Updated DTO: ' + JSON.stringify(data));
+      }
+    );
+  }
   search() {
     this.loadingResults = true;
     this.filter.end = this.endFilterPeriodFC.value.format("YYYY-MM-DD");
@@ -131,43 +138,41 @@ export class ResultsBrowserComponent implements OnInit {
 
   export() {
     const exportHeaders = ['p1memberId', 'playername', 'tournamentname', 'eventname',
-      'finalposition', 'result', 'tournamentyear', 'tournamentweek', 'externalpoints', 'points'];
+      'finalposition', 'DrawSize', 'result', 'tournamentyear', 'tournamentweek', 'Type', 'ExternalPoints',
+      'points', 'FRL', 'ManualExtPts'];
     const juniorData = [];
     juniorData.push(exportHeaders);
     const openData = [];
     openData.push(exportHeaders);
 
 
+    // Note to future self.  The "eventDescription" field requested by VR is actually
+    // theRankingCategoryThisResultBelongsIn. Hard learned lesson #893221a.
+
     for (const result of this.results.data) {
+      if (isNaN(parseInt(result.tcPoints))) continue;
       const tournamentDate = moment(result.endDate);
-      const jrRow = [];
-      if (result.isJunior && !isNaN(parseInt(result.tcJuniorPoints))) {
-        jrRow.push(result.internalId);
-        jrRow.push(result.playerName);
-        jrRow.push(result.tournamentName);
-        jrRow.push(result.eventDescription);
-        jrRow.push(result.finishPosition);
-        jrRow.push(Math.round(Math.log2(result.finishPosition)));
-        jrRow.push(tournamentDate.year());
-        jrRow.push(tournamentDate.isoWeek());
-        jrRow.push(result.externalRankingPoints);
-        jrRow.push(parseInt(result.tcJuniorPoints));
-        juniorData.push(jrRow);
+      const row = [];
+      row.push(result.internalId);
+      row.push(result.playerName);
+      row.push(result.tournamentName);
+      row.push(result.pointsCategory);
+      row.push(result.finishPosition);
+      row.push(result.drawSize);
+      row.push(Math.round(Math.log2(result.finishPosition)));
+      row.push(tournamentDate.year());
+      row.push(tournamentDate.isoWeek());
+      row.push(result.tournamentType);
+      row.push(result.externalRankingPoints);
+      row.push(parseInt(result.tcPoints));
+      row.push((result.drawSize <= result.finishPosition) ? 'FRL' : '');
+      row.push((result.manualPointAllocation) ? result.manualPointAllocation: '');
+      if (result.eventType === 'Open') {
+        openData.push(row);
+      } else {
+        juniorData.push(row);
       }
-      const openRow = [];
-      if (!isNaN(parseInt(result.tcOpenPoints))) {
-        openRow.push(result.internalId);
-        openRow.push(result.playerName);
-        openRow.push(result.tournamentName);
-        openRow.push(result.eventDescription);
-        openRow.push(result.finishPosition);
-        openRow.push(Math.round(Math.log2(result.finishPosition)));
-        openRow.push(tournamentDate.year());
-        openRow.push(tournamentDate.isoWeek());
-        openRow.push(result.externalRankingPoints);
-        openRow.push(parseInt(result.tcOpenPoints));
-        openData.push(openRow);
-      }
+
     }
     const now = moment().format('YYYY-MM-DD-HH-mm-ss');
 
@@ -179,7 +184,9 @@ export class ResultsBrowserComponent implements OnInit {
       {wch: 11},
       {wch: 11},
       {wch: 11},
+      {wch: 11},
       {wch: 14},
+      {wch: 11},
       {wch: 11},
       {wch: 11},
       {wch: 11},
@@ -196,7 +203,9 @@ export class ResultsBrowserComponent implements OnInit {
       {wch: 11},
       {wch: 11},
       {wch: 11},
+      {wch: 11},
       {wch: 14},
+      {wch: 11},
       {wch: 11},
       {wch: 11},
       {wch: 11},
@@ -208,20 +217,23 @@ export class ResultsBrowserComponent implements OnInit {
 }
 
 export class ExternalEventResultDTO {
+  eventId: string;
   finishPosition: number;
   externalRankingPoints: number;
   manualPointAllocation: number;
-  tcJuniorPoints: string;
-  tcOpenPoints: string;
+  tcPoints: string;
   tournamentName: string;
-  tournamentType: string;
-  endDate: string;
   sanctioningBody: string;
-  eventDescription: string;
+  endDate: string;
+  tournamentType: string;
+  eventType: string;
+  eventGender: string;
+  eventDiscipline: string;
+  pointsCategory: string;
+  shortPointsCategory: string;
   playerName: string;
-  externalId:string;
-  internalId:string;
   drawSize: number;
-  isJunior: boolean;
   yob: number;
+  externalId: string;
+  internalId: number;
 }

@@ -26,13 +26,14 @@ import { OktaAuthModule } from "@okta/okta-angular";
 
 
 import { environment } from '../environments/environment';
-import {LoginComponent} from "./auth/login.component";
+import { LoginComponent } from "./auth/login.component";
 import { HomeComponent } from './home/home.component';
-import {AuthTokenInterceptor} from "./auth/AuthTokenInterceptor";
+import { AuthTokenInterceptor } from "./auth/AuthTokenInterceptor";
 import { TournamentStrengthComponent } from './tournament-strength/tournament-strength.component';
 import { UtrReportComponent } from './utr-report/utr-report.component';
 import { AppRoutingModule } from './app-routing.module';
 import { ExternalTournamentsModule } from './external-tournaments/external-tournaments.module';
+import { ItfExportsComponent } from './itf-exports/itf-exports.component';
 
 export function onAuthRequired({ oktaAuth, router }) {
   // Redirect the user to your custom login page
@@ -46,12 +47,13 @@ environment.oktaEnv['onAuthRequired'] = onAuthRequired;
   declarations: [
     AppComponent,
     HomeComponent,
+    ItfExportsComponent,
     LoginComponent,
     PlayerImportComponent,
     PlayerMergeImportComponent,
+    TournamentStrengthComponent,
     VRLicenseManagerComponent,
     VRLicenseReporterComponent,
-    TournamentStrengthComponent,
     UtrReportComponent,
   ],
   imports: [

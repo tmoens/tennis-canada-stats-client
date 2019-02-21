@@ -10,8 +10,8 @@ import {PlayerMergeImportComponent} from "./vr/player-merge-import/player-merge-
 import {TournamentStrengthComponent} from "./tournament-strength/tournament-strength.component";
 import {UtrReportComponent} from "./utr-report/utr-report.component";
 import {HomeComponent} from "./home/home.component";
-import {environment} from "../environments/environment";
 import {ExternalTournamentsComponent} from "./external-tournaments/external-tournaments.component";
+import {ItfExportsComponent} from './itf-exports/itf-exports.component';
 
 const routes: Routes = [
   {
@@ -49,6 +49,11 @@ const routes: Routes = [
   {
     path: 'external_data_admin',
     component: ExternalTournamentsComponent,
+    canActivate: [ OktaAuthGuard ],
+  },
+  {
+    path: 'itf_exports',
+    component: ItfExportsComponent,
     canActivate: [ OktaAuthGuard ],
   },
   {

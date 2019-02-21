@@ -27,7 +27,7 @@ export class UtrReportComponent implements OnInit {
 
   buildReport() {
     this.buildingReport = true;
-    let reportURL = environment.serverPrefix + '/utr/buildUTRReport';
+    let reportURL = environment.serverPrefix + '/Exports/UTRReport';
 
     const httpOptions = {
       headers: new HttpHeaders({ 'Content-Type': 'application/json'})

@@ -68,10 +68,13 @@
     </div>
     <div fxFlex *ngIf="resultCount > 0 && !loadingResults" >
       <mat-table fxFlex #resultsTable [dataSource]="results">
-        <ng-container matColumnDef="startDate">
+        <!--End Date column-->
+        <ng-container matColumnDef="endDate">
           <mat-header-cell *matHeaderCellDef>End Date</mat-header-cell>
-          <mat-cell *matCellDef="let t">{{t.endDate.substr(2)}}</mat-cell>
+          <mat-cell *matCellDef="let t">{{t.endDate}}</mat-cell>
         </ng-container>
+
+        <!--Tournament Name Column-->
         <ng-container matColumnDef="name">
           <mat-header-cell *matHeaderCellDef>Tournament</mat-header-cell>
           <mat-cell *matCellDef="let t">
@@ -80,58 +83,89 @@
                     (click)="onTournamentNameSelected(t.tournamentName)">{{ t.tournamentName }}</button>
           </mat-cell>
         </ng-container>
+
+        <!--Tournament Type Column-->
         <ng-container matColumnDef="tournamentType">
           <mat-header-cell *matHeaderCellDef>Type</mat-header-cell>
           <mat-cell *matCellDef="let t">{{ t.tournamentType }}</mat-cell>
         </ng-container>
+
+        <!--Player's full name-->
         <ng-container matColumnDef="fullName">
           <mat-header-cell *matHeaderCellDef>Name</mat-header-cell>
           <mat-cell *matCellDef="let t">{{t.playerName}}</mat-cell>
         </ng-container>
+
+        <!--Player's external Id-->
         <ng-container matColumnDef="id">
           <mat-header-cell *matHeaderCellDef >Id</mat-header-cell>
           <mat-cell *matCellDef="let t" fxFlexAlign="center">
             <button mat-button color="primary" (click)="onPlayerIDSelected(t.externalId)">{{ t.externalId }}</button>
           </mat-cell>
         </ng-container>
+
+        <!--Player's VR Id-->
         <ng-container matColumnDef="vrid">
           <mat-header-cell *matHeaderCellDef>VR Id</mat-header-cell>
           <mat-cell *matCellDef="let t">
             <button mat-button color="primary">{{ t.internalId }}</button>
           </mat-cell>
         </ng-container>
+
+        <!--Finishing Position-->
         <ng-container matColumnDef="fp">
           <mat-header-cell *matHeaderCellDef>Result</mat-header-cell>
           <mat-cell *matCellDef="let t">{{ t.finishPosition }}</mat-cell>
         </ng-container>
+
+        <!--Draw Size-->
         <ng-container matColumnDef="drawSize">
           <mat-header-cell *matHeaderCellDef>Draw</mat-header-cell>
           <mat-cell *matCellDef="let t">{{ t.drawSize }}</mat-cell>
         </ng-container>
-        <ng-container matColumnDef="eventType">
-          <mat-header-cell *matHeaderCellDef>Event</mat-header-cell>
-          <mat-cell *matCellDef="let t">{{t.eventDescription}}</mat-cell>
-        </ng-container>
-        <ng-container matColumnDef="jrPts">
+
+        <!--Points Category Column-->
+        <ng-container matColumnDef="pc">
           <mat-header-cell *matHeaderCellDef
-                           matTooltip="Points earned towards Tennis Canada Junior rankings.">
-            JrPts</mat-header-cell>
-          <mat-cell *matCellDef="let t">{{t.tcJuniorPoints}}</mat-cell>
+                           matTooltip="Type of Tennis Canada points.">
+            Type</mat-header-cell>
+          <mat-cell *matCellDef="let t">{{t.shortPointsCategory}}</mat-cell>
         </ng-container>
-        <ng-container matColumnDef="openPts">
+
+        <!--Tennis Canada Ranking Points-->
+        <ng-container matColumnDef="tcPts">
           <mat-header-cell *matHeaderCellDef
-                           matTooltip="Points earned towards Tennis Canada Open rankings.">
-            OpenPts</mat-header-cell>
-          <mat-cell *matCellDef="let t">{{t.tcOpenPoints}}</mat-cell>
+                           matTooltip="Points earned towards Tennis Canada rankings.">
+            TC Pts</mat-header-cell>
+          <mat-cell *matCellDef="let t">{{t.tcPoints}}</mat-cell>
         </ng-container>
+
+        <!--External Rankings Points-->
         <ng-container matColumnDef="externalPts">
           <mat-header-cell *matHeaderCellDef
                            matTooltip="Points earned in the point system of the external tournament.">
-            ExtPts</mat-header-cell>
+            Ext Pts</mat-header-cell>
           <mat-cell *matCellDef="let t"
                     [matTooltip]="t.sanctioningBody + ' points earned'">
             {{t.externalRankingPoints}}</mat-cell>
         </ng-container>
+
+        <!--External Rankings Points Override-->
+        <ng-container matColumnDef="epOverride">
+          <mat-header-cell *matHeaderCellDef
+                           matTooltip="Manual entry/override of external points earned.">
+            Override</mat-header-cell>
+          <mat-cell *matCellDef="let t"
+                    [matTooltip]="'Override external points...'">
+            <mat-form-field style="width: 60px">
+              <input matInput [(ngModel)]="t.manualPointAllocation"
+                     placeholder="Override"
+              (change)="onPointOverride(t)">
+            </mat-form-field>
+
+          </mat-cell>
+        </ng-container>
+
         <mat-header-row *matHeaderRowDef="displayColumns"></mat-header-row>
         <mat-row *matRowDef="let row;  columns:displayColumns;"></mat-row>
       </mat-table>

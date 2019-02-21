@@ -52,6 +52,11 @@ export class HomeComponent implements OnInit {
       '/external_data_admin',
       'Manage competitive data from non Tennis Canada tournaments.',
     ))
+    this.statsApps.push(new StatsApp(
+      'ITF Data Exporter',
+      '/itf_exports',
+      'Create excel files to export to the ITF',
+    ))
   }
 
   navigateToApp(app: StatsApp) {
