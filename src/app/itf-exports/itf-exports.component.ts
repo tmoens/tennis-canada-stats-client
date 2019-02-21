@@ -10,7 +10,7 @@ import {VRPlayerService} from '../vr/player.service';
 @Component({
   selector: 'app-itf-exports',
   templateUrl: './itf-exports.component.html',
-  styleUrls: ['./itf-exports.component.css'],
+  styleUrls: ['./itf-exports.component.scss'],
   providers: [{provide: MAT_DATE_FORMATS, useValue: TC_DATE_FORMATS}],
 })
 export class ItfExportsComponent implements OnInit {
