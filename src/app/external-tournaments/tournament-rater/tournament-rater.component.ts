@@ -15,12 +15,11 @@ import { MatTableDataSource } from '@angular/material';
 import { MAT_DATE_FORMATS } from '@angular/material/core';
 import * as moment from 'moment';
 
-import { ExternalTournament } from '../tournament-detail-editor/external-tournament';
-import { RatingService } from '../rating-service.service';
 import { ExternalTournamentService } from '../external-tournament.service';
 import { TournamentFilter } from './tournament-filter';
 import { TC_DATE_FORMATS } from '../dateFormats';
 import {FormControl} from '@angular/forms';
+import {ExternalTournament} from '../external-tournament';
 
 @Component({
   selector: 'app-tournament-rater',
@@ -33,62 +32,34 @@ import {FormControl} from '@angular/forms';
 
 export class TournamentRaterComponent implements OnInit {
   // columns in the tournament table
-  displayColumns = ['name', 'hn', 'sb', 'ed', 'category', 'subCategory', 'updated'];
+  displayColumns = ['name', 'country', 'sanctioningBody', 'category', 'endDate', 'tournamentType'];
 
   // The list of tournaments that need classification by the user
   tournaments: ExternalTournament[];
-  // Corresponding array of which tournaments the user has rated
-  rated: boolean[];
-  // Corresponding array of the subcategories supported for each
-  // tournament (because the subcategories differ between
-  // sanctioning bodies and categories within sanctioning bodies)
-  // For example, several sub categories exist for ATP Futures.
-  supportedSubCategories: string[][];
 
   // For filtering the list of tournaments
   filter: TournamentFilter;
 
-  // FOr presenting the tournaments in a material table
+  // For presenting the tournaments in a material table
   ut: MatTableDataSource<ExternalTournament>;
 
   // Progress indicators
-  todoCount: number;
   loadingTournaments:boolean;
 
   endFilterPeriodFC: FormControl;
   startFilterPeriodFC: FormControl;
 
-  sanctioningBodies = [
-    {name: 'Any', value: null},
-    {name: 'ITF', value: 'ITF'},
-    {name: 'ATP', value: 'ATP'},
-    {name: 'WTA', value: 'WTA'},
-    {name: 'TE', value: 'TE'},
-    {name: 'USTA', value: 'USTA'},
-  ];
-
-  sortOrders = [
-    {name: 'Name/Date', value: 1},
-    {name: 'Date/Tournament/Name', value: 2},
-  ];
-
-  selectedSanctioningBody;
-  selectedSortOrder;
-
   constructor(
     private tournamentService: ExternalTournamentService,
-    private ratingService: RatingService,
   ) {
     this.tournaments = [];
     this.ut = new MatTableDataSource(this.tournaments);
-    this.supportedSubCategories = [];
-    this.rated = [];
     this.filter = new TournamentFilter();
-    this.todoCount = 0;
     this.endFilterPeriodFC = new FormControl(moment());
     this.startFilterPeriodFC = new FormControl(moment().subtract(1,'months'));
-    this.selectedSanctioningBody = this.sanctioningBodies[0];
-    this.selectedSortOrder = this.sortOrders[0];
+    this.filter.sanctioningBody = 'ITF';
+    this.filter.category = 'Open';
+    this.filter.gender = 'F';
   }
 
   onEndDateChanged() {
@@ -110,8 +81,6 @@ export class TournamentRaterComponent implements OnInit {
   search() {
     this.filter.endPeriod = this.endFilterPeriodFC.value.format("YYYY-MM-DD");
     this.filter.startPeriod = this.startFilterPeriodFC.value.format("YYYY-MM-DD");
-    this.filter.sanctioningBody = this.selectedSanctioningBody.value;
-    this.filter.sortOrder = this.selectedSortOrder.value;
     this.loadTournaments();
   }
 
@@ -124,81 +93,11 @@ export class TournamentRaterComponent implements OnInit {
   tournamentsArrived(data) {
     this.tournaments = data;
     this.ut = new MatTableDataSource(this.tournaments);
-    this.supportedSubCategories = [];
-    this.rated = [];
-    this.todoCount = 0;
-    for (const t of this.tournaments) {
-      const after2018: boolean = ('2018' < t.endDate.substr(0, 4));
-      if (after2018) {
-        this.rated[t.tournamentId] = true;
-      } else {
-        if (t.subCategory == null) this.todoCount++;
-        t.subCategoryEditable = t.category == "WITF" || t.category == "Futures"
-          || t.category == "Challenger" || t.category == "Grade A";
-        this.rated[t.tournamentId] = false;
-        this.supportedSubCategories[t.tournamentId] =
-          this.ratingService.getSubCategories(
-            t.endDate.substr(0, 4),
-            t.sanctioningBody,
-            t.category);
-      }
-    }
     this.loadingTournaments = false;
   }
 
-  // The user has selected a category for the tournament
-  onCategorize(t: ExternalTournament) {
-    this.tournamentService.categorizeTournament(
-      t.tournamentId,
-      t.subCategory
-    ).subscribe((data) => {
-      this.rated[t.tournamentId] = true;
-      this.todoCount--;
-    });
+  onTournamentTypeChange(tournament: ExternalTournament) {
+    this.tournamentService.categorizeTournament(tournament)
+    .subscribe()
   }
-
-  // I know I know, this belongs in the External Tournament object and not here.
-  makeURL(t:ExternalTournament):string {
-    let url = "http://www.google.ca";
-    switch (t.sanctioningBody) {
-      case "ATP":
-        switch(t.category) {
-          case "Futures":
-            url = "http://www.itftennis.com/procircuit/tournaments/men's-calendar.aspx?" +
-              "nat=" + t.hostNation +
-              "&fromDate=" + t.startDate.substr(0,10) +
-              "&toDate=" + t.endDate.substr(0,10);
-            break;
-          case "Challenger":
-            url = "http://www.atpworldtour.com/en/scores/results-archive?year=" +
-            t.endDate.substr(0,4) + "&tournamentType=ch";
-            break;
-          default:
-            url = "http://www.atpworldtour.com/en/tournaments";
-            break;
-        }
-        break;
-      case "WTA":
-        switch(t.category) {
-          case "WITF":
-            url = "http://www.itftennis.com/procircuit/tournaments/women's-calendar.aspx?" +
-              "nat=" + t.hostNation +
-              "&fromDate=" + t.startDate.substr(0,10) +
-              "&toDate=" + t.endDate.substr(0,10);
-            break;
-          default:
-            url = "http://www.wtatennis.com/tournaments";
-            break;
-        }
-        break;
-      case "ITF":
-        url = "http://www.itftennis.com/juniors/tournaments/calendar.aspx?" +
-          "nat=" + t.hostNation +
-          "&fromDate=" + t.startDate.substr(0,10) +
-          "&toDate=" + t.endDate.substr(0,10);
-        break;
-    }
-    return url;
-  }
-
-  }
+}

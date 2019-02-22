@@ -43,3 +43,7 @@ Thumbs.db
 *.css
 *.css.map
 
+# environment files
+/src/environments/*
+!/src/environments/sample.environment.ts
+!/src/environments/sample.environment.production.ts

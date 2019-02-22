@@ -4,56 +4,80 @@
     <p>This application allows you to browse results for Canadians
       playing in ATP, WTA and ITF.</p>
     <mat-divider></mat-divider>
-    <h3>Result Filters</h3>
-    <mat-form-field class="filter-form-field">
-      <input matInput [(ngModel)]="filter.playerId" name="ITFId"
-             placeholder="Full ITF Id" type="search">
-    </mat-form-field>
-    <mat-form-field class="filter-form-field">
-      <input matInput [(ngModel)]="filter.VRID" name="VRId"
-             placeholder="Full VR Id" type="search">
-    </mat-form-field>
-    <mat-form-field class="filter-form-field">
-      <input matInput [(ngModel)]="filter.lastName" name="familyName"
-             placeholder="Family Name" type="search">
-    </mat-form-field>
-    <mat-form-field class="filter-form-field">
-      <input matInput [(ngModel)]="filter.tournamentName" name="tournamentName"
-             placeholder="Tournament Name" type="search">
-    </mat-form-field>
-    <mat-form-field class="filter-form-field">
-      <mat-select placeholder="Sanctioning Body"
-                  class="form-control"
-                  [(ngModel)]="selectedSanctioningBody" name="sanctioningBody">
-        <mat-option *ngFor="let item of sanctioningBodies" [value]="item">
-          {{ item.name }}
-        </mat-option>
-      </mat-select>
-    </mat-form-field>
-    <mat-form-field class="filter-form-field">
-      <input matInput [matDatepicker]="startdp" placeholder="From Date" [formControl]="startFilterPeriodFC"
-             (dateChange)="onStartDateChanged()" (dateInput)="onStartDateChanged()">
-      <mat-datepicker-toggle matSuffix [for]="startdp"></mat-datepicker-toggle>
-      <mat-datepicker #startdp></mat-datepicker>
-    </mat-form-field>
-    <mat-form-field class="filter-form-field">
-      <input matInput [matDatepicker]="enddp" placeholder="Until date" [formControl]="endFilterPeriodFC"
-             (dateChange)="onEndDateChanged()" (dateInput)="onEndDateChanged()">
-      <mat-datepicker-toggle matSuffix [for]="enddp"></mat-datepicker-toggle>
-      <mat-datepicker #enddp></mat-datepicker>
-    </mat-form-field>
-    <mat-form-field class="filter-form-field">
-      <mat-select placeholder="Sort Order"
-                  class="form-control"
-                  [(ngModel)]="selectedSortOrder" name="sortOrder">
-        <mat-option *ngFor="let item of sortOrders" [value]="item">
-          {{ item.name }}
-        </mat-option>
-      </mat-select>
-    </mat-form-field>
-    <span class="fill-remaining-space"></span>
-    <button mat-button color="primary" (click)="search()">Search</button>
-    <button mat-button color="primary" (click)="export()">Export</button>
+    <form (submit)="search()">
+      <h3>Result Filters</h3>
+
+      <!--Player's ITF Id Filter-->
+      <mat-form-field class="filter-form-field">
+        <input matInput [(ngModel)]="filter.playerId" name="ITFId"
+               placeholder="Full ITF Id" type="search">
+        <button mat-button type="button" *ngIf="filter.playerId" matSuffix mat-icon-button
+                aria-label="Clear" (click)="filter.playerId='';search()">
+          <mat-icon>close</mat-icon>
+        </button>
+      </mat-form-field>
+
+      <!--Players VRID Filter-->
+      <mat-form-field class="filter-form-field">
+        <input matInput [(ngModel)]="filter.VRID" name="VRId"
+               placeholder="Full VR Id" type="search">
+        <button mat-button type="button" *ngIf="filter.VRID" matSuffix mat-icon-button
+                aria-label="Clear" (click)="filter.VRID='';search()">
+          <mat-icon>close</mat-icon>
+        </button>
+      </mat-form-field>
+
+      <!--Player's Family Name Filter-->
+      <mat-form-field class="filter-form-field">
+        <input matInput [(ngModel)]="filter.lastName" name="familyName"
+               placeholder="Family Name" type="search">
+        <button mat-button type="button" *ngIf="filter.lastName" matSuffix mat-icon-button
+                aria-label="Clear" (click)="filter.lastName='';search()">
+          <mat-icon>close</mat-icon>
+        </button>
+      </mat-form-field>
+
+      <!--Tournament Name Filter-->
+      <mat-form-field class="filter-form-field">
+        <input matInput [(ngModel)]="filter.tournamentName" name="tournamentName"
+               placeholder="Tournament Name" type="search">
+        <button mat-button type="button" *ngIf="filter.tournamentName" matSuffix mat-icon-button
+                aria-label="Clear" (click)="filter.tournamentName='';search()">
+          <mat-icon>close</mat-icon>
+        </button>
+      </mat-form-field>
+
+      <!--Tournament Type filter-->
+      <mat-form-field class="filter-form-field">
+        <mat-select (selectionChange)="select" placeholder="Tournament Type"
+                    class="form-control"
+                    [(ngModel)]="selectedTournamentType" name="tournamentType">
+          <mat-option *ngFor="let item of tournamentTypes" [value]="item">
+            {{ item.name }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <!--Start Period Filter-->
+      <mat-form-field class="filter-form-field">
+        <input matInput [matDatepicker]="startdp" placeholder="From Date" [formControl]="startFilterPeriodFC"
+               (dateChange)="onStartDateChanged()" (dateInput)="onStartDateChanged()">
+        <mat-datepicker-toggle matSuffix [for]="startdp"></mat-datepicker-toggle>
+        <mat-datepicker #startdp></mat-datepicker>
+      </mat-form-field>
+
+      <!--End Period Filter-->
+      <mat-form-field class="filter-form-field">
+        <input matInput [matDatepicker]="enddp" placeholder="Until date" [formControl]="endFilterPeriodFC"
+               (dateChange)="onEndDateChanged()" (dateInput)="onEndDateChanged()">
+        <mat-datepicker-toggle matSuffix [for]="enddp"></mat-datepicker-toggle>
+        <mat-datepicker #enddp></mat-datepicker>
+      </mat-form-field>
+
+      <span class="fill-remaining-space"></span>
+      <button mat-button color="primary" type="submit" (keyup.enter)="search()">Search</button>
+      <button mat-button color="primary" (click)="export()">Export</button>
+    </form>
   </div>
   <div class="app-box mat-elevation-z3" fxFlex>
     <div *ngIf="loadingResults">
@@ -93,14 +117,9 @@
         <!--Player's full name-->
         <ng-container matColumnDef="fullName">
           <mat-header-cell *matHeaderCellDef>Name</mat-header-cell>
-          <mat-cell *matCellDef="let t">{{t.playerName}}</mat-cell>
-        </ng-container>
-
-        <!--Player's external Id-->
-        <ng-container matColumnDef="id">
-          <mat-header-cell *matHeaderCellDef >Id</mat-header-cell>
-          <mat-cell *matCellDef="let t" fxFlexAlign="center">
-            <button mat-button color="primary" (click)="onPlayerIDSelected(t.externalId)">{{ t.externalId }}</button>
+          <mat-cell *matCellDef="let t">
+            <button mat-button color="primary"
+                    (click)="onPlayerNameSelected(t.externalId)">{{ t.playerName }}</button>
           </mat-cell>
         </ng-container>
 
@@ -108,7 +127,8 @@
         <ng-container matColumnDef="vrid">
           <mat-header-cell *matHeaderCellDef>VR Id</mat-header-cell>
           <mat-cell *matCellDef="let t">
-            <button mat-button color="primary">{{ t.internalId }}</button>
+            <button mat-button color="primary"
+                    (click)="onVRIDSelected(t.internalId)">{{ t.internalId }}</button>
           </mat-cell>
         </ng-container>
 
@@ -160,7 +180,7 @@
             <mat-form-field style="width: 60px">
               <input matInput [(ngModel)]="t.manualPointAllocation"
                      placeholder="Override"
-              (change)="onPointOverride(t)">
+                     (change)="onPointOverride(t)">
             </mat-form-field>
 
           </mat-cell>

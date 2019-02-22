@@ -5,15 +5,15 @@ import { Observable } from 'rxjs/Observable';
 import { of } from 'rxjs/observable/of';
 import { catchError, tap } from 'rxjs/operators';
 
-import { ExternalTournament } from './tournament-detail-editor/external-tournament';
-import { ExternalEvent } from './event-detail-editor/external-event';
-import { EventResult } from './event-result-editor/event-result-editor.component';
 import { ExternalPlayer } from './external-player-manager/external-player';
 import { VRPlayer } from './VRPlayer';
 import { ExternalEventResultDTO} from './results-browser/results-browser.component';
 import { ResultFilter } from './results-browser/ResultFilter';
 import { TournamentFilter } from './tournament-rater/tournament-filter';
 import { environment } from '../../environments/environment';
+import {ExternalTournament} from './external-tournament';
+import {ExternalEvent} from './external-event';
+import {plainToClass} from 'class-transformer';
 
 const defaultHeaders = new HttpHeaders({ 'Content-Type': 'application/json' });
 const httpOptions = {
@@ -29,32 +29,6 @@ export class ExternalTournamentService {
     private http: HttpClient,
   ) { }
 
-  // ==================== EXTERNAL TOURNAMENTS =================================
-  /** PUT: add a new tournament to the server */
-  addTournament (t: ExternalTournament): Observable<ExternalTournament> {
-    return this.http.put<ExternalTournament>(`${this.serverURL}/ExternalTournament/`, t, httpOptions).pipe(
-      tap((t: ExternalTournament) => this.log(`added tournament w/ id=${t.tournamentId}`)),
-      catchError(this.handleError<ExternalTournament>('addTournament'))
-    );
-  }
-
-  /** POST: add a new tournament to the server */
-  updateTournament (t: ExternalTournament): Observable<ExternalTournament> {
-    return this.http.post<ExternalTournament>(`${this.serverURL}/ExternalTournament/`, t, httpOptions).pipe(
-      tap((t: ExternalTournament) => this.log(`added tournament w/ id=${t.tournamentId}`)),
-      catchError(this.handleError<ExternalTournament>('updateTournament'))
-    );
-  }
-
-  /** DELETE: delete the tournament from the server */
-  deleteTournament (id: string): Observable<any> {
-    const url = `${this.serverURL}/ExternalTournament/${id}`;
-    return this.http.delete(url, httpOptions)
-      .pipe(
-        tap(_ => this.log(`deleted tournament id=${id}`)),
-        catchError(this.handleError<string>('deleteTournament'))
-      );
-  }
 
   getFilteredTournaments(filter:TournamentFilter):Observable<ExternalTournament[]> {
     let options = { headers: defaultHeaders };
@@ -68,15 +42,9 @@ export class ExternalTournamentService {
     options['params'] = params;
 
     return this.http.get<ExternalTournament[]>(url , options)
-      .map(response => response as ExternalTournament[]);
+      .map(response => plainToClass(ExternalTournament, response));
   }
 
-
-  getManualTournaments(searchString: string): Observable<ExternalTournament[]> {
-    let url = `${this.serverURL}/ExternalTournament/searchManualTournaments/${searchString}`;
-    return this.http.get<ExternalTournament[]>(url , httpOptions)
-      .map(response => response['ExternalTournaments']);
-  };
 
   /** Get the events for a given tournament */
   getTournamentEvents(tournamentId:string):Observable<ExternalEvent[]> {
@@ -88,72 +56,13 @@ export class ExternalTournamentService {
 
   /** Set the sub-category of a tournament */
   // TODO This should not be a get operation.
-  categorizeTournament(tournamentId: string, subCategory:string):Observable<ExternalTournament> {
+  categorizeTournament(tournament: ExternalTournament):Observable<ExternalTournament> {
     let url =
-      `${this.serverURL}/ExternalTournament/UpdateSubCategory/${tournamentId}/${encodeURIComponent(subCategory)}`;
+      `${this.serverURL}/ExternalTournament/UpdateCategory/${tournament.tournamentId}/${encodeURIComponent(tournament.category)}`;
     return this.http.post<ExternalTournament>(url , httpOptions);
   }
 
   // ==================== EXTERNAL EVENTS =================================
-  /** PUT: add a new event to the server */
-  addEvent (t: ExternalEvent): Observable<ExternalEvent> {
-    return this.http.put<ExternalEvent>(`${this.serverURL}/ExternalEvent/`, t, httpOptions).pipe(
-      tap((t: ExternalEvent) => this.log(`added event w/ id=${t.eventId}`)),
-      catchError(this.handleError<ExternalEvent>('addEvent'))
-    );
-  }
-
-  /** POST: add a new event to the server */
-  updateEvent (t: ExternalEvent): Observable<ExternalEvent> {
-    return this.http.post<ExternalEvent>(`${this.serverURL}/ExternalEvent/`, t, httpOptions).pipe(
-      tap((t: ExternalEvent) => this.log(`added event w/ id=${t.eventId}`)),
-      catchError(this.handleError<ExternalEvent>('updateEvent'))
-    );
-  }
-
-  /** DELETE: delete the event from the server */
-  deleteEvent (id: string): Observable<any> {
-    const url = `${this.serverURL}/ExternalEvent/${id}`;
-    this.log("Trying to delete event " + id);
-    return this.http.delete(url, httpOptions)
-      .pipe(
-        tap(_ => this.log(`deleted event id=${id}`)),
-        catchError(this.handleError<string>('deleteEvent'))
-      );
-  }
-
-  /** Get the events results for a given event */
-  getEventResults(eventId:string):Observable<EventResult[]> {
-    if (eventId == "") return Observable.of([]);
-    let url = `${this.serverURL}/ExternalEvent/${eventId}/ResultsWithPlayers`;
-    return this.http.get<EventResult[]>(url , httpOptions)
-      .map(response => response['ExternalEventResults']);
-  }
-
-
-  // ==================== EXTERNAL EVENT RESULTS ==========================
-  deleteEventResult (eventId: string, playerId: string): Observable<any> {
-    const url = `${this.serverURL}/ExternalEventResult/${eventId}/${playerId}`;
-    return this.http.delete(url, httpOptions)
-      .pipe(
-        tap(_ => this.log(`deleted eventId=${eventId} playerId=${playerId}`)),
-        catchError(this.handleError<string>('deleteEvent'))
-      );
-  }
-  addEventResult (t: EventResult): Observable<EventResult> {
-    return this.http.put<EventResult>(`${this.serverURL}/ExternalEventResult/`, t, httpOptions).pipe(
-      tap((t: EventResult) => this.log(`added event w/ id=${t.eventId}`)),
-      catchError(this.handleError<EventResult>('addEvent'))
-    );
-  }
-
-  updateEventResult (t: EventResult): Observable<EventResult> {
-    return this.http.post<EventResult>(`${this.serverURL}/ExternalEventResult/`, t, httpOptions).pipe(
-      tap((t: EventResult) => this.log(`added event w/ id=${t.eventId}`)),
-      catchError(this.handleError<EventResult>('updateEvent'))
-    );
-  }
-
   getFilteredResults(resultFilter:ResultFilter):Observable<ExternalEventResultDTO[]> {
     let options = { headers: defaultHeaders };
     let params: HttpParams = new HttpParams();
@@ -170,7 +79,7 @@ export class ExternalTournamentService {
     }
 
     return this.http.get<ExternalEventResultDTO[]>(url , options)
-       .map(response => response as ExternalEventResultDTO[]);
+      .map(response => response as ExternalEventResultDTO[]);
   }
 
   // ==================== EXTERNAL PLAYERS ==========================
@@ -219,7 +128,7 @@ export class ExternalTournamentService {
     return this.http.post<ExternalEventResultDTO>(
       `${this.serverURL}/ExternalEventResult/overrideExternalPoints/`, er, httpOptions).pipe(
       tap((t: ExternalEventResultDTO) => this.log('Set manual points: ' + JSON.stringify(er))),
-      catchError(this.handleError<EventResult>('updateEvent', null))
+      catchError(this.handleError<ExternalEventResultDTO>('updateEvent', null))
     );
   }
 

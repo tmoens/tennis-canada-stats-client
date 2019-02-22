@@ -40,22 +40,16 @@ export class ResultsBrowserComponent implements OnInit {
   endFilterPeriodFC: FormControl;
   startFilterPeriodFC: FormControl;
 
-  sanctioningBodies = [
+  tournamentTypes = [
     {name: 'Any', value: null},
-    {name: 'ITF', value: 'ITF'},
     {name: 'ATP', value: 'ATP'},
     {name: 'WTA', value: 'WTA'},
-    {name: 'TE', value: 'TE'},
-    {name: 'USTA', value: 'USTA'},
+    {name: 'ITF Pro Women', value: 'ITF Pro Women'},
+    {name: 'ITF TT Women', value: 'ITF TT Women'},
+    {name: 'ITF TT Men', value: 'ITF TT Men'},
+    {name: 'ITF Junior', value: 'ITF Junior'},
   ];
-
-  sortOrders = [
-    {name: 'Name/Date', value: 1},
-    {name: 'Date/Tournament/Name', value: 2},
-  ];
-
-  selectedSanctioningBody;
-  selectedSortOrder;
+  selectedTournamentType;
 
   constructor(
     private dataService: ExternalTournamentService
@@ -64,8 +58,7 @@ export class ResultsBrowserComponent implements OnInit {
     this.results = new MatTableDataSource([]);
     this.endFilterPeriodFC = new FormControl(moment());
     this.startFilterPeriodFC = new FormControl(moment().subtract(14,'days'));
-    this.selectedSanctioningBody = this.sanctioningBodies[0];
-    this.selectedSortOrder = this.sortOrders[0];
+    this.selectedTournamentType = this.tournamentTypes[0];
     this.filter = new ResultFilter();
   };
 
@@ -73,12 +66,14 @@ export class ResultsBrowserComponent implements OnInit {
     if (this.endFilterPeriodFC.value < this.startFilterPeriodFC.value) {
       this.startFilterPeriodFC.setValue(this.endFilterPeriodFC.value.subtract(1,'days'));
     }
+    this.search();
   }
 
   onStartDateChanged() {
     if (this.endFilterPeriodFC.value < this.startFilterPeriodFC.value) {
       this.endFilterPeriodFC.setValue(this.startFilterPeriodFC.value.add(1,'days'));
     }
+    this.search();
   }
 
   // someone wants to focus on a single player
@@ -89,7 +84,7 @@ export class ResultsBrowserComponent implements OnInit {
     this.filter.tournamentName = null;
     this.search();
   }
-  onPlayerIDSelected(playerId:string) {
+  onPlayerNameSelected(playerId:string) {
     this.filter.VRID = null;
     this.filter.playerId = playerId;
     this.filter.lastName = null;
@@ -131,8 +126,38 @@ export class ResultsBrowserComponent implements OnInit {
     this.loadingResults = true;
     this.filter.end = this.endFilterPeriodFC.value.format("YYYY-MM-DD");
     this.filter.start = this.startFilterPeriodFC.value.format("YYYY-MM-DD");
-    this.filter.sanctioningBody = this.selectedSanctioningBody.value;
-    this.filter.sortOrder = this.selectedSortOrder.value;
+    switch (this.selectedTournamentType.value) {
+      case 'ATP':
+        this.filter.sanctioningBody = 'ATP';
+        this.filter.category = null;
+        this.filter.gender = null;
+        break;
+      case 'WTA':
+        this.filter.sanctioningBody = 'WTA'
+        this.filter.category = null;
+        this.filter.gender = null;
+        break;
+      case 'ITF Pro Women':
+        this.filter.sanctioningBody = 'ITF'
+        this.filter.category = 'Pro';
+        this.filter.gender = 'F';
+        break;
+      case 'ITF TT Women':
+        this.filter.sanctioningBody = 'ITF'
+        this.filter.category = 'TT';
+        this.filter.gender = 'F';
+        break;
+      case 'ITF TT Men':
+        this.filter.sanctioningBody = 'ITF'
+        this.filter.category = 'TT';
+        this.filter.gender = 'M';
+        break;
+      case 'ITF Junior':
+        this.filter.sanctioningBody = 'ITF'
+        this.filter.category = null;
+        this.filter.gender = null;
+        break;
+    }
     this.search$.next(this.filter)
   }
 

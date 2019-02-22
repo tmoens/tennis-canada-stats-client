@@ -1,5 +1,4 @@
-import {ExternalTournament} from "../tournament-detail-editor/external-tournament";
-import {EventRating} from "../rating-service.service";
+import {ExternalTournament} from './external-tournament';
 
 export class ExternalEvent {
   eventId: string;
@@ -9,7 +8,6 @@ export class ExternalEvent {
   eventType: string;
   discipline: string;
   drawSize:number;
-  rating: EventRating;
   manuallyCreated: boolean;
   ignoreResults: boolean;
   numResults: number;

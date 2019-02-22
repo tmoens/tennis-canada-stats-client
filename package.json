@@ -27,6 +27,7 @@
     "@angular/router": "^7.2.0",
     "@okta/okta-angular": "^1.0.7",
     "@okta/okta-signin-widget": "^2.14.0",
+    "class-transformer": "^0.2.0",
     "core-js": "^2.6.2",
     "file-saver": "^2.0.0",
     "hammerjs": "^2.0.8",

@@ -9,6 +9,5 @@ export class ResultFilter {
   subCategory: string = null;
   start:string;
   end:string;
-  // sort order 1 = Player Name/EndDate, 2 = EndDate/Tournament Name/Player Name
-  sortOrder:number;
+  gender: string;
 }
