@@ -154,7 +154,7 @@ export class ResultsBrowserComponent implements OnInit {
         break;
       case 'ITF Junior':
         this.filter.sanctioningBody = 'ITF'
-        this.filter.category = null;
+        this.filter.category = 'Junior';
         this.filter.gender = null;
         break;
     }

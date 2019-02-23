@@ -49,7 +49,7 @@
 
       <!--Tournament Type filter-->
       <mat-form-field class="filter-form-field">
-        <mat-select (selectionChange)="select" placeholder="Tournament Type"
+        <mat-select (selectionChange)="search()" placeholder="Tournament Type"
                     class="form-control"
                     [(ngModel)]="selectedTournamentType" name="tournamentType">
           <mat-option *ngFor="let item of tournamentTypes" [value]="item">
