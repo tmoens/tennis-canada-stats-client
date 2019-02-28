@@ -157,13 +157,18 @@ export class ResultsBrowserComponent implements OnInit {
         this.filter.category = 'Junior';
         this.filter.gender = null;
         break;
+      default:
+        this.filter.sanctioningBody = null
+        this.filter.category = null;
+        this.filter.gender = null;
+
     }
     this.search$.next(this.filter)
   }
 
   export() {
     const exportHeaders = ['p1memberId', 'playername', 'tournamentname', 'eventname',
-      'finalposition', 'DrawSize', 'result', 'tournamentyear', 'tournamentweek', 'Type', 'ExternalPoints',
+      'finalposition1', 'DrawSize', 'result', 'tournamentyear', 'tournamentweek', 'Type', 'ExternalPoints',
       'points', 'FRL', 'ManualExtPts'];
     const juniorData = [];
     juniorData.push(exportHeaders);
