@@ -57,6 +57,12 @@ export class HomeComponent implements OnInit {
       '/itf_exports',
       'Create excel files to export to the ITF',
     ))
+    this.statsApps.push(new StatsApp(
+      'BC Membership List Checker',
+      '/player-check',
+      'Given a a workbook with membership lists of partial player information,' +
+      'or confirm the identity of players on the lists.',
+    ))
   }
 
   navigateToApp(app: StatsApp) {

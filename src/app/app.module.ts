@@ -34,6 +34,7 @@ import { UtrReportComponent } from './utr-report/utr-report.component';
 import { AppRoutingModule } from './app-routing.module';
 import { ExternalTournamentsModule } from './external-tournaments/external-tournaments.module';
 import { ItfExportsComponent } from './itf-exports/itf-exports.component';
+import {PlayerCheckComponent} from './vr/player-check/player-check.component';
 
 export function onAuthRequired({ oktaAuth, router }) {
   // Redirect the user to your custom login page
@@ -51,6 +52,7 @@ environment.oktaEnv['onAuthRequired'] = onAuthRequired;
     LoginComponent,
     PlayerImportComponent,
     PlayerMergeImportComponent,
+    PlayerCheckComponent,
     TournamentStrengthComponent,
     VRLicenseManagerComponent,
     VRLicenseReporterComponent,

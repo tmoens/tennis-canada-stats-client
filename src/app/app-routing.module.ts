@@ -12,6 +12,7 @@ import {UtrReportComponent} from "./utr-report/utr-report.component";
 import {HomeComponent} from "./home/home.component";
 import {ExternalTournamentsComponent} from "./external-tournaments/external-tournaments.component";
 import {ItfExportsComponent} from './itf-exports/itf-exports.component';
+import {PlayerCheckComponent} from './vr/player-check/player-check.component';
 
 const routes: Routes = [
   {
@@ -38,6 +39,10 @@ const routes: Routes = [
     component: PlayerMergeImportComponent,
     canActivate: [ OktaAuthGuard ],
   },
+  { path: 'player_check',
+    component: PlayerCheckComponent,
+    canActivate: [ OktaAuthGuard ],
+  },
   { path: 'tournament_strength',
     component: TournamentStrengthComponent,
     canActivate: [ OktaAuthGuard ],
@@ -54,6 +59,11 @@ const routes: Routes = [
   {
     path: 'itf_exports',
     component: ItfExportsComponent,
+    canActivate: [ OktaAuthGuard ],
+  },
+  {
+    path: 'player_check',
+    component: PlayerCheckComponent,
     canActivate: [ OktaAuthGuard ],
   },
   {

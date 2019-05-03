@@ -50,5 +50,4 @@ export class VRLicenseService {
       return of(result as T);
     };
   }
-
 }
