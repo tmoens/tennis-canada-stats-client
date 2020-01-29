@@ -2,7 +2,8 @@ import {Component, OnInit} from '@angular/core';
 
 import {Router} from "@angular/router";
 import {AppStateService} from "./app-state.service";
-import {OktaAuthService} from "@okta/okta-angular";
+import {OktaAuthService, UserClaims} from '@okta/okta-angular';
+import {STATS_APPS, StatsApp} from '../assets/stats-apps';
 
 @Component({
   selector: 'tc-stats-app',
@@ -11,7 +12,8 @@ import {OktaAuthService} from "@okta/okta-angular";
 })
 export class AppComponent {
   isAuthenticated:boolean;
-  user: any;
+  user: UserClaims;
+  statsApps = STATS_APPS;
 
   constructor(
     public router: Router,
@@ -30,6 +32,7 @@ export class AppComponent {
   async onLoginStateChange (newLoginState:boolean) {
     this.isAuthenticated = newLoginState;
     this.user = await this.oktaAuth.getUser();
+    this.appState.setRights(this.user);
   }
 
   async ngOnInit() {
