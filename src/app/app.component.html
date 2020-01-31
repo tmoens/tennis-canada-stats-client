@@ -10,10 +10,13 @@
 <div class="mat-typography" fxLayout="column" style="min-height: 600px">
   <mat-sidenav-container class="sidenav-container">
     <mat-sidenav #drawer mode="over" hasBackdrop="true" role="navigation">
-      <mat-nav-list *ngFor="let app of statsApps">
+      <mat-nav-list >
+        <a mat-list-item routerLink="/" (click)="drawer.toggle()">Home</a>
+        <div *ngFor="let app of statsApps">
           <a mat-list-item *ngIf="appState.hasRight(app)"
-          [routerLink]="app.route">{{app.name}}
+             (click)="drawer.toggle()" [routerLink]="app.route">{{app.name}}
           </a>
+        </div>
       </mat-nav-list>
     </mat-sidenav>
     <mat-sidenav-content style="min-height: 600px">
