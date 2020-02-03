@@ -19,10 +19,6 @@ export class ExternalTournamentsComponent implements OnInit {
         link: './idmapping',
         index: 0
       }, {
-        label: 'Rate Tournaments',
-        link: './tournamentRater',
-        index: 1
-      }, {
         label: 'Results Browser and Exporter',
         link: './resultsBrowser',
         index: 2

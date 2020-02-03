@@ -26,7 +26,7 @@ import * as XLSX from 'xlsx';
 export class ResultsBrowserComponent implements OnInit {
   // columns in the tournament table
   displayColumns = ['endDate', 'name', 'tournamentType', 'fullName', 'vrid',
-    'drawSize', 'fp', 'pc', 'tcPts', 'externalPts', 'epOverride'];
+     'drawSize', 'fp', 'pc', 'tcPts', 'externalPts', 'epOverride'];
 
   // The filtered set results
   results$: Observable<ExternalEventResultDTO[]>;
@@ -42,11 +42,12 @@ export class ResultsBrowserComponent implements OnInit {
 
   tournamentTypes = [
     {name: 'Any', value: null},
-    {name: 'ATP', value: 'ATP'},
     {name: 'WTA', value: 'WTA'},
+    {name: 'ATP', value: 'ATP'},
     {name: 'ITF Pro Women', value: 'ITF Pro Women'},
-    {name: 'ITF TT Women', value: 'ITF TT Women'},
-    {name: 'ITF TT Men', value: 'ITF TT Men'},
+    {name: 'ITF Pro Men', value: 'ITF Pro Men'},
+    {name: 'ITF TT Women (2019)', value: 'ITF TT Women'},
+    {name: 'ITF TT Men (2019)', value: 'ITF TT Men'},
     {name: 'ITF Junior', value: 'ITF Junior'},
   ];
   selectedTournamentType;
@@ -132,33 +133,38 @@ export class ResultsBrowserComponent implements OnInit {
         this.filter.category = null;
         this.filter.gender = null;
         break;
+      case 'ITF Pro Men':
+        this.filter.sanctioningBody = 'ITF';
+        this.filter.category = 'Pro';
+        this.filter.gender = 'M';
+        break;
       case 'WTA':
-        this.filter.sanctioningBody = 'WTA'
+        this.filter.sanctioningBody = 'WTA';
         this.filter.category = null;
         this.filter.gender = null;
         break;
       case 'ITF Pro Women':
-        this.filter.sanctioningBody = 'ITF'
+        this.filter.sanctioningBody = 'ITF';
         this.filter.category = 'Pro';
         this.filter.gender = 'F';
         break;
       case 'ITF TT Women':
-        this.filter.sanctioningBody = 'ITF'
+        this.filter.sanctioningBody = 'ITF';
         this.filter.category = 'TT';
         this.filter.gender = 'F';
         break;
       case 'ITF TT Men':
-        this.filter.sanctioningBody = 'ITF'
+        this.filter.sanctioningBody = 'ITF';
         this.filter.category = 'TT';
         this.filter.gender = 'M';
         break;
       case 'ITF Junior':
-        this.filter.sanctioningBody = 'ITF'
+        this.filter.sanctioningBody = 'ITF';
         this.filter.category = 'Junior';
         this.filter.gender = null;
         break;
       default:
-        this.filter.sanctioningBody = null
+        this.filter.sanctioningBody = null;
         this.filter.category = null;
         this.filter.gender = null;
 
@@ -167,9 +173,9 @@ export class ResultsBrowserComponent implements OnInit {
   }
 
   export() {
-    const exportHeaders = ['Member Id', 'Name', 'Tournament', 'Tour. Type', 'Event', 'Event Id',
-      'Position', 'Draw Size', 'Result', 'Year', 'Week', 'Ext. Points', 'EP Override',
-      'RR Points', 'FRL', 'SorD'];
+    const exportHeaders = ['p1memberId', 'playername', 'tournamentname', 'eventname',
+      'finalposition1', 'DrawSize', 'result', 'tournamentyear', 'tournamentweek', 'Type', 'ExternalPoints',
+      'points', 'FRL', 'ManualExtPts'];
     const juniorData = [];
     juniorData.push(exportHeaders);
     const openData = [];
@@ -186,19 +192,17 @@ export class ResultsBrowserComponent implements OnInit {
       row.push(result.internalId);
       row.push(result.playerName);
       row.push(result.tournamentName);
-      row.push(result.tournamentType);
       row.push(result.pointsCategory);
-      row.push(result.eventId);
       row.push(result.finishPosition);
       row.push(result.drawSize);
       row.push(Math.round(Math.log2(result.finishPosition)));
       row.push(tournamentDate.year());
       row.push(tournamentDate.isoWeek());
+      row.push(result.tournamentType);
       row.push(result.externalRankingPoints);
-      row.push((result.manualPointAllocation) ? result.manualPointAllocation : '');
       row.push(parseInt(result.tcPoints));
       row.push((result.drawSize <= result.finishPosition) ? 'FRL' : '');
-      row.push(result.eventDiscipline);
+      row.push((result.manualPointAllocation) ? result.manualPointAllocation: '');
       if (result.eventType === 'Open') {
         openData.push(row);
       } else {
@@ -208,40 +212,43 @@ export class ResultsBrowserComponent implements OnInit {
     }
     const now = moment().format('YYYY-MM-DD-HH-mm-ss');
 
-    const columnWidths = [
-      {wch: 10},
+    var jws = XLSX.utils.aoa_to_sheet(juniorData);
+    jws['!cols'] = [
+      {wch: 12},
       {wch: 25},
       {wch: 35},
-      {wch: 12},
-      {wch: 20},
       {wch: 11},
-      {wch: 12},
-      {wch: 7},
-      {wch: 8},
-      {wch: 5},
-      {wch: 5},
-      {wch: 5},
-      {wch: 9},
-      {wch: 9},
-      {wch: 8},
-      {wch: 4},
-      {wch: 7},
+      {wch: 11},
+      {wch: 11},
+      {wch: 11},
+      {wch: 14},
+      {wch: 11},
+      {wch: 11},
+      {wch: 11},
+      {wch: 11},
     ];
-    if (juniorData.length > 1) {
-      var jws = XLSX.utils.aoa_to_sheet(juniorData);
-      jws['!cols'] = columnWidths;
-      const jwb = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(jwb, jws, 'results');
-      XLSX.writeFile(jwb, `JuniorResults-${now}.xlsx`);
-    }
+    const jwb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(jwb, jws, 'results');
+    XLSX.writeFile(jwb, `JuniorResults-${now}.xlsx`);
 
-    if (openData.length > 1) {
-      var ows = XLSX.utils.aoa_to_sheet(openData);
-      ows['!cols'] = columnWidths
-      const owb = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(owb, ows, 'results');
-      XLSX.writeFile(owb, `OpenResults-${now}.xlsx`);
-    }
+    var ows = XLSX.utils.aoa_to_sheet(openData);
+    ows['!cols'] = [
+      {wch: 12},
+      {wch: 25},
+      {wch: 35},
+      {wch: 11},
+      {wch: 11},
+      {wch: 11},
+      {wch: 11},
+      {wch: 14},
+      {wch: 11},
+      {wch: 11},
+      {wch: 11},
+      {wch: 11},
+    ];
+    const owb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(owb, ows, 'results');
+    XLSX.writeFile(owb, `OpenResults-${now}.xlsx`);
   }
 }
 
