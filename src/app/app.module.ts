@@ -1,5 +1,4 @@
 import { BrowserModule } from '@angular/platform-browser';
-import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {FlexLayoutModule} from '@angular/flex-layout';
 import { NgModule } from '@angular/core';
 import {
@@ -35,6 +34,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { ExternalTournamentsModule } from './external-tournaments/external-tournaments.module';
 import { ItfExportsComponent } from './itf-exports/itf-exports.component';
 import {PlayerCheckComponent} from './vr/player-check/player-check.component';
+import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 
 export function onAuthRequired({ oktaAuth, router }) {
   // Redirect the user to your custom login page

@@ -24,8 +24,8 @@
               "src/assets"
             ],
             "styles": [
-              "src/styles.css",
-              "src/tc-tools-theme.css"
+              "src/styles.scss",
+              "src/tc-tools-theme.scss"
             ],
             "scripts": []
           },
@@ -78,8 +78,8 @@
             "tsConfig": "src/tsconfig.spec.json",
             "karmaConfig": "src/karma.conf.js",
             "styles": [
-              "src/styles.css",
-              "src/tc-tools-theme.css"
+              "src/styles.scss",
+              "src/tc-tools-theme.scss"
             ],
             "scripts": [],
             "assets": [

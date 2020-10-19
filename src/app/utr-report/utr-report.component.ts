@@ -6,7 +6,7 @@ import {environment} from "../../environments/environment";
 @Component({
   selector: 'app-utr-report',
   templateUrl: './utr-report.component.html',
-  styleUrls: ['./utr-report.component.css']
+  styleUrls: ['./utr-report.component.scss']
 })
 export class UtrReportComponent implements OnInit {
   buildingReport = false;

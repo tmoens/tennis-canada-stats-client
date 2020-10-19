@@ -4,6 +4,16 @@ This is where the code lives for now.  Any access requires a user id
 and ssh setup on the git server.
 ssh://git@tswebwork.com:6022/home/git/tcNodeAdminClient.git
 
+Running the tc_stats_server ==> done in task scheduler out of the directory in which it was built.
+By default it will run on port 3002, but you can configure it to run on any port in the
+production.env file. For example:
+PORT=3003
+
+Configuring apache => make sure you proxy requests to the tc_stats_server to the port on which the
+server is running.  This ought to have been done elsewhere, but it is done in the main apache config file.
+
+
+
 To make a production build
 
 ng build --base-href=/TCStatsAdminClient/ --configuration=production
@@ -27,3 +37,5 @@ Generally
 1) deploy it locally and test it out
 2) deploy to staging on TC server and test it out
 3) deploy to production and test it out
+
+

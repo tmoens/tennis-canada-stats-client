@@ -21,7 +21,7 @@ const PLAYER_IMPORT_ROUTE_ON_SERVER = '/Player/importVRPersonsCSV';
 @Component({
   selector: 'app-player-import',
   templateUrl: './player-import.component.html',
-  styleUrls: ['./player-import.component.css']
+  styleUrls: ['./player-import.component.scss']
 })
 
 export class PlayerImportComponent implements OnInit {

@@ -11,7 +11,7 @@ import {FormControl} from "@angular/forms";
 @Component({
   selector: 'app-tournament-strength',
   templateUrl: './tournament-strength.component.html',
-  styleUrls: ['./tournament-strength.component.css'],
+  styleUrls: ['./tournament-strength.component.scss'],
   providers: [
     {provide: MAT_DATE_FORMATS, useValue: TC_DATE_FORMATS},
   ],

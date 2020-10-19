@@ -18,7 +18,7 @@ export enum PlayerMergeStatus {
 @Component({
   selector: 'app-player-merge-import',
   templateUrl: './player-merge-import.component.html',
-  styleUrls: ['./player-merge-import.component.css']
+  styleUrls: ['./player-merge-import.component.scss']
 })
 export class PlayerMergeImportComponent implements OnInit {
   public expectedHeaders:string[] = ["fromPlayerId", "fromFirstName",

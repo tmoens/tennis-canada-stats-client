@@ -6,7 +6,7 @@ import {environment} from "../../../environments/environment";
 @Component({
   selector: 'app-license-reporter',
   templateUrl: './license-reporter.component.html',
-  styleUrls: ['./license-reporter.component.css'],
+  styleUrls: ['./license-reporter.component.scss'],
 })
 export class VRLicenseReporterComponent implements OnInit {
   licenseReportURL: string;

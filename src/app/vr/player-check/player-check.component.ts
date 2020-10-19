@@ -21,7 +21,7 @@ const PLAYER_CHECK_ROUTE_ON_SERVER = '/Player/check';
 @Component({
   selector: 'app-player-import',
   templateUrl: './player-check.component.html',
-  styleUrls: ['./player-check.component.css']
+  styleUrls: ['./player-check.component.scss']
 })
 
 export class PlayerCheckComponent implements OnInit {

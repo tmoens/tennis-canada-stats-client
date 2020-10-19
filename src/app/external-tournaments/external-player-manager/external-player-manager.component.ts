@@ -22,7 +22,7 @@ import {debounceTime, switchMap} from 'rxjs/operators';
 @Component({
   selector: 'app-itf-player-list',
   templateUrl: './external-player-manager.component.html',
-  styleUrls: ['./external-player-manager.component.css'],
+  styleUrls: ['./external-player-manager.component.scss'],
 })
 
 export class ExternalPlayerManagerComponent implements OnInit {
@@ -43,7 +43,7 @@ export class ExternalPlayerManagerComponent implements OnInit {
   VRPlayerCount: number;
 
   // Input field that contains the proposed VR ID for an existing ITF Player
-  newVRIdentifier:string;
+  newVRIdentifier: string;
   failedVRPlayerLookup = false; // asked to look up a VR player that does not exist;
   newVRPlayer = new VRPlayer();
 
