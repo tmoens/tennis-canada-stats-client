@@ -1,6 +1,6 @@
 import { BrowserModule } from '@angular/platform-browser';
-import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
-import {FlexLayoutModule} from "@angular/flex-layout";
+import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
+import {FlexLayoutModule} from '@angular/flex-layout';
 import { NgModule } from '@angular/core';
 import {
   MatButtonModule, MatCardModule, MatCheckboxModule,
@@ -8,27 +8,27 @@ import {
   MatInputModule, MatListModule, MatOptionModule, MatRadioModule, MatProgressBarModule,
   MatSelectModule, MatSlideToggleModule, MatStepperModule,
   MatTableModule, MatToolbarModule, MatSidenavModule, MatSortModule, MatExpansionModule
-} from "@angular/material";
-import {HTTP_INTERCEPTORS, HttpClientModule} from "@angular/common/http";
-import {FormsModule, ReactiveFormsModule} from "@angular/forms";
+} from '@angular/material';
+import {HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 
 import { AppComponent } from './app.component';
 import { VRLicenseManagerComponent } from './vr/vrlicense-manager/vrlicense-manager.component';
 
 import { LayoutModule } from '@angular/cdk/layout';
 import { VRLicenseReporterComponent } from './vr/license-reporter/license-reporter.component';
-import {MomentDateModule} from "@angular/material-moment-adapter";
+import {MomentDateModule} from '@angular/material-moment-adapter';
 import { PlayerImportComponent } from './vr/player-import/player-import.component';
-import {NgxUploaderModule} from "ngx-uploader";
-import {PlayerMergeImportComponent} from "./vr/player-merge-import/player-merge-import.component";
+import {NgxUploaderModule} from 'ngx-uploader';
+import {PlayerMergeImportComponent} from './vr/player-merge-import/player-merge-import.component';
 
-import { OktaAuthModule } from "@okta/okta-angular";
+import { OktaAuthModule } from '@okta/okta-angular';
 
 
 import { environment } from '../environments/environment';
-import { LoginComponent } from "./auth/login.component";
+import { LoginComponent } from './auth/login.component';
 import { HomeComponent } from './home/home.component';
-import { AuthTokenInterceptor } from "./auth/AuthTokenInterceptor";
+import { AuthTokenInterceptor } from './auth/AuthTokenInterceptor';
 import { TournamentStrengthComponent } from './tournament-strength/tournament-strength.component';
 import { UtrReportComponent } from './utr-report/utr-report.component';
 import { AppRoutingModule } from './app-routing.module';
