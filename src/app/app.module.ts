@@ -1,13 +1,26 @@
 import { BrowserModule } from '@angular/platform-browser';
 import {FlexLayoutModule} from '@angular/flex-layout';
 import { NgModule } from '@angular/core';
-import {
-  MatButtonModule, MatCardModule, MatCheckboxModule,
-  MatDatepickerModule, MatFormFieldModule, MatGridListModule, MatIconModule,
-  MatInputModule, MatListModule, MatOptionModule, MatRadioModule, MatProgressBarModule,
-  MatSelectModule, MatSlideToggleModule, MatStepperModule,
-  MatTableModule, MatToolbarModule, MatSidenavModule, MatSortModule, MatExpansionModule
-} from '@angular/material';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatOptionModule } from '@angular/material/core';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatExpansionModule } from '@angular/material/expansion';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatGridListModule } from '@angular/material/grid-list';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+import { MatListModule } from '@angular/material/list';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatRadioModule } from '@angular/material/radio';
+import { MatSelectModule } from '@angular/material/select';
+import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { MatSortModule } from '@angular/material/sort';
+import { MatStepperModule } from '@angular/material/stepper';
+import { MatTableModule } from '@angular/material/table';
+import { MatToolbarModule } from '@angular/material/toolbar';
 import {HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 

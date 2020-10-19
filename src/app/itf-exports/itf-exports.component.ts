@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import {MAT_DATE_FORMATS} from '@angular/material';
+import { MAT_DATE_FORMATS } from '@angular/material/core';
 import {TC_DATE_FORMATS} from '../external-tournaments/dateFormats';
 import {FormControl} from '@angular/forms';
 import * as moment from 'moment';

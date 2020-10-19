@@ -11,7 +11,7 @@
  * tournaments.  That is all.
  */
 import { Component, OnInit  } from '@angular/core';
-import { MatTableDataSource } from '@angular/material';
+import { MatTableDataSource } from '@angular/material/table';
 import { MAT_DATE_FORMATS } from '@angular/material/core';
 import * as moment from 'moment';
 
