@@ -8,7 +8,7 @@ export class ExternalTournament {
   subCategory: string;
   startDate: string;
   endDate: string;
-  subCategoryEditable:boolean;
+  subCategoryEditable: boolean;
 
   makeURL(): string {
     let url = "http://www.google.ca";

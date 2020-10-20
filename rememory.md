@@ -1,8 +1,22 @@
 read the README.md
 
+## git repo
+
 This is where the code lives for now.  Any access requires a user id
 and ssh setup on the git server.
 ssh://git@tswebwork.com:6022/home/git/tcNodeAdminClient.git
+
+For god's sake change this.
+
+## Bad Design
+
+
+The ill-advised plan was to deploy this under rogersrankings.com/TCStatsClient
+rather than as a separate site. This was sheer ignorance when the work started and it
+kinda worked, regardless of how goofy it was in retrospect.
+
+This introduced the following problems:
+1. There is no apache configuration for this "site"
 
 Running the tc_stats_server ==> done in task scheduler out of the directory in which it was built.
 By default it will run on port 3002, but you can configure it to run on any port in the

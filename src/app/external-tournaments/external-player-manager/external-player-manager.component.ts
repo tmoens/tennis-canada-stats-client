@@ -4,20 +4,9 @@ import { VRPlayer } from '../VRPlayer';
 import { ExternalPlayer } from './external-player';
 import { ExternalTournamentService } from '../external-tournament.service';
 
-import { Observable } from 'rxjs/Observable';
-import { BehaviorSubject } from 'rxjs/BehaviorSubject';
+import {Observable, BehaviorSubject, of} from 'rxjs';
 
-// Observable class extensions
-import 'rxjs/add/observable/of';
-
-// Observable operators
-import 'rxjs/add/operator/catch';
-import 'rxjs/add/operator/switchMap';
-import 'rxjs/add/operator/debounceTime';
-import 'rxjs/add/operator/distinctUntilChanged';
-import 'rxjs/add/operator/count';
-import {of} from 'rxjs';
-import {debounceTime, switchMap} from 'rxjs/operators';
+import {catchError, debounceTime, switchMap} from 'rxjs/operators';
 
 @Component({
   selector: 'app-itf-player-list',
@@ -74,7 +63,7 @@ export class ExternalPlayerManagerComponent implements OnInit {
 
   constructor(
     private externalTournamentService: ExternalTournamentService
-  ) {};
+  ) {}
 
 
   ngOnInit() {
@@ -87,12 +76,14 @@ export class ExternalPlayerManagerComponent implements OnInit {
     // but I am just pulling them from local variables.
     this.ITFPlayers = [];
     this.ITFPlayers$ = this.ITFSearchTerms
-      .debounceTime(300)        // wait 100ms after each keystroke before considering the term
-      .switchMap(() => this.externalTournamentService.searchPlayers(this.searchString, this.onlyPlayersWithoutVRID))
-      .catch(error => {
+      .pipe(
+      debounceTime(300),        // wait 100ms after each keystroke before considering the term
+      switchMap(() => this.externalTournamentService.searchPlayers(this.searchString, this.onlyPlayersWithoutVRID)),
+      catchError(error => {
         console.log(error);
         return of<ExternalPlayer[]>([]);
-      });
+      })
+  );
 
     // Watch for the arrival of the ITF Players from the Server
     this.VRPlayers = [];
@@ -146,7 +137,7 @@ export class ExternalPlayerManagerComponent implements OnInit {
       // Wipe the vrIdentifier that was being entered (if any).
       this.newVRIdentifier = null;
       this.VRPlayersLoading = true;
-      this.VRSearchTerms.next(this.selectedITFPlayer.playerId)
+      this.VRSearchTerms.next(this.selectedITFPlayer.playerId);
       this.newVRPlayer = new VRPlayer();
       this.failedVRPlayerLookup = false;
       this.showVRMatchHelp = false;
@@ -172,8 +163,8 @@ export class ExternalPlayerManagerComponent implements OnInit {
 
     // TODO priority: lowest -> next 5 lines are a duplication of the validation on the form.
     // would like to just check the form validation, but ok.
-    let n = parseInt(this.newVRIdentifier);
-    if (isNaN(n)|| (10000000 > n || 100000000 < n)) {
+    const n = parseInt(this.newVRIdentifier, 10);
+    if (isNaN(n) || (10000000 > n || 100000000 < n)) {
       return;
     }
 
@@ -188,7 +179,7 @@ export class ExternalPlayerManagerComponent implements OnInit {
       });
   }
 
-  ITFPlayersArrived(data):void {
+  ITFPlayersArrived(data): void {
     this.ITFPlayers = data;
     this.externalPlayersLoading = false;
     this.VRPlayersLoading = false;
@@ -196,7 +187,7 @@ export class ExternalPlayerManagerComponent implements OnInit {
     this.matchesCompleted = 0;
   }
 
-  VRPlayersArrived(data):void {
+  VRPlayersArrived(data): void {
     this.VRPlayers = data;
     this.VRPlayerCount = data.length;
     this.VRPlayersLoading = false;
@@ -210,11 +201,12 @@ export class ExternalPlayerManagerComponent implements OnInit {
 
   // The match is correct - it is shown clearly to the user and the user confirmed
   // So DO IT
-  onConfirmMatch():void {
+  onConfirmMatch(): void {
     this.externalTournamentService.setExternalPlayerVRID(this.selectedITFPlayer.playerId, this.newVRPlayer.playerId)
       .then(updatedPlayer => {
         if (updatedPlayer) {
           // Touch up the ITF player list without reloading it.
+          // TODO - why the heck is this not for...of rather than for...in?
           for (const i in this.ITFPlayers) {
             const index = parseInt(i, 10);
             if (this.ITFPlayers[i].playerId === updatedPlayer.playerId) {

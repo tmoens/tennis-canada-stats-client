@@ -1,16 +1,16 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import {RouterModule, Routes} from "@angular/router";
-import {OktaAuthGuard, OktaCallbackComponent} from "@okta/okta-angular";
-import {LoginComponent} from "./auth/login.component";
-import {VRLicenseManagerComponent} from "./vr/vrlicense-manager/vrlicense-manager.component";
-import {VRLicenseReporterComponent} from "./vr/license-reporter/license-reporter.component";
-import {PlayerImportComponent} from "./vr/player-import/player-import.component";
-import {PlayerMergeImportComponent} from "./vr/player-merge-import/player-merge-import.component";
-import {TournamentStrengthComponent} from "./tournament-strength/tournament-strength.component";
-import {UtrReportComponent} from "./utr-report/utr-report.component";
-import {HomeComponent} from "./home/home.component";
-import {ExternalTournamentsComponent} from "./external-tournaments/external-tournaments.component";
+import {RouterModule, Routes} from '@angular/router';
+import {OktaAuthGuard, OktaCallbackComponent} from '@okta/okta-angular';
+import {LoginComponent} from './auth/login.component';
+import {VRLicenseManagerComponent} from './vr/vrlicense-manager/vrlicense-manager.component';
+import {VRLicenseReporterComponent} from './vr/license-reporter/license-reporter.component';
+import {PlayerImportComponent} from './vr/player-import/player-import.component';
+import {PlayerMergeImportComponent} from './vr/player-merge-import/player-merge-import.component';
+import {TournamentStrengthComponent} from './tournament-strength/tournament-strength.component';
+import {UtrReportComponent} from './utr-report/utr-report.component';
+import {HomeComponent} from './home/home.component';
+import {ExternalTournamentsComponent} from './external-tournaments/external-tournaments.component';
 import {ItfExportsComponent} from './itf-exports/itf-exports.component';
 import {PlayerCheckComponent} from './vr/player-check/player-check.component';
 

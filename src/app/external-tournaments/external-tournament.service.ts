@@ -1,9 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams} from '@angular/common/http';
 
-import { Observable } from 'rxjs/Observable';
-import { of } from 'rxjs/observable/of';
-import { catchError, tap } from 'rxjs/operators';
+import { Observable, of} from 'rxjs';
+import {catchError, map, tap} from 'rxjs/operators';
 
 import { ExternalPlayer } from './external-player-manager/external-player';
 import { VRPlayer } from './VRPlayer';
@@ -30,73 +29,71 @@ export class ExternalTournamentService {
   ) { }
 
 
-  getFilteredTournaments(filter:TournamentFilter):Observable<ExternalTournament[]> {
-    let options = { headers: defaultHeaders };
+  getFilteredTournaments(filter: TournamentFilter): Observable<ExternalTournament[]> {
+    const options = { headers: defaultHeaders };
     let params: HttpParams = new HttpParams();
-    let url = `${this.serverURL}/ExternalTournament/getFilteredTournaments`;
+    const url = `${this.serverURL}/ExternalTournament/getFilteredTournaments`;
     Object.entries(filter).map(e => {
       if (e[1] && e[0]) {
-        params = params.set(e[0],e[1]);
+        params = params.set(e[0], e[1]);
       }
     });
     options['params'] = params;
 
     return this.http.get<ExternalTournament[]>(url , options)
-      .map(response => plainToClass(ExternalTournament, response));
+      .pipe( map(response => plainToClass(ExternalTournament, response)));
   }
 
 
   /** Get the events for a given tournament */
-  getTournamentEvents(tournamentId:string):Observable<ExternalEvent[]> {
-    if (tournamentId == "") return Observable.of([]);
-    let url = `${this.serverURL}/ExternalTournament/${tournamentId}/Events`;
-    return this.http.get<ExternalEvent[]>(url , httpOptions)
-      .map(response => response['ExternalEvents']);
+  getTournamentEvents(tournamentId: string): Observable<ExternalEvent[]> {
+    if (tournamentId === '') { return of([]); }
+    const url = `${this.serverURL}/ExternalTournament/${tournamentId}/Events`;
+    return this.http.get<ExternalEvent[]>(url , httpOptions);
   }
 
   /** Set the sub-category of a tournament */
   // TODO This should not be a get operation.
-  categorizeTournament(tournament: ExternalTournament):Observable<ExternalTournament> {
-    let url =
+  categorizeTournament(tournament: ExternalTournament): Observable<ExternalTournament> {
+    const url =
       `${this.serverURL}/ExternalTournament/UpdateCategory/${tournament.tournamentId}/${encodeURIComponent(tournament.category)}`;
     return this.http.post<ExternalTournament>(url , httpOptions);
   }
 
   // ==================== EXTERNAL EVENTS =================================
-  getFilteredResults(resultFilter:ResultFilter):Observable<ExternalEventResultDTO[]> {
-    let options = { headers: defaultHeaders };
+  getFilteredResults(resultFilter: ResultFilter): Observable<ExternalEventResultDTO[]> {
+    const options = { headers: defaultHeaders };
     let params: HttpParams = new HttpParams();
-    let url = `${this.serverURL}/ExternalEventResult/GetFilteredResults`;
-    let noFilters:boolean = true;
+    const url = `${this.serverURL}/ExternalEventResult/GetFilteredResults`;
+    let noFilters = true;
     Object.entries(resultFilter).map(e => {
       if (e[1] && e[0]) {
         noFilters = false;
-        params = params.set(e[0],e[1]);
+        params = params.set(e[0], e[1]);
       }
     });
     if (!noFilters) {
       options['params'] = params;
     }
 
-    return this.http.get<ExternalEventResultDTO[]>(url , options)
-      .map(response => response as ExternalEventResultDTO[]);
+    return this.http.get<ExternalEventResultDTO[]>(url , options);
   }
 
   // ==================== EXTERNAL PLAYERS ==========================
   searchPlayers(searchString: string, onlyPlayersWithoutVRID: boolean): Observable<ExternalPlayer[]> {
-    let options = { headers: defaultHeaders };
-    let url = `${this.serverURL}/ExternalPlayer/GetExternalPlayers`;
+    const options = { headers: defaultHeaders };
+    const url = `${this.serverURL}/ExternalPlayer/GetExternalPlayers`;
     let params: HttpParams = new HttpParams();
     if (onlyPlayersWithoutVRID) {
-      params = params.set('missingVRID',"true");
+      params = params.set('missingVRID', 'true');
     }
     if (searchString) {
       params = params.set('searchString', searchString);
     }
     options['params'] = params;
     return this.http.get(url, options)
-      .map(response => response as ExternalPlayer[]);
-  };
+      .pipe(map(response => response as ExternalPlayer[]));
+  }
 
   // ==================== VR PLAYERS ==========================
   findVRMatches(ITFPlayerId): Observable<VRPlayer[]> {
@@ -104,23 +101,23 @@ export class ExternalTournamentService {
       // short circuit if no ITF player is selected when looking for matching VR players
       return of<VRPlayer[]>([]);
     }
-    return this.http.get(this.serverURL + "/ExternalPlayer/FindVRMatches/" + ITFPlayerId, httpOptions)
-      .map(response => response as VRPlayer[]);
-      };
+    return this.http.get(this.serverURL + '/ExternalPlayer/FindVRMatches/' + ITFPlayerId, httpOptions)
+      .pipe(map(response => response as VRPlayer[]));
+      }
 
   getVRPlayerById(VRPlayerId): Promise<VRPlayer> {
-    return this.http.get(this.serverURL + "/Player/" + VRPlayerId, httpOptions)
+    return this.http.get(this.serverURL + '/Player/' + VRPlayerId, httpOptions)
       .toPromise()
       .then(response => response as VRPlayer);
-  };
+  }
 
   setExternalPlayerVRID(ITFPlayerID, newVRPlayerID): Promise<ExternalPlayer> {
     return this.http.put(this.serverURL +
-      "/ExternalPlayer/SetVRId/" + ITFPlayerID +
-      "/" + newVRPlayerID, httpOptions)
+      '/ExternalPlayer/SetVRId/' + ITFPlayerID +
+      '/' + newVRPlayerID, httpOptions)
       .toPromise()
       .then(response => response as ExternalPlayer);
-    //TODO catch erros
+    // TODO catch errors
   }
 
   // When the user sets the external points won in an external event.

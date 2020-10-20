@@ -3,8 +3,6 @@
  * tournaments such as ITF, WTA and ATP.
  */
 import { Component, OnInit } from '@angular/core';
-import { Observable } from 'rxjs/Observable';
-import { Subject } from 'rxjs/Subject';
 import { MatTableDataSource } from '@angular/material/table';
 import { FormControl } from '@angular/forms';
 import { MAT_DATE_FORMATS } from '@angular/material/core';
@@ -14,6 +12,9 @@ import { ExternalTournamentService } from '../external-tournament.service';
 import { ResultFilter } from './ResultFilter';
 import { TC_DATE_FORMATS } from '../dateFormats';
 import * as XLSX from 'xlsx';
+
+import {Observable, of, Subject} from 'rxjs';
+import {catchError, switchMap} from 'rxjs/operators';
 
 @Component({
   selector: 'app-results-browser',
@@ -26,7 +27,7 @@ import * as XLSX from 'xlsx';
 export class ResultsBrowserComponent implements OnInit {
   // columns in the tournament table
   displayColumns = ['endDate', 'name', 'tournamentType', 'fullName', 'vrid',
-     'drawSize', 'fp', 'pc', 'tcPts', 'externalPts', 'epOverride'];
+    'drawSize', 'fp', 'pc', 'tcPts', 'externalPts', 'epOverride'];
 
   // The filtered set results
   results$: Observable<ExternalEventResultDTO[]>;
@@ -34,8 +35,8 @@ export class ResultsBrowserComponent implements OnInit {
   search$ = new Subject<object>();
 
   results: MatTableDataSource<ExternalEventResultDTO>;
-  loadingResults:boolean = false;
-  resultCount:number = -1;
+  loadingResults = false;
+  resultCount = -1;
 
   endFilterPeriodFC: FormControl;
   startFilterPeriodFC: FormControl;
@@ -53,45 +54,44 @@ export class ResultsBrowserComponent implements OnInit {
 
   constructor(
     private dataService: ExternalTournamentService
-  )
-  {
+  ) {
     this.results = new MatTableDataSource([]);
     this.endFilterPeriodFC = new FormControl(moment());
-    this.startFilterPeriodFC = new FormControl(moment().subtract(14,'days'));
+    this.startFilterPeriodFC = new FormControl(moment().subtract(14, 'days'));
     this.selectedTournamentType = this.tournamentTypes[0];
     this.filter = new ResultFilter();
-  };
+  }
 
   onEndDateChanged() {
     if (this.endFilterPeriodFC.value < this.startFilterPeriodFC.value) {
-      this.startFilterPeriodFC.setValue(this.endFilterPeriodFC.value.subtract(1,'days'));
+      this.startFilterPeriodFC.setValue(this.endFilterPeriodFC.value.subtract(1, 'days'));
     }
     this.search();
   }
 
   onStartDateChanged() {
     if (this.endFilterPeriodFC.value < this.startFilterPeriodFC.value) {
-      this.endFilterPeriodFC.setValue(this.startFilterPeriodFC.value.add(1,'days'));
+      this.endFilterPeriodFC.setValue(this.startFilterPeriodFC.value.add(1, 'days'));
     }
     this.search();
   }
 
   // someone wants to focus on a single player
-  onVRIDSelected(vrid:string) {
+  onVRIDSelected(vrid: string) {
     this.filter.VRID = vrid;
     this.filter.playerId = null;
     this.filter.lastName = null;
     this.filter.tournamentName = null;
     this.search();
   }
-  onPlayerNameSelected(playerId:string) {
+  onPlayerNameSelected(playerId: string) {
     this.filter.VRID = null;
     this.filter.playerId = playerId;
     this.filter.lastName = null;
     this.filter.tournamentName = null;
     this.search();
   }
-  onTournamentNameSelected(tournamentName:string) {
+  onTournamentNameSelected(tournamentName: string) {
     this.filter.VRID = null;
     this.filter.playerId = null;
     this.filter.lastName = null;
@@ -101,11 +101,14 @@ export class ResultsBrowserComponent implements OnInit {
 
   ngOnInit() {
     this.results$ = this.search$
-      .switchMap((filter: ResultFilter) => this.dataService.getFilteredResults(filter))
-      .catch(error => {
-        console.log(error);
-        return Observable.of<any[]>([]);
-      });
+      .pipe(
+        switchMap((filter: ResultFilter) => this.dataService.getFilteredResults(filter)),
+        catchError(error => {
+          console.log(error);
+          return of<any[]>([]);
+        })
+      );
+
 
     this.results$.subscribe(data => {
       this.loadingResults = false;
@@ -124,8 +127,8 @@ export class ResultsBrowserComponent implements OnInit {
   }
   search() {
     this.loadingResults = true;
-    this.filter.end = this.endFilterPeriodFC.value.format("YYYY-MM-DD");
-    this.filter.start = this.startFilterPeriodFC.value.format("YYYY-MM-DD");
+    this.filter.end = this.endFilterPeriodFC.value.format('YYYY-MM-DD');
+    this.filter.start = this.startFilterPeriodFC.value.format('YYYY-MM-DD');
     switch (this.selectedTournamentType.value) {
       case 'ATP':
         this.filter.sanctioningBody = 'ATP';
@@ -133,37 +136,37 @@ export class ResultsBrowserComponent implements OnInit {
         this.filter.gender = null;
         break;
       case 'WTA':
-        this.filter.sanctioningBody = 'WTA'
+        this.filter.sanctioningBody = 'WTA';
         this.filter.category = null;
         this.filter.gender = null;
         break;
       case 'ITF Pro Women':
-        this.filter.sanctioningBody = 'ITF'
+        this.filter.sanctioningBody = 'ITF';
         this.filter.category = 'Pro';
         this.filter.gender = 'F';
         break;
       case 'ITF TT Women':
-        this.filter.sanctioningBody = 'ITF'
+        this.filter.sanctioningBody = 'ITF';
         this.filter.category = 'TT';
         this.filter.gender = 'F';
         break;
       case 'ITF TT Men':
-        this.filter.sanctioningBody = 'ITF'
+        this.filter.sanctioningBody = 'ITF';
         this.filter.category = 'TT';
         this.filter.gender = 'M';
         break;
       case 'ITF Junior':
-        this.filter.sanctioningBody = 'ITF'
+        this.filter.sanctioningBody = 'ITF';
         this.filter.category = 'Junior';
         this.filter.gender = null;
         break;
       default:
-        this.filter.sanctioningBody = null
+        this.filter.sanctioningBody = null;
         this.filter.category = null;
         this.filter.gender = null;
 
     }
-    this.search$.next(this.filter)
+    this.search$.next(this.filter);
   }
 
   export() {
@@ -180,7 +183,9 @@ export class ResultsBrowserComponent implements OnInit {
     // theRankingCategoryThisResultBelongsIn. Hard learned lesson #893221a.
 
     for (const result of this.results.data) {
-      if (isNaN(parseInt(result.tcPoints))) continue;
+      if (isNaN(parseInt(result.tcPoints, 10))) {
+        continue;
+      }
       const tournamentDate = moment(result.endDate);
       const row = [];
       row.push(result.internalId);
@@ -194,9 +199,9 @@ export class ResultsBrowserComponent implements OnInit {
       row.push(tournamentDate.isoWeek());
       row.push(result.tournamentType);
       row.push(result.externalRankingPoints);
-      row.push(parseInt(result.tcPoints));
+      row.push(parseInt(result.tcPoints, 10));
       row.push((result.drawSize <= result.finishPosition) ? 'FRL' : '');
-      row.push((result.manualPointAllocation) ? result.manualPointAllocation: '');
+      row.push((result.manualPointAllocation) ? result.manualPointAllocation : '');
       if (result.eventType === 'Open') {
         openData.push(row);
       } else {
@@ -206,7 +211,7 @@ export class ResultsBrowserComponent implements OnInit {
     }
     const now = moment().format('YYYY-MM-DD-HH-mm-ss');
 
-    var jws = XLSX.utils.aoa_to_sheet(juniorData);
+    const jws = XLSX.utils.aoa_to_sheet(juniorData);
     jws['!cols'] = [
       {wch: 12},
       {wch: 25},
@@ -225,7 +230,7 @@ export class ResultsBrowserComponent implements OnInit {
     XLSX.utils.book_append_sheet(jwb, jws, 'results');
     XLSX.writeFile(jwb, `JuniorResults-${now}.xlsx`);
 
-    var ows = XLSX.utils.aoa_to_sheet(openData);
+    const ows = XLSX.utils.aoa_to_sheet(openData);
     ows['!cols'] = [
       {wch: 12},
       {wch: 25},

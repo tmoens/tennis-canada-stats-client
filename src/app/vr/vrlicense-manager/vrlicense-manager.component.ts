@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import {VRLicenseService} from "../vrlicense.service";
-import {VRLicense} from "./VRLicense";
-import {Observable} from "rxjs/index";
-import {TENNIS_ASSOCIATIONS} from "../../../assets/provinces";
-import {FormArray, FormBuilder, FormControl, FormGroup} from "@angular/forms";
-import {AppStateService} from "../../app-state.service";
+import {VRLicenseService} from '../vrlicense.service';
+import {VRLicense} from './VRLicense';
+import {Observable} from 'rxjs';
+import {TENNIS_ASSOCIATIONS} from '../../../assets/provinces';
+import {FormArray, FormBuilder, FormGroup} from '@angular/forms';
+import {AppStateService} from '../../app-state.service';
 
 
 @Component({
@@ -31,11 +31,11 @@ export class VRLicenseManagerComponent implements OnInit {
   buildForm() {
     this.licenseUpdateForm = this.fb.group({
       licenses: this.fb.array([]),
-    })
+    });
   }
 
   ngOnInit() {
-    this.appState.setActiveTool("License Manager");
+    this.appState.setActiveTool('License Manager');
     this.getLicensesWithoutProvinces();
   }
 
@@ -52,17 +52,17 @@ export class VRLicenseManagerComponent implements OnInit {
     this.licenseUpdateForm.reset();
     const licenseFGs = this.licensesWithoutProvince.map(
       license => this.fb.group({
-        licenseName: {value: license.licenseName,disabled: true},
+        licenseName: {value: license.licenseName, disabled: true},
         // licenseName: license.licenseName,
         province: license.province,
       })
     );
     const licenseFGArray = this.fb.array(licenseFGs);
-    this.licenseUpdateForm.setControl('licenses',licenseFGArray);
+    this.licenseUpdateForm.setControl('licenses', licenseFGArray);
   }
 
   // This just makes the licenses form array available to the HTML
-  get licenses(): FormArray{
+  get licenses(): FormArray {
     return this.licenseUpdateForm.get('licenses') as FormArray;
   }
 
@@ -73,11 +73,11 @@ export class VRLicenseManagerComponent implements OnInit {
     // not show up in the form data model.
     // Also we do not send back un-updated licenses for processing.
     const updates: VRLicense[] = [];
-    for(let i=0; i < this.licenses.length; i++) {
-      let p = this.licenses.at(i).get('province').value;
-      if ("TBD" != p) {
+    for (let i = 0; i < this.licenses.length; i++) {
+      const p = this.licenses.at(i).get('province').value;
+      if ('TBD' != p) {
         // TODO a proper check for a valid province
-        let newL:VRLicense = new VRLicense();
+        const newL: VRLicense = new VRLicense();
         newL.province = p;
         newL.licenseName = this.licenses.at(i).get('licenseName').value;
         updates.push(newL);

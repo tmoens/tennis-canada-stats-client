@@ -2,8 +2,9 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams} from '@angular/common/http';
 import { Observable, of} from 'rxjs';
 import { environment } from '../../environments/environment';
-import {PlayerMergeRecord, PlayerMergeResult} from "./player-merge-import/player-merge-import.component";
+import {PlayerMergeRecord, PlayerMergeResult} from './player-merge-import/player-merge-import.component';
 import {ITFMatchDTO, ITFPlayerDTO} from '../itf-exports/itf-exports.component';
+import {map} from "rxjs/operators";
 
 const defaultHeaders = new HttpHeaders({ 'Content-Type': 'application/json' });
 const httpOptions = {
@@ -18,27 +19,25 @@ export class VRPlayerService {
 
   constructor(
     private http: HttpClient,
-    )
-  { }
+    ) {
+  }
 
-  //TODO Handle error;
-  mergePlayers(mergeRecord: PlayerMergeRecord):Observable<PlayerMergeResult> {
-    let url = `${this.serverURL}/Player/renumber`;
+  // TODO Handle error;
+  mergePlayers(mergeRecord: PlayerMergeRecord): Observable<PlayerMergeResult> {
+    const url = `${this.serverURL}/Player/renumber`;
     return this.http.post<PlayerMergeResult>(url , mergeRecord, httpOptions);
   }
 
   getPlayerDataForITF(): Observable<ITFPlayerDTO[]> {
-    return this.http.get(this.serverURL + "/Player/ITFPlayerData", httpOptions)
-      .map(response => response as ITFPlayerDTO[]);
-  };
+    return this.http.get<ITFPlayerDTO[]>(this.serverURL + '/Player/ITFPlayerData', httpOptions);
+  }
 
   getITFMatchData(updatedSinceString): Observable<ITFMatchDTO[]> {
     let params: HttpParams = new HttpParams();
     params = params.set('updatedSince', updatedSinceString);
-    let options = { headers: defaultHeaders };
+    const options = { headers: defaultHeaders };
     options['params'] = params;
-    return this.http.get(this.serverURL + "/Exports/ITFMatchData", options)
-      .map(response => response as ITFMatchDTO[]);
+    return this.http.get<ITFMatchDTO[]>(this.serverURL + '/Exports/ITFMatchData', options);
   }
 
   /**
