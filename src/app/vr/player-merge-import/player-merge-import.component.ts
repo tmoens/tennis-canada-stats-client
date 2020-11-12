@@ -1,9 +1,9 @@
 import {Component, EventEmitter, OnInit} from '@angular/core';
-import {JobState, JobStats, JobStatusService} from "../../job-status.service";
-import {AppStateService} from "../../app-state.service";
-import {humanizeBytes, UploaderOptions, UploadFile, UploadInput, UploadOutput} from "ngx-uploader";
-import {OktaAuthService} from "@okta/okta-angular";
-import {environment} from "../../../environments/environment";
+import {JobState, JobStats, JobStatusService} from '../../job-status.service';
+import {AppStateService} from '../../app-state.service';
+import {humanizeBytes, UploaderOptions, UploadFile, UploadInput, UploadOutput} from 'ngx-uploader';
+import {OktaAuthService} from '@okta/okta-angular';
+import {environment} from '../../../environments/environment';
 
 const PLAYER_MERGE_ROUTE_ON_SERVER = '/Player/importVRPersonMergesCSV';
 
@@ -21,22 +21,22 @@ export enum PlayerMergeStatus {
   styleUrls: ['./player-merge-import.component.scss']
 })
 export class PlayerMergeImportComponent implements OnInit {
-  public expectedHeaders:string[] = ["fromPlayerId", "fromFirstName",
-    "fromLastName",	"toPlayerId", "toFirstName",	"toLastName",	"date"];
+  public expectedHeaders: string[] = ['fromPlayerId', 'fromFirstName',
+    'fromLastName',	'toPlayerId', 'toFirstName',	'toLastName',	'date'];
 
-  public notes:string[] = [
-    "When Player IDs get merged in the VR system, the merge is not sent " +
-    "out via the VR API.  Instead we have to load the merge information here.",
-    "We do two things a) we renumber historical data and b) we set it up " +
-    "so that if we encounter a merged Id in the future, we renumber it."
+  public notes: string[] = [
+    'When Player IDs get merged in the VR system, the merge is not sent ' +
+    'out via the VR API.  Instead we have to load the merge information here.',
+    'We do two things a) we renumber historical data and b) we set it up ' +
+    'so that if we encounter a merged Id in the future, we renumber it.'
   ];
-  public step1:string[] = [
-    "Create a simple Excel and Save As file type: CSV UTF-8 (Comma delimited) (*.csv)",
-    'Columns must be: ' + this.expectedHeaders.join(", ") + ".",
-    "Of these, only the fromPlayerId and the toPlayerId are absolutely required, " +
-    "the others are informational."
+  public step1: string[] = [
+    'Create a simple Excel and Save As file type: CSV UTF-8 (Comma delimited) (*.csv)',
+    'Columns must be: ' + this.expectedHeaders.join(', ') + '.',
+    'Of these, only the fromPlayerId and the toPlayerId are absolutely required, ' +
+    'the others are informational.'
   ];
-  public tidyUp:string[] = ['The merge process is complete.',
+  public tidyUp: string[] = ['The merge process is complete.',
     'While you can re-run the merges, they will have no further effect.',
     'You can delete the merge file, but it is probably a good idea to keep it for your records.'];
 
@@ -63,13 +63,13 @@ export class PlayerMergeImportComponent implements OnInit {
       description: 'The reverse renumbering already exists - either directly or indirectly.'},
     {name: PlayerMergeStatus.BAD_ID,
       description: 'Player IDs must be 8 digits'},
-  ]
+  ];
 
   constructor(
     private jobStatusService: JobStatusService,
     private appState: AppStateService,
     private auth: OktaAuthService,
-  ){
+  ) {
     this.options = { concurrency: 1};
     this.files = [];
     this.file = null;
@@ -80,26 +80,26 @@ export class PlayerMergeImportComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.setState("not started");
-    this.appState.setActiveTool("Player Merge Import");
+    this.setState('not started');
+    this.appState.setActiveTool('Player Merge Import');
     // When initializing, check if there is already an upload in progress
     // If so, just join in to get status updates.
     this.pollStatus();
   }
 
-  pollStatus():void {
+  pollStatus(): void {
     this.jobStatusService.getStatus(PLAYER_MERGE_ROUTE_ON_SERVER).subscribe(
       data => {
         this.mergeStats = data;
-        if (this.mergeStats.status == JobState.IN_PROGRESS) {
-          this.setState("processing");
+        if (this.mergeStats.status === JobState.IN_PROGRESS) {
+          this.setState('processing');
           setTimeout(() => this.pollStatus(), 200);
-        } else if (this.mergeStats.status == JobState.DONE) {
+        } else if (this.mergeStats.status === JobState.DONE) {
           this.allResults = this.mergeStats.data.allResults as PlayerMergeResult[];
-          this.setState("done");
+          this.setState('done');
         }
       }
-    )
+    );
   }
 
   openFileChooser() {
@@ -120,11 +120,11 @@ export class PlayerMergeImportComponent implements OnInit {
     if (output.type === 'allAddedToQueue') {
       // could call startUpload to upload automatically here
     } else if (output.type === 'addedToQueue' && typeof output.file !== 'undefined') {
-      this.file=(output.file);
-      this.setState("selected");
+      this.file = (output.file);
+      this.setState('selected');
     } else if (output.type === 'uploading' && typeof output.file !== 'undefined') {
       this.file = output.file;
-      this.setState("uploading");
+      this.setState('uploading');
     } else if (output.type === 'removed') {
       this.file = null;
     } else if (output.type === 'rejected' && typeof output.file !== 'undefined') {
@@ -132,7 +132,7 @@ export class PlayerMergeImportComponent implements OnInit {
     } else if (output.type === 'done') {
       this.file = output.file;
       if (this.file.responseStatus != 201) {
-        this.setState("error");
+        this.setState('error');
         return;
       }
       // Once the file is uploaded, we can start polling the server to
@@ -150,26 +150,26 @@ export class PlayerMergeImportComponent implements OnInit {
       file: this.file,
       data: { }
     };
-    this.setState("uploading");
+    this.setState('uploading');
     this.uploadInput.emit(event);
   }
 
-  setState(state:string) {
+  setState(state: string) {
     this.state = state;
-    this.canSelectFile = !("uploading" == this.state || "processing" == this.state);
-    this.canShowResults = ("done" == this.state || "processing" == this.state);
-    this.canUploadFile = this.state == "selected";
+    this.canSelectFile = !('uploading' === this.state || 'processing' === this.state);
+    this.canShowResults = ('done' === this.state || 'processing' === this.state);
+    this.canUploadFile = this.state === 'selected';
   }
 }
 
 export interface PlayerMergeRecord {
-  fromPlayerId: number,
-  toPlayerId:number,
-  fromLastName?: string,
-  toLastName?: string,
-  fromFirstName?: string,
-  toFirstName?: string,
-  date?:string,
+  fromPlayerId: number;
+  toPlayerId: number;
+  fromLastName?: string;
+  toLastName?: string;
+  fromFirstName?: string;
+  toFirstName?: string;
+  date?: string;
 }
 
 export interface PlayerMergeResult {

@@ -1,23 +1,23 @@
 import {Component, OnInit} from '@angular/core';
 
-import {Router} from "@angular/router";
-import {AppStateService} from "./app-state.service";
-import {OktaAuthService} from "@okta/okta-angular";
+import {Router} from '@angular/router';
+import {AppStateService} from './app-state.service';
+import {OktaAuthService} from '@okta/okta-angular';
 
 @Component({
-  selector: 'tc-stats-app',
+  selector: 'app-tc-stats-app',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
 })
-export class AppComponent {
-  isAuthenticated:boolean;
+export class AppComponent implements OnInit {
+  isAuthenticated: boolean;
   user: any;
 
   constructor(
     public router: Router,
     public appState: AppStateService,
     public oktaAuth: OktaAuthService,
-  ){
+  ) {
     // subscribe to authentication state changes
     this.oktaAuth.$authenticationState.subscribe(
       (isAuthenticated: boolean)  => {
@@ -27,7 +27,7 @@ export class AppComponent {
     );
   }
 
-  async onLoginStateChange (newLoginState:boolean) {
+  async onLoginStateChange (newLoginState: boolean) {
     this.isAuthenticated = newLoginState;
     this.user = await this.oktaAuth.getUser();
   }

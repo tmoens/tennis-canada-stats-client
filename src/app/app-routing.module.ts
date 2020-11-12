@@ -16,7 +16,11 @@ import {PlayerCheckComponent} from './vr/player-check/player-check.component';
 
 const routes: Routes = [
   {
-    path: 'implicit/callback',
+    path: '',
+    component: HomeComponent,
+  },
+  {
+    path: 'login/callback',
     component: OktaCallbackComponent,
   },
   {
@@ -64,11 +68,6 @@ const routes: Routes = [
   {
     path: 'player_check',
     component: PlayerCheckComponent,
-    canActivate: [ OktaAuthGuard ],
-  },
-  {
-    path: '',
-    component: HomeComponent,
     canActivate: [ OktaAuthGuard ],
   },
 ];

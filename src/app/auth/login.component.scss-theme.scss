@@ -3,6 +3,8 @@
 /*
    This allows me to use the tc-tools-theme to override some of the bits of the
    login widget.  See the base styles.css to see how this file is brought into play.
+   You may well wonder where the freak the Okta theme comes from. Look in angular.json styles.
+   Honestly - that took me about 4 hours to figure out how to do.
  */
 @mixin login-theme($theme) {
   $primary: map-get($theme, primary);
@@ -26,6 +28,10 @@
     color: mat-color($primary)!important;
   }
 
+  .focused-input {
+    box-shadow: 0 0 5px mat-color($primary, 200)!important;
+    border-color: mat-color($primary)!important;
+  }
 }
 
 

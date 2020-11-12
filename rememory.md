@@ -26,7 +26,17 @@ PORT=3003
 Configuring apache => make sure you proxy requests to the tc_stats_server to the port on which the
 server is running.  This ought to have been done elsewhere, but it is done in the main apache config file.
 
+## OKTA
 
+OK like, holy cow. You follow every little step in their documentation for creating a "custom"
+login page.  EVERY one.  Doing stupid stuff you know does not matter. 
+You download their example app. It works fine.  You duplicate it in your app. It does not.
+Oh darn. How do you spell darn, starting with an F?
+Did their documentation tell you how the heck to get the .css for the signin widget into your application?
+No.  You end up looking in the browser debugger - you do not have the .css, the example does.
+How the blazes did they load it? HOW? HOW? 
+Oh well, EVERYONE knows to add a line to the styles array in the angular.json file. Right?
+Am I Right? AM I RIGHT?  DAMN DAMN DAMN hours go by to find that puppy.
 
 To make a production build
 

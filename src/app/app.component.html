@@ -1,12 +1,3 @@
-<link
-  href="https://ok1static.oktacdn.com/assets/js/sdk/okta-signin-widget/2.6.0/css/okta-sign-in.min.css"
-  type="text/css"
-  rel="stylesheet"/>
-<link
-  href="https://ok1static.oktacdn.com/assets/js/sdk/okta-signin-widget/2.6.0/css/okta-theme.css"
-  type="text/css"
-  rel="stylesheet"/>
-
 <div class="mat-typography" fxLayout="column" style="min-height: 600px">
   <mat-sidenav-container class="sidenav-container">
     <mat-sidenav #drawer mode="over" hasBackdrop="true" role="navigation">
@@ -40,7 +31,6 @@
           aria-label="Toggle sidenav"
           mat-icon-button
           (click)="drawer.toggle()">
-          <!--*ngIf="isHandset$ | async">-->
           <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
         </button>
         <span>{{appState.activeTool$ | async}}</span>

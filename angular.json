@@ -26,7 +26,8 @@
             ],
             "styles": [
               "src/styles.scss",
-              "src/tc-tools-theme.scss"
+              "src/tc-tools-theme.scss",
+              "node_modules/@okta/okta-signin-widget/dist/css/okta-sign-in.min.css"
             ],
             "scripts": []
           },

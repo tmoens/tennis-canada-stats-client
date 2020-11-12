@@ -11,7 +11,8 @@
   <div fxLayout="column" class="app-box mat-elevation-z3">
     <h3>Export Match Data</h3>
     <mat-form-field class="filter-form-field">
-      <input matInput [matDatepicker]="enddp" placeholder="Tournaments Updated Since" [formControl]="updatedSinceFC">
+      <input matInput [formControl]="updatedSinceFC" [matDatepicker]="enddp"
+             placeholder="Tournaments Updated Since">
       <mat-datepicker-toggle matSuffix [for]="enddp"></mat-datepicker-toggle>
       <mat-datepicker #enddp></mat-datepicker>
     </mat-form-field>

@@ -4,7 +4,6 @@ import { Observable, of} from 'rxjs';
 import { environment } from '../../environments/environment';
 import {PlayerMergeRecord, PlayerMergeResult} from './player-merge-import/player-merge-import.component';
 import {ITFMatchDTO, ITFPlayerDTO} from '../itf-exports/itf-exports.component';
-import {map} from "rxjs/operators";
 
 const defaultHeaders = new HttpHeaders({ 'Content-Type': 'application/json' });
 const httpOptions = {
