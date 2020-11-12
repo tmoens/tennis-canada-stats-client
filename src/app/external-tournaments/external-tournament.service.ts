@@ -8,11 +8,9 @@ import { ExternalPlayer } from './external-player-manager/external-player';
 import { VRPlayer } from './VRPlayer';
 import { ExternalEventResultDTO} from './results-browser/results-browser.component';
 import { ResultFilter } from './results-browser/ResultFilter';
-import { TournamentFilter } from './tournament-rater/tournament-filter';
 import { environment } from '../../environments/environment';
 import {ExternalTournament} from './external-tournament';
 import {ExternalEvent} from './external-event';
-import {plainToClass} from 'class-transformer';
 
 const defaultHeaders = new HttpHeaders({ 'Content-Type': 'application/json' });
 const httpOptions = {
@@ -27,23 +25,6 @@ export class ExternalTournamentService {
   constructor(
     private http: HttpClient,
   ) { }
-
-
-  getFilteredTournaments(filter: TournamentFilter): Observable<ExternalTournament[]> {
-    const options = { headers: defaultHeaders };
-    let params: HttpParams = new HttpParams();
-    const url = `${this.serverURL}/ExternalTournament/getFilteredTournaments`;
-    Object.entries(filter).map(e => {
-      if (e[1] && e[0]) {
-        params = params.set(e[0], e[1]);
-      }
-    });
-    options['params'] = params;
-
-    return this.http.get<ExternalTournament[]>(url , options)
-      .pipe( map(response => plainToClass(ExternalTournament, response)));
-  }
-
 
   /** Get the events for a given tournament */
   getTournamentEvents(tournamentId: string): Observable<ExternalEvent[]> {

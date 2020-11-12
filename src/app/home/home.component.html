@@ -4,7 +4,7 @@
   </mat-card-header>
   <mat-card-content>
     <mat-list *ngFor="let app of statsApps">
-      <mat-list-item>
+      <mat-list-item *ngIf="appState.hasRight(app)">
         <p mat-line >
           <button mat-button color="primary"
                   routerLink="{{app.route}}">{{app.name}}

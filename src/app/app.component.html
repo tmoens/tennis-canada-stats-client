@@ -1,27 +1,13 @@
 <div class="mat-typography" fxLayout="column" style="min-height: 600px">
   <mat-sidenav-container class="sidenav-container">
     <mat-sidenav #drawer mode="over" hasBackdrop="true" role="navigation">
-      <mat-nav-list>
-        <a mat-list-item routerLink="/"
-           (click)="drawer.toggle()" color="green">Home</a>
-        <a mat-list-item routerLink="/vr_license_manager"
-           (click)="drawer.toggle()" color="primary">License Manager</a>
-        <a mat-list-item routerLink="/vr_license_reporter"
-           (click)="drawer.toggle()" color="primary">License Reporter</a>
-        <a mat-list-item routerLink="/player_import"
-           (click)="drawer.toggle()" color="primary">Player Importer</a>
-        <a mat-list-item routerLink="/player_merge_import"
-           (click)="drawer.toggle()" color="primary">Player Merge Importer</a>
-        <a mat-list-item routerLink="/tournament_strength"
-           (click)="drawer.toggle()" color="primary">Tournament Strength Reporter</a>
-        <a mat-list-item routerLink="/utr_report"
-           (click)="drawer.toggle()" color="primary">UTR Report Generator</a>
-        <a mat-list-item routerLink="/external_data_admin"
-           (click)="drawer.toggle()" color="primary">External Competitive Data Administration</a>
-        <a mat-list-item routerLink="/itf_exports"
-           (click)="drawer.toggle()" color="primary">ITF Data Exporter</a>
-        <a mat-list-item routerLink="/player_check"
-           (click)="drawer.toggle()" color="primary">BC Membership List Validation</a>
+      <mat-nav-list >
+        <a mat-list-item routerLink="/" (click)="drawer.toggle()">Home</a>
+        <div *ngFor="let app of statsApps">
+          <a mat-list-item *ngIf="appState.hasRight(app)"
+             (click)="drawer.toggle()" [routerLink]="app.route">{{app.name}}
+          </a>
+        </div>
       </mat-nav-list>
     </mat-sidenav>
     <mat-sidenav-content style="min-height: 600px">

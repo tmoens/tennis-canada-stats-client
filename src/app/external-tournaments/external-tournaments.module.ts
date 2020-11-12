@@ -25,14 +25,12 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import {MomentDateModule} from "@angular/material-moment-adapter";
 import {ExternalPlayerManagerComponent} from "./external-player-manager/external-player-manager.component";
 import {ResultsBrowserComponent} from "./results-browser/results-browser.component";
-import {TournamentRaterComponent} from "./tournament-rater/tournament-rater.component";
 import { ExternalTournamentsComponent } from './external-tournaments.component';
 
 @NgModule({
   declarations: [
     ExternalPlayerManagerComponent,
     ResultsBrowserComponent,
-    TournamentRaterComponent,
     ExternalTournamentsComponent,
   ],
   imports: [

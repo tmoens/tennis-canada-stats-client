@@ -43,11 +43,12 @@ export class ResultsBrowserComponent implements OnInit {
 
   tournamentTypes = [
     {name: 'Any', value: null},
-    {name: 'ATP', value: 'ATP'},
     {name: 'WTA', value: 'WTA'},
+    {name: 'ATP', value: 'ATP'},
     {name: 'ITF Pro Women', value: 'ITF Pro Women'},
-    {name: 'ITF TT Women', value: 'ITF TT Women'},
-    {name: 'ITF TT Men', value: 'ITF TT Men'},
+    {name: 'ITF Pro Men', value: 'ITF Pro Men'},
+    {name: 'ITF TT Women (2019)', value: 'ITF TT Women'},
+    {name: 'ITF TT Men (2019)', value: 'ITF TT Men'},
     {name: 'ITF Junior', value: 'ITF Junior'},
   ];
   selectedTournamentType;
@@ -134,6 +135,11 @@ export class ResultsBrowserComponent implements OnInit {
         this.filter.sanctioningBody = 'ATP';
         this.filter.category = null;
         this.filter.gender = null;
+        break;
+      case 'ITF Pro Men':
+        this.filter.sanctioningBody = 'ITF';
+        this.filter.category = 'Pro';
+        this.filter.gender = 'M';
         break;
       case 'WTA':
         this.filter.sanctioningBody = 'WTA';
