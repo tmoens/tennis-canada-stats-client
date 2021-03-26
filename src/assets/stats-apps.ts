@@ -1,24 +1,7 @@
-export enum RIGHTS {
-  ADMIN,
-  BC_MEMBERSHIP
-}
+import {RIGHTS, StatsApp} from './stats-app';
 
 
-export class StatsApp {
-  iconName: string;
-
-  constructor(
-    public name: string,
-    public route: string,
-    public description: string,
-    public detail: string = '',
-    public rights: RIGHTS[] = [RIGHTS.ADMIN],
-  ) {
-  };
-
-}
-
-export const STATS_APPS: StatsApp[] =[
+export const STATS_APPS: StatsApp[] = [
   new StatsApp(
     'License Manager',
     '/vr_license_manager',
@@ -29,7 +12,7 @@ export const STATS_APPS: StatsApp[] =[
     '/vr_license_reporter',
     'Learn about VR Tournament Planner license usage',
     '',
-    [RIGHTS.BC_MEMBERSHIP,RIGHTS.ADMIN],
+    [RIGHTS.BC_MEMBERSHIP, RIGHTS.ADMIN],
   ),
   new StatsApp(
     'Player Importer',
@@ -63,6 +46,16 @@ export const STATS_APPS: StatsApp[] =[
     'Create excel files to export to the ITF',
   ),
   new StatsApp(
+    'WTN Uploader',
+    '/wtn_uploader',
+    'Load known WTN IDs into VR player records',
+  ),
+  new StatsApp(
+    'WTN Synch Audit Reporter',
+    '/wtn_sync_report',
+    'Report on the synch between WTN players and Tennis Canada VR Players',
+  ),
+  new StatsApp(
     'BC Membership List Checker',
     '/player_check',
     'Given a a workbook with membership lists of partial player information,' +
@@ -70,5 +63,4 @@ export const STATS_APPS: StatsApp[] =[
     '',
     [RIGHTS.BC_MEMBERSHIP],
   ),
-]
-
+];

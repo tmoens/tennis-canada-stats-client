@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import {BehaviorSubject} from 'rxjs';
 import {UserClaims} from '@okta/okta-angular';
-import {RIGHTS, StatsApp} from '../assets/stats-apps';
+import {RIGHTS, StatsApp} from '../assets/stats-app';
 
 const OKTA_BC_MEMBERSHIP_GROUP = 'BC Membership';
 const OKTA_TC_ADMIN_GROUP = 'Tennis Canada Admin';

@@ -1,0 +1,125 @@
+<div fxLayout="column" class="mat-elevation-z3 app-box">
+  <h2 fxFlexAlign="center">WTN Uploader</h2>
+  <p style="margin-left: 20px" *ngFor="let note of notes">{{note}}</p>
+  <mat-vertical-stepper class="mat-elevation-z1">
+    <mat-step>
+      <form >
+        <ng-template matStepLabel>Get WTN Data Ready</ng-template>
+        <ul>
+          <li *ngFor="let instruction of step1">
+            {{instruction}}
+          </li>
+        </ul>
+        <mat-divider></mat-divider>
+        <div>
+          <button mat-button matStepperNext color="primary">Next</button>
+        </div>
+      </form>
+    </mat-step>
+    <mat-step [completed]="state == 'done'">
+      <form>
+        <ng-template matStepLabel>Upload and Process WTN</ng-template>
+        <div>
+          <button mat-button color="primary" (click)="openFileChooser()" >
+            <label disabled="!canSelectFile">Select WTN file...</label>
+          </button>
+          <input id="fileToUpload" type="file" hidden
+                 ngFileSelect [options]="options"
+                 (uploadOutput)="onUploadOutput($event)"
+                 [uploadInput]="uploadInput" required
+                 [disabled]="!canSelectFile">
+          <div>
+            <button mat-button color="primary" type="button" (click)="startUpload()" [disabled]="!canUploadFile">
+              Process <span *ngIf="file">{{file.name}}</span>...
+            </button>
+            <span class="mat-h4" [hidden]="!canUploadFile">
+                  Warning, these changes are permanent and cannot be undone!
+                </span>
+          </div>
+        </div>
+        <mat-card *ngIf='state == "uploading"'>
+          <mat-card-header class="mat-h3">Uploading file...</mat-card-header>
+          <mat-progress-bar
+            color="primary"
+            mode="determinate"
+            [value]="file.progress?.data?.percentage">
+          </mat-progress-bar>
+
+          <div class="progress-text-content">
+                    <span class="progress-text" [class.is-done]="file?.progress?.data?.percentage === 100">
+                      <span>{{ file.progress?.data?.percentage }}% </span>
+                      <span *ngIf="file.progress?.data?.percentage !== 100">Uploading...</span>
+                      <span *ngIf="file.progress?.data?.percentage === 100">Done</span>
+                    </span>
+            <span class="speed-and-eta-text" *ngIf="file.progress?.data?.percentage !== 0 && file.progress?.data?.percentage !== 100">
+                      <span>{{ file.progress?.data?.speedHuman }} </span>
+                      <span>ETA {{ file.progress?.data?.etaHuman }}</span>
+                    </span>
+          </div>
+        </mat-card>
+        <mat-card *ngIf="state == 'processing'">
+          <mat-card-header class="mat-h3">File uploaded, now processing players...</mat-card-header>
+          <mat-card-content>
+            <div fxLayout="row" fxLayoutAlign="space-between center">
+              <div>Done: {{uploadStats.counters['done']}}</div>
+              <div class="fill-remaining-space"></div>
+              <div>To Do: {{uploadStats.toDo}}</div>
+            </div>
+            <mat-progress-bar
+              color="primary"
+              mode="determinate"
+              [value]="uploadStats.percentComplete">
+            </mat-progress-bar>
+          </mat-card-content>
+        </mat-card>
+        <div *ngIf="canShowResults">
+          <mat-accordion>
+            <div *ngFor="let s of possibleResultTypes">
+              <mat-expansion-panel *ngIf="uploadStats.counters[s.name] > 0">
+                <mat-expansion-panel-header >
+                  <mat-panel-title>
+                    {{s.name}}({{uploadStats.counters[s.name]}})
+                  </mat-panel-title>
+                </mat-expansion-panel-header>
+                <p>{{s.description}}</p>
+                <mat-list dense *ngIf="s.displayDetails">
+                  <div *ngFor="let r of allResults;">
+                    <mat-list-item *ngIf="r.status == s.name">
+                      <div mat-line>{{r.request.vrId}} {{r.request.lastName}} {{r.request.firstName}} {{r.request.wtnId}}</div>
+                      <div mat-line>{{r.description}}</div>
+                    </mat-list-item>
+                  </div>
+                </mat-list>
+              </mat-expansion-panel>
+            </div>
+          </mat-accordion>
+        </div>
+        <mat-card *ngIf="state == 'error'">
+          <mat-card-header class="mat-h3">Error uploading file...</mat-card-header>
+          <mat-card-content>
+            {{file.response.message}}
+          </mat-card-content>
+        </mat-card>
+      </form>
+      <mat-divider></mat-divider>
+      <div>
+        <button mat-button matStepperPrevious color="primary">Previous</button>
+        <button mat-button matStepperNext color="primary" [disabled]="state != 'done'">Next</button>
+      </div>
+    </mat-step>
+    <mat-step>
+      <form >
+        <ng-template matStepLabel>Tidy Up</ng-template>
+        <ul>
+          <li *ngFor="let instruction of tidyUp">
+            {{instruction}}
+          </li>
+        </ul>
+        <mat-divider></mat-divider>
+        <div>
+          <button mat-button matStepperPrevious color="primary">Previous</button>
+        </div>
+      </form>
+    </mat-step>
+  </mat-vertical-stepper>
+</div>

@@ -3,7 +3,7 @@ import {Component, OnInit} from '@angular/core';
 import {Router} from '@angular/router';
 import {AppStateService} from './app-state.service';
 import {OktaAuthService, UserClaims} from '@okta/okta-angular';
-import {STATS_APPS, StatsApp} from '../assets/stats-apps';
+import {STATS_APPS} from '../assets/stats-apps';
 
 @Component({
   selector: 'app-tc-stats-app',

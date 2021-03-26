@@ -16,15 +16,14 @@ export class JobStatusService {
   private serverURL = environment.serverPrefix;
 
   constructor(
-    private http: HttpClient)
-  { }
+    private http: HttpClient) { }
 
 
   /* By my convention, if the job is at some route, the status of that job is
    * at the same route appended by '/status'
    */
-  getStatus(jobRoute):Observable<JobStats> {
-    let url = `${this.serverURL}${jobRoute}/status`;
+  getStatus(jobRoute): Observable<JobStats> {
+    const url = `${this.serverURL}${jobRoute}/status`;
     return this.http.get<JobStats>(url , httpOptions);
   }
 
@@ -41,7 +40,7 @@ export class JobStatusService {
       console.error(error); // log to console instead
 
       // TODO: better job of transforming error for user consumption
-      //this.log(`${operation} failed: ${error.message}`);
+      // this.log(`${operation} failed: ${error.message}`);
 
       // Let the app keep running by returning an empty result.
       return of(result as T);
@@ -65,10 +64,10 @@ export interface JobStatsI {
 }
 
 export enum JobState {
-  NOT_STARTED = "Not Started",
-  IN_PROGRESS = "In Progress",
-  DONE = "Done",
-  ERROR = "Error",
+  NOT_STARTED = 'Not Started',
+  IN_PROGRESS = 'In Progress',
+  DONE = 'Done',
+  ERROR = 'Error',
 }
 
 /*
@@ -79,7 +78,7 @@ export enum JobState {
  * Used for things like uploading big player spreadsheets
  * or building reports for the client.
  */
-export class JobStats implements JobStatsI{
+export class JobStats implements JobStatsI {
   name: string;
   startTime: Date;
   endTime: Date;
@@ -129,15 +128,6 @@ export class JobStats implements JobStatsI{
 
   getHistory(): string[] {
     return this.history;
-  }
-
-  addNote(note: string) {
-    this.history.push((new Date()).toISOString() + ' ' + note);
-  }
-
-  setCurrentActivity(activity: string) {
-    this.currentActivity = activity;
-    this.addNote(activity);
   }
 
   // Merge one set of stats with another

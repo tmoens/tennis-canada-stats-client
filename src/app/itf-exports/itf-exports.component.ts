@@ -59,7 +59,6 @@ export class ItfExportsComponent implements OnInit {
   }
 }
 
-
 export class ITFPlayerDTO {
   IPIN: string = null;
   NationalPlayerID: string = null;

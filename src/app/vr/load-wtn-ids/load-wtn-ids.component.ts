@@ -1,44 +1,40 @@
 import {Component, EventEmitter, OnInit} from '@angular/core';
+import {humanizeBytes, UploaderOptions, UploadFile, UploadInput, UploadOutput} from 'ngx-uploader';
 import {JobState, JobStats, JobStatusService} from '../../job-status.service';
 import {AppStateService} from '../../app-state.service';
-import {humanizeBytes, UploaderOptions, UploadFile, UploadInput, UploadOutput} from 'ngx-uploader';
 import {OktaAuthService} from '@okta/okta-angular';
 import {environment} from '../../../environments/environment';
 
-const PLAYER_MERGE_ROUTE_ON_SERVER = '/Player/importVRPersonMergesCSV';
+const ROUTE_ON_SERVER = '/Player/uploadWtnIdCSV';
 
-export enum PlayerMergeStatus {
+export enum WtnUploadStatus {
   SUCCESS = 'Success',
   ALREADY_DONE = 'Already Done',
-  CIRCULAR_RENUMBERING = 'Circular Renumbering',
-  AMBIGUOUS_RENUMBERING = 'Ambiguous Renumbering',
-  BAD_ID = 'Bad ID',
+  WTN_CHANGED = 'WTN Changed',
+  BAD_VR_ID = 'Bad VR ID',
+  FAIL = 'Fail',
 }
 
 @Component({
-  selector: 'app-player-merge-import',
-  templateUrl: './player-merge-import.component.html',
-  styleUrls: ['./player-merge-import.component.scss']
+  selector: 'app-load-wtn-ids',
+  templateUrl: './load-wtn-ids.component.html',
+  styleUrls: ['./load-wtn-ids.component.css']
 })
-export class PlayerMergeImportComponent implements OnInit {
-  public expectedHeaders: string[] = ['fromPlayerId', 'fromFirstName',
-    'fromLastName',	'toPlayerId', 'toFirstName',	'toLastName',	'date'];
+export class LoadWtnIdsComponent implements OnInit {
+
+  public expectedHeaders: string[] = ['vrId', 'lastName', 'firstName', 'wtnId'];
 
   public notes: string[] = [
-    'When Player IDs get merged in the VR system, the merge is not sent ' +
-    'out via the VR API.  Instead we have to load the merge information here.',
-    'We do two things a) we renumber historical data and b) we set it up ' +
-    'so that if we encounter a merged Id in the future, we renumber it.'
+    'Load WTN Ids for VR players.  This assumes the matching has been done carefully.'
   ];
   public step1: string[] = [
     'Create a simple Excel and Save As file type: CSV UTF-8 (Comma delimited) (*.csv)',
     'Columns must be: ' + this.expectedHeaders.join(', ') + '.',
-    'Of these, only the fromPlayerId and the toPlayerId are absolutely required, ' +
-    'the others are informational.'
   ];
-  public tidyUp: string[] = ['The merge process is complete.',
-    'While you can re-run the merges, they will have no further effect.',
-    'You can delete the merge file, but it is probably a good idea to keep it for your records.'];
+
+  public tidyUp: string[] = ['The upload process is complete.',
+    'While you can re-run the upload, it will have no further effect.',
+    'You can delete the upload file, but it is probably a good idea to keep it for your records.'];
 
   options: UploaderOptions;
   files: UploadFile[];
@@ -47,22 +43,28 @@ export class PlayerMergeImportComponent implements OnInit {
   humanizeBytes: Function;
 
   state: string;
-  mergeStats: JobStats;
-  allResults: PlayerMergeResult[] = [];
+  uploadStats: JobStats;
+  allResults: WtnUploadResult[] = [];
   canSelectFile: boolean;
   canUploadFile: boolean;
   canShowResults: boolean;
 
-  possibleMergeResultTypes = [
-    {name: PlayerMergeStatus.SUCCESS, description: ''},
-    {name: PlayerMergeStatus.ALREADY_DONE,
-      description: 'These merges were done sometime in the past'},
-    {name: PlayerMergeStatus.AMBIGUOUS_RENUMBERING,
-      description: 'The "From player" was already renumbered to something else.'},
-    {name: PlayerMergeStatus.CIRCULAR_RENUMBERING,
-      description: 'The reverse renumbering already exists - either directly or indirectly.'},
-    {name: PlayerMergeStatus.BAD_ID,
-      description: 'Player IDs must be 8 digits'},
+  possibleResultTypes = [
+    {name: WtnUploadStatus.SUCCESS,
+      description: '',
+      displayDetails: false},
+    {name: WtnUploadStatus.ALREADY_DONE,
+      description: 'WTN ID already uploaded',
+      displayDetails: false},
+    {name: WtnUploadStatus.WTN_CHANGED,
+      description: 'Chnaged the WTN ID',
+      displayDetails: true},
+    {name: WtnUploadStatus.BAD_VR_ID,
+      description: 'VR playerID unknown',
+      displayDetails: true},
+    {name: WtnUploadStatus.FAIL,
+      description: 'Failure',
+      displayDetails: true},
   ];
 
   constructor(
@@ -81,21 +83,21 @@ export class PlayerMergeImportComponent implements OnInit {
 
   ngOnInit() {
     this.setState('not started');
-    this.appState.setActiveTool('Player Merge Import');
+    this.appState.setActiveTool('WTN ID Upload');
     // When initializing, check if there is already an upload in progress
     // If so, just join in to get status updates.
     this.pollStatus();
   }
 
   pollStatus(): void {
-    this.jobStatusService.getStatus(PLAYER_MERGE_ROUTE_ON_SERVER).subscribe(
+    this.jobStatusService.getStatus(ROUTE_ON_SERVER).subscribe(
       data => {
-        this.mergeStats = data;
-        if (this.mergeStats.status === JobState.IN_PROGRESS) {
+        this.uploadStats = data;
+        if (this.uploadStats.status === JobState.IN_PROGRESS) {
           this.setState('processing');
           setTimeout(() => this.pollStatus(), 200);
-        } else if (this.mergeStats.status === JobState.DONE) {
-          this.allResults = this.mergeStats.data.allResults as PlayerMergeResult[];
+        } else if (this.uploadStats.status === JobState.DONE) {
+          this.allResults = this.uploadStats.data.allProblems as WtnUploadResult[];
           this.setState('done');
         }
       }
@@ -144,7 +146,7 @@ export class PlayerMergeImportComponent implements OnInit {
   async startUpload(): Promise<any | null> {
     const event: UploadInput = {
       type: 'uploadFile',
-      url: environment.serverPrefix + PLAYER_MERGE_ROUTE_ON_SERVER,
+      url: environment.serverPrefix + ROUTE_ON_SERVER,
       method: 'POST',
       headers: { 'Authorization': 'bearer ' + await this.auth.getAccessToken() },
       file: this.file,
@@ -162,24 +164,17 @@ export class PlayerMergeImportComponent implements OnInit {
   }
 }
 
-export interface PlayerMergeRecord {
-  fromPlayerId: number;
-  toPlayerId: number;
-  fromLastName?: string;
-  toLastName?: string;
-  fromFirstName?: string;
-  toFirstName?: string;
-  date?: string;
+export interface WtnUploadRecord {
+  vrId: number;
+  firstName: string;
+  lastName: string;
+  wtnId: number;
 }
 
-export interface PlayerMergeResult {
-  request: PlayerMergeRecord;
-  notes: string[];
-  status: PlayerMergeStatus;
-  merges?: {
-    matches?: number;
-    ranking_entries?: number;
-    event_entries?: number;
-  };
+export interface WtnUploadResult {
+  request: WtnUploadRecord;
+  description: string[];
+  status: WtnUploadStatus;
 }
+
 

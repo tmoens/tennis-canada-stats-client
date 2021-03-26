@@ -50,6 +50,8 @@ import { PlayerCheckComponent } from './vr/player-check/player-check.component';
 import {Router} from '@angular/router';
 
 import { environment } from '../environments/environment';
+import { LoadWtnIdsComponent } from './vr/load-wtn-ids/load-wtn-ids.component';
+import { WtnSyncReportComponent } from './wtn/wtn-sync-report/wtn-sync-report.component';
 
 const oktaConfig = Object.assign({
   onAuthRequired: (oktaAuth, injector) => {
@@ -72,6 +74,8 @@ const oktaConfig = Object.assign({
     VRLicenseManagerComponent,
     VRLicenseReporterComponent,
     UtrReportComponent,
+    LoadWtnIdsComponent,
+    WtnSyncReportComponent,
   ],
   imports: [
     BrowserModule,

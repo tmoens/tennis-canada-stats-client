@@ -1,0 +1,29 @@
+<div fxLayout="column" class="mat-elevation-z3 app-box">
+  <h2 fxFlexAlign="center">WTN Sync Audit Reporter</h2>
+  <p style="margin-left: 20px" *ngFor="let note of notes">{{note}}</p>
+  <div fxFlexAlign="center" fxLayout="row"  fxLayoutGap="20px">
+    <button mat-button  color="primary"  (click)="buildReport()">
+      <mat-icon>build</mat-icon> Build Report
+    </button>
+    <a mat-button color="primary" type="button" [href]="downloadUrl" [disabled]="!downloadUrl">
+      <mat-icon>cloud_download</mat-icon> Download Report
+    </a>
+  </div>
+      <form>
+        <mat-card *ngIf="jobStats.status === JobState.IN_PROGRESS">
+          <mat-card-header class="mat-h3">{{jobStats.currentActivity}}</mat-card-header>
+          <mat-card-content>
+            <div fxLayout="row" fxLayoutAlign="space-between center">
+              <div>Done: {{jobStats.counters.done}}</div>
+              <div class="fill-remaining-space"></div>
+              <div>To Do: {{jobStats.toDo}}</div>
+            </div>
+            <mat-progress-bar
+              color="primary"
+              mode="determinate"
+              [value]="jobStats.percentComplete">
+            </mat-progress-bar>
+          </mat-card-content>
+        </mat-card>
+      </form>
+</div>

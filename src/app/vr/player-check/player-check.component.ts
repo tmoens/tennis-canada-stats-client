@@ -180,8 +180,7 @@ export class PlayerCheckComponent implements OnInit {
           setTimeout(() => this.pollStatus(), 200);
         } else if (this.importStatus.status == JobState.DONE) {
           this.setState('downloadAvailable');
-          this.downloadURL =  environment.serverPrefix +  PLAYER_CHECK_ROUTE_ON_SERVER +
-            '/downloadReport?filename=' + this.importStatus.data.filename;
+          this.downloadURL =  environment.serverPrefix + '/downloadReport?filename=' + this.importStatus.data.filename;
         }
       }
     );

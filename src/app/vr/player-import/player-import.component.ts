@@ -1,9 +1,9 @@
 import {Component, EventEmitter, OnInit} from '@angular/core';
-import {humanizeBytes, UploaderOptions, UploadFile, UploadInput, UploadOutput} from "ngx-uploader";
-import {JobState, JobStats, JobStatusService} from "../../job-status.service";
-import {AppStateService} from "../../app-state.service";
-import {OktaAuthService} from "@okta/okta-angular";
-import {environment} from "../../../environments/environment";
+import {humanizeBytes, UploaderOptions, UploadFile, UploadInput, UploadOutput} from 'ngx-uploader';
+import {JobState, JobStats, JobStatusService} from '../../job-status.service';
+import {AppStateService} from '../../app-state.service';
+import {OktaAuthService} from '@okta/okta-angular';
+import {environment} from '../../../environments/environment';
 
 /* Note to self about the ngx-uploader 2018-10-05 on account of it having no
  * documentation.  The uploader maintains a queue of files which gets
@@ -25,33 +25,33 @@ const PLAYER_IMPORT_ROUTE_ON_SERVER = '/Player/importVRPersonsCSV';
 })
 
 export class PlayerImportComponent implements OnInit {
-  public notes:string[] = [
-    "The VR loader automatically pulls in players from " +
-    "the VR API whenever a new player is encountered. " +
-    "However, the API provides only minimal information for each player.",
-    "The VR Player Importer retrieves more complete and up to date " +
-    "information like phone numbers and addresses for all players.",
-    "This takes a long time, but it should be done every month or so."
+  public notes: string[] = [
+    'The VR loader automatically pulls in players from ' +
+    'the VR API whenever a new player is encountered. ' +
+    'However, the API provides only minimal information for each player.',
+    'The VR Player Importer retrieves more complete and up to date ' +
+    'information like phone numbers and addresses for all players.',
+    'This takes a long time, but it should be done every month or so.'
   ];
-  public step1:string[] = [
-    "Log in to VR as an Tennis Canada Organization Admin and " +
-    "navigate to the admin reports.",
-    "Run the \"All persons\" report using \"Export XLSX\". " +
-    "DO NOT use \"Export CLI\".",
-    "Open the downloaded file and enable editing. " +
-    "Make sure that the column called \"dob\" is in \"YYYY-MM-DD\" format.  " +
-    "If not, you must convert it accordingly.  Failure to do so, will cause problems. " +
-    "It is probably best if you set \"YYYY-MM-DD\" as your default date format.",
-    "IMPORTANT: save the file with the type: CSV UTF-8 (Comma delimited) (*.csv) " +
-    "The UTF-8 is critical or else all of accented characters will " +
-    "become garbled in the player database.",
-    "Save and close the file. ",
-    "Once you have done all of this, move to the next step."
+  public step1: string[] = [
+    'Log in to VR as an Tennis Canada Organization Admin and ' +
+    'navigate to the admin reports.',
+    'Run the "All persons" report using "Export XLSX". ' +
+    'DO NOT use "Export CLI".',
+    'Open the downloaded file and enable editing. ' +
+    'Make sure that the column called "dob" is in "YYYY-MM-DD" format.  ' +
+    'If not, you must convert it accordingly.  Failure to do so, will cause problems. ' +
+    'It is probably best if you set "YYYY-MM-DD" as your default date format.',
+    'IMPORTANT: save the file with the type: CSV UTF-8 (Comma delimited) (*.csv) ' +
+    'The UTF-8 is critical or else all of accented characters will ' +
+    'become garbled in the player database.',
+    'Save and close the file. ',
+    'Once you have done all of this, move to the next step.'
   ];
-  public step3:string[] = [
-    "Please delete the .xlsx file you downloaded from VR.",
-    "Please delete the .csv file you saved",
-    "(you have a lot of personal information on your computer which should not stay around)."
+  public step3: string[] = [
+    'Please delete the .xlsx file you downloaded from VR.',
+    'Please delete the .csv file you saved',
+    '(you have a lot of personal information on your computer which should not stay around).'
   ];
 
   options: UploaderOptions;
@@ -62,12 +62,12 @@ export class PlayerImportComponent implements OnInit {
 
   state: string;
   importStatus: JobStats;
-  canUploadFile:boolean;
+  canUploadFile: boolean;
   canSelectFile: boolean;
 
   constructor(
       private jobStatusService: JobStatusService,
-      private appState:AppStateService,
+      private appState: AppStateService,
       private auth: OktaAuthService,
     ) {
     this.options = { concurrency: 1};
@@ -79,16 +79,16 @@ export class PlayerImportComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.appState.setActiveTool("Player Importer");
+    this.appState.setActiveTool('Player Importer');
     // When initializing, check if there is already an upload in progress
     // If so, just join in to get status updates.
     this.jobStatusService.getStatus(PLAYER_IMPORT_ROUTE_ON_SERVER).subscribe(
       data => {
         this.importStatus = data;
-        if (this.importStatus.status == JobState.IN_PROGRESS  ) {
+        if (this.importStatus.status === JobState.IN_PROGRESS  ) {
           this.pollStatus();
         } else {
-          this.setState("not started");
+          this.setState('not started');
         }
       }
     );
@@ -126,19 +126,19 @@ export class PlayerImportComponent implements OnInit {
     if (output.type === 'allAddedToQueue') {
       // could call startUpload to upload automatically here
     } else if (output.type === 'addedToQueue' && typeof output.file !== 'undefined') {
-      this.file=(output.file);
-      this.setState("selected");
+      this.file = (output.file);
+      this.setState('selected');
     } else if (output.type === 'uploading' && typeof output.file !== 'undefined') {
       this.file = output.file;
-      this.setState("uploading");
+      this.setState('uploading');
     } else if (output.type === 'removed') {
       this.file = null;
     } else if (output.type === 'rejected' && typeof output.file !== 'undefined') {
       console.log(output.file.name + ' rejected');
     } else if (output.type === 'done') {
       this.file = output.file;
-      if (this.file.responseStatus != 201) {
-        this.setState("error");
+      if (this.file.responseStatus !== 201) {
+        this.setState('error');
         return;
       }
       // Once the file is uploaded, we can start polling the server to
@@ -157,27 +157,27 @@ export class PlayerImportComponent implements OnInit {
       file: this.file,
       data: { }
     };
-    this.setState("uploading");
+    this.setState('uploading');
     this.uploadInput.emit(event);
   }
 
-  pollStatus():void {
+  pollStatus(): void {
     this.jobStatusService.getStatus(PLAYER_IMPORT_ROUTE_ON_SERVER).subscribe(
       data => {
         this.importStatus = data;
-        if (this.importStatus.status == JobState.IN_PROGRESS  ) {
-          this.setState("processing");
-          setTimeout(() => this.pollStatus(),200);
-        } else if (this.importStatus.status == JobState.DONE) {
-          this.setState("done");
+        if (this.importStatus.status === JobState.IN_PROGRESS  ) {
+          this.setState('processing');
+          setTimeout(() => this.pollStatus(), 200);
+        } else if (this.importStatus.status === JobState.DONE) {
+          this.setState('done');
         }
       }
-    )
+    );
   }
 
-  setState(state:string) {
+  setState(state: string) {
     this.state = state;
-    this.canSelectFile = !("uploading" == this.state || "processing" == this.state);
-    this.canUploadFile = this.state == "selected";
+    this.canSelectFile = !('uploading' === this.state || 'processing' === this.state);
+    this.canUploadFile = this.state === 'selected';
   }
 }
