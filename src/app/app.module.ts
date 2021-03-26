@@ -26,7 +26,6 @@ import { MatSortModule } from '@angular/material/sort';
 import { MatStepperModule } from '@angular/material/stepper';
 import { MatTableModule } from '@angular/material/table';
 import { MatToolbarModule } from '@angular/material/toolbar';
-import { MomentDateModule } from '@angular/material-moment-adapter';
 
 import { NgxUploaderModule } from 'ngx-uploader';
 import { OKTA_CONFIG, OktaAuthModule, OktaAuthGuard, OktaCallbackComponent } from '@okta/okta-angular';
@@ -52,6 +51,7 @@ import {Router} from '@angular/router';
 import { environment } from '../environments/environment';
 import { LoadWtnIdsComponent } from './vr/load-wtn-ids/load-wtn-ids.component';
 import { WtnSyncReportComponent } from './wtn/wtn-sync-report/wtn-sync-report.component';
+import { PlayReportComponent } from './play-reporter/play-report.component';
 
 const oktaConfig = Object.assign({
   onAuthRequired: (oktaAuth, injector) => {
@@ -70,6 +70,7 @@ const oktaConfig = Object.assign({
     PlayerImportComponent,
     PlayerMergeImportComponent,
     PlayerCheckComponent,
+    PlayReportComponent,
     TournamentStrengthComponent,
     VRLicenseManagerComponent,
     VRLicenseReporterComponent,
@@ -84,7 +85,6 @@ const oktaConfig = Object.assign({
     FormsModule,
     HttpClientModule,
     LayoutModule,
-    MomentDateModule,
     MatButtonModule, MatCardModule, MatCheckboxModule,
     MatDatepickerModule, MatIconModule, MatExpansionModule,
     MatFormFieldModule, MatGridListModule,

@@ -31,6 +31,15 @@ export const STATS_APPS: StatsApp[] = [
     'Rate a set of tournaments based on their strength.',
   ),
   new StatsApp(
+    'Play Reporter',
+    '/play_reporter',
+    'For every event in a given time period, list every player who played.',
+    'Generates an excel report with one line for each player who entered an event.  ' +
+    'By putting the data in a pivot table Tennis Canada can develop a clear ' +
+    'understanding of how the game is growing in various areas' +
+    'and in various play categories.',
+  ),
+  new StatsApp(
     'UTR Reporter',
     '/utr_report',
     'Send recent match data to UTR.',
@@ -58,7 +67,7 @@ export const STATS_APPS: StatsApp[] = [
   new StatsApp(
     'BC Membership List Checker',
     '/player_check',
-    'Given a a workbook with membership lists of partial player information,' +
+    'Given a a workbook with membership lists of partial player information, ' +
     'or confirm the identity of players on the lists.',
     '',
     [RIGHTS.BC_MEMBERSHIP],
