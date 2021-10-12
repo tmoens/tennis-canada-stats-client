@@ -34,6 +34,7 @@ export class PlayerCheckComponent implements OnInit {
   public step1: string[] = [
     'Create a workbook (with as many worksheets as you like)',
     'Each sheet must have the a header row (case sensitive, order unimportant). ',
+    'Empty worksheets will cause the import to fail.',
     'Different Sheets can have different columns in different orders.',
     'Required Columns: FirstName, LastName, MemberId, ClubNumber (VR Club Code for membership)',
     'Additional columns make for better matches:',
@@ -45,8 +46,8 @@ export class PlayerCheckComponent implements OnInit {
     'Province - proper two letter abbreviation',
     'Email',
     'HomePhone - pretty much any format will do',
-    'Phone2',
     'MobilePhone',
+    'Phone3',
     'It is not necessary to have data in any columns except LastName, ' +
     'but don\'t count on good matches if you do not.'
   ];
@@ -94,7 +95,7 @@ export class PlayerCheckComponent implements OnInit {
     this.jobStatusService.getStatus(PLAYER_CHECK_ROUTE_ON_SERVER).subscribe(
       data => {
         this.importStatus = data;
-        if (this.importStatus.status == JobState.IN_PROGRESS  ) {
+        if (this.importStatus.status === JobState.IN_PROGRESS  ) {
           this.pollStatus();
         } else {
           this.setState('not started');
@@ -146,7 +147,7 @@ export class PlayerCheckComponent implements OnInit {
       console.log(output.file.name + ' rejected');
     } else if (output.type === 'done') {
       this.file = output.file;
-      if (this.file.responseStatus != 201) {
+      if (this.file.responseStatus !== 201) {
         this.setState('error');
         return;
       }
@@ -175,10 +176,10 @@ export class PlayerCheckComponent implements OnInit {
     this.jobStatusService.getStatus(PLAYER_CHECK_ROUTE_ON_SERVER).subscribe(
       data => {
         this.importStatus = data;
-        if (this.importStatus.status == JobState.IN_PROGRESS  ) {
+        if (this.importStatus.status === JobState.IN_PROGRESS  ) {
           this.setState('processing');
           setTimeout(() => this.pollStatus(), 200);
-        } else if (this.importStatus.status == JobState.DONE) {
+        } else if (this.importStatus.status === JobState.DONE) {
           this.setState('downloadAvailable');
           this.downloadURL =  environment.serverPrefix + '/downloadReport?filename=' + this.importStatus.data.filename;
         }
@@ -188,8 +189,8 @@ export class PlayerCheckComponent implements OnInit {
 
   setState(state: string) {
     this.state = state;
-    this.canSelectFile = !('uploading' == this.state || 'processing' == this.state);
-    this.canUploadFile = this.state == 'selected';
-    this.canDownloadReport = this.state == 'downloadAvailable';
+    this.canSelectFile = !('uploading' === this.state || 'processing' === this.state);
+    this.canUploadFile = this.state === 'selected';
+    this.canDownloadReport = this.state === 'downloadAvailable';
   }
 }

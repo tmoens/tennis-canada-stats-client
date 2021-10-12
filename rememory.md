@@ -2,11 +2,9 @@ read the README.md
 
 ## git repo
 
-This is where the code lives for now.  Any access requires a user id
-and ssh setup on the git server.
-ssh://git@tswebwork.com:6022/home/git/tcNodeAdminClient.git
+now on github
 
-For god's sake change this.
+https://github.com/tmoens/tennis-canada-stats-client
 
 ## Bad Design
 
@@ -24,7 +22,8 @@ production.env file. For example:
 PORT=3003
 
 Configuring apache => make sure you proxy requests to the tc_stats_server to the port on which the
-server is running.  This ought to have been done elsewhere, but it is done in the main apache config file.
+server is running.  
+This ought to have been done in a vhost config file, but it is done in the main apache config file.
 
 ## OKTA
 
