@@ -13,8 +13,6 @@ import {HomeComponent} from './home/home.component';
 import {ExternalTournamentsComponent} from './external-tournaments/external-tournaments.component';
 import {ItfExportsComponent} from './itf-exports/itf-exports.component';
 import {PlayerCheckComponent} from './vr/player-check/player-check.component';
-import {LoadWtnIdsComponent} from './vr/load-wtn-ids/load-wtn-ids.component';
-import {WtnSyncReportComponent} from './wtn/wtn-sync-report/wtn-sync-report.component';
 import {PlayReportComponent} from './play-reporter/play-report.component';
 
 const routes: Routes = [
@@ -70,14 +68,6 @@ const routes: Routes = [
   {
     path: 'itf_exports',
     component: ItfExportsComponent,
-    canActivate: [ OktaAuthGuard ],
-  },
-  { path: 'wtn_uploader',
-    component: LoadWtnIdsComponent,
-    canActivate: [ OktaAuthGuard ],
-  },
-  { path: 'wtn_sync_report',
-    component: WtnSyncReportComponent,
     canActivate: [ OktaAuthGuard ],
   },
   {
