@@ -1,6 +1,5 @@
 import {RIGHTS, StatsApp} from './stats-app';
 
-
 export const STATS_APPS: StatsApp[] = [
   new StatsApp(
     'License Manager',
@@ -48,11 +47,6 @@ export const STATS_APPS: StatsApp[] = [
     'External Data Admin',
     '/external_data_admin',
     'Manage competitive data from non Tennis Canada tournaments.',
-  ),
-  new StatsApp(
-    'ITF Data Exporter',
-    '/itf_exports',
-    'Create excel files to export to the ITF',
   ),
   new StatsApp(
     'BC Membership List Checker',
