@@ -60,5 +60,6 @@ Generally
 1) deploy it locally and test it out
 2) deploy to staging on TC server and test it out
 3) deploy to production and test it out
-
+~
+4) 
 
