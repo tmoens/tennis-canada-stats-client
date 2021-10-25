@@ -25,8 +25,7 @@
             ],
             "styles": [
               "src/styles.scss",
-              "src/tc-tools-theme.scss",
-              "node_modules/@okta/okta-signin-widget/dist/css/okta-sign-in.min.css"
+              "src/tc-tools-theme.scss"
             ],
             "scripts": [],
             "vendorChunk": true,
@@ -34,15 +33,20 @@
             "buildOptimizer": false,
             "sourceMap": true,
             "optimization": false,
-            "namedChunks": true,
-            "aot": false
+            "namedChunks": true
           },
           "configurations": {
             "production": {
               "budgets": [
                 {
+                  "type": "initial",
+                  "maximumWarning": "2mb",
+                  "maximumError": "5mb"
+                },
+                {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "6kb"
+                  "maximumWarning": "6kb",
+                  "maximumError": "10kb"
                 }
               ],
               "fileReplacements": [
@@ -72,9 +76,6 @@
           "configurations": {
             "production": {
               "browserTarget": "statsadmin:build:production"
-            },
-            "moensnetproduction": {
-              "browserTarget": "statsadmin:build:moensnetproduction"
             }
           }
         },
