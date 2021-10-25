@@ -1,3 +1,4 @@
+@use '~@angular/material' as mat;
 @import '../node_modules/@angular/material/theming';
 // A theme for tennis canada tools
 
@@ -67,8 +68,8 @@ $tc-brown: (
   )
 );
 
-$tc-tools-primary: mat-palette($tc-brown);
-$tc-tools-accent: mat-palette($tc-red, A200, A100, A400);
-$tc-tools-warn: mat-palette($mat-red);
+$tc-tools-primary: mat.define-palette($tc-brown);
+$tc-tools-accent: mat.define-palette($tc-red, A200, A100, A400);
+$tc-tools-warn: mat.define-palette(mat.$red-palette);
 
-$tc-tools-theme: mat-light-theme($tc-tools-primary, $tc-tools-accent, $tc-tools-warn);
+$tc-tools-theme: mat.define-light-theme($tc-tools-primary, $tc-tools-accent, $tc-tools-warn);

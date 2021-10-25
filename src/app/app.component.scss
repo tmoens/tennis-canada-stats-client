@@ -1,3 +1,4 @@
+@use '~@angular/material' as mat;
 @mixin tc-stats-app($theme) {
   $primary: map-get($theme, primary);
   $warn: map-get($theme, warn);
@@ -7,13 +8,13 @@
 
   //This just allows me to color arbitrary things according to the app theme.
   .color-primary {
-    color: mat-color($primary)
+    color: mat.get-color-from-palette($primary)
   }
   .color-accent {
-    color: mat-color($accent)
+    color: mat.get-color-from-palette($accent)
   }
 
   .mat-nav-list .mat-list-item {
-    color: mat-color($primary)!important
+    color: mat.get-color-from-palette($primary)!important
   }
 }

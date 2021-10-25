@@ -1,3 +1,4 @@
+@use '~@angular/material' as mat;
 @mixin itf-player-list-theme($theme) {
 
   $primary: map-get($theme, primary);
@@ -14,21 +15,21 @@
 
   .player-list-item {
     &:hover, &:active, &:focus {
-      background-color: mat-color($background, hover);
+      background-color: mat.get-color-from-palette($background, hover);
     }
 
     &.selected {
-      background-color: mat-color($primary, lighter, 0.5);
+      background-color: mat.get-color-from-palette($primary, lighter, 0.5);
     }
 
   }
   .candidate {
-    background-color: mat-color($accent,  0.5);
+    background-color: mat.get-color-from-palette($accent,  0.5);
     padding: 7px!important;
   }
 
   .instruction {
-    background-color: mat-color($accent, darker, 0.5);
+    background-color: mat.get-color-from-palette($accent, darker, 0.5);
 
   }
 }

@@ -1,11 +1,12 @@
+@use '~@angular/material' as mat;
 @import '../node_modules/@angular/material/theming';
 // Note to self - import component .scss files here if you have component specific scss
 
 // From the documentation - mat-core should not be imported in other scss files
-@include mat-core();
+@include mat.core();
 @import "tc-tools-theme.scss";
 
-@include angular-material-theme($tc-tools-theme);
+@include mat.all-component-themes($tc-tools-theme);
 @import './app/app.component';
 @include tc-stats-app($tc-tools-theme);
 @import './app/external-tournaments/external-player-manager/external-player-manager.component.theme';
