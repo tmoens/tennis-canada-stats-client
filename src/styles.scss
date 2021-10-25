@@ -8,8 +8,6 @@
 @include angular-material-theme($tc-tools-theme);
 @import './app/app.component';
 @include tc-stats-app($tc-tools-theme);
-@import "./app/auth/login.component.scss-theme";
-@include login-theme($tc-tools-theme);
 @import './app/external-tournaments/external-player-manager/external-player-manager.component.theme';
 @include itf-player-list-theme($tc-tools-theme);
 

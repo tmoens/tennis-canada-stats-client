@@ -67,7 +67,11 @@
     <button mat-button  color="primary"  (click)="buildReport()">
       <mat-icon>build</mat-icon> Build Ratings
     </button>
-    <a mat-button color="primary" type="button" [href]="downloadURL" [disabled]="!state.ratingsReady">
+    <a mat-button color="primary" type="button"
+       [href]="downloadURL"
+       [disabled]="!state.ratingsReady"
+       (click)="ratingsDownloaded()"
+    >
       <mat-icon>cloud_download</mat-icon> Download Ratings
     </a>
   </div>

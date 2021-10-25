@@ -2,8 +2,9 @@ import {Component, EventEmitter, OnInit} from '@angular/core';
 import {humanizeBytes, UploaderOptions, UploadFile, UploadInput, UploadOutput} from 'ngx-uploader';
 import {JobState, JobStats, JobStatusService} from '../../job-status.service';
 import {AppStateService} from '../../app-state.service';
-import {OktaAuthService} from '@okta/okta-angular';
 import {environment} from '../../../environments/environment';
+import {STATSTOOL} from '../../../assets/stats-tools';
+import {AuthService} from '../../auth/auth.service';
 
 /* Note to self about the ngx-uploader 2018-10-05 on account of it having no
  * documentation.  The uploader maintains a queue of files which gets
@@ -78,7 +79,7 @@ export class PlayerCheckComponent implements OnInit {
   constructor(
       private jobStatusService: JobStatusService,
       private appState: AppStateService,
-      private auth: OktaAuthService,
+      private authService: AuthService,
     ) {
     this.options = { concurrency: 1};
     this.files = [];
@@ -89,7 +90,7 @@ export class PlayerCheckComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.appState.setActiveTool('BC Membership List Validator');
+    this.appState.setActiveTool(STATSTOOL.PLAYER_CHECK);
     // When initializing, check if there is already an upload in progress
     // If so, just join in to get status updates.
     this.jobStatusService.getStatus(PLAYER_CHECK_ROUTE_ON_SERVER).subscribe(
@@ -132,7 +133,7 @@ export class PlayerCheckComponent implements OnInit {
    * at any point.
    */
   onUploadOutput(output: UploadOutput): void {
-    console.log(JSON.stringify(output));
+    // console.log(JSON.stringify(output));
     if (output.type === 'allAddedToQueue') {
       // could call startUpload to upload automatically here
     } else if (output.type === 'addedToQueue' && typeof output.file !== 'undefined') {
@@ -163,8 +164,8 @@ export class PlayerCheckComponent implements OnInit {
     const event: UploadInput = {
       type: 'uploadFile',
       url: serverURL + PLAYER_CHECK_ROUTE_ON_SERVER,
+      headers: { 'Authorization': 'bearer ' + this.authService.accessToken },
       method: 'POST',
-      headers: { 'Authorization': 'bearer ' + await this.auth.getAccessToken() },
       file: this.file,
       data: { }
     };
@@ -181,7 +182,7 @@ export class PlayerCheckComponent implements OnInit {
           setTimeout(() => this.pollStatus(), 200);
         } else if (this.importStatus.status === JobState.DONE) {
           this.setState('downloadAvailable');
-          this.downloadURL =  environment.serverPrefix + '/downloadReport?filename=' + this.importStatus.data.filename;
+          this.downloadURL =  environment.serverPrefix + '/player/check/downloadReport?filename=' + this.importStatus.data.filename;
         }
       }
     );

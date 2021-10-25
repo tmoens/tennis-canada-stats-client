@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import {AppStateService} from "../app-state.service";
 import {HttpClient, HttpHeaders} from "@angular/common/http";
 import {environment} from "../../environments/environment";
+import {STATSTOOL} from '../../assets/stats-tools';
 
 @Component({
   selector: 'app-utr-report',
@@ -18,7 +19,7 @@ export class UtrReportComponent implements OnInit {
                private http: HttpClient) { }
 
   ngOnInit() {
-    this.appState.setActiveTool('UTR Report Tool');
+    this.appState.setActiveTool(STATSTOOL.UTR_REPORTER);
   }
 
   dismissResult() {

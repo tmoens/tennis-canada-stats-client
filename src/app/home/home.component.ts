@@ -1,8 +1,9 @@
 import {Component, OnInit} from '@angular/core';
 import {AppStateService} from '../app-state.service';
 import {Router} from '@angular/router';
-import {StatsApp} from '../../assets/stats-app';
-import {STATS_APPS} from '../../assets/stats-apps';
+import {STATSTOOL} from '../../assets/stats-tools';
+import {STATS_TOOL_GROUPS} from '../../assets/stats-tool-groups';
+import {AuthService} from '../auth/auth.service';
 
 @Component({
   selector: 'app-home',
@@ -11,18 +12,19 @@ import {STATS_APPS} from '../../assets/stats-apps';
 })
 
 export class HomeComponent implements OnInit {
-  public statsApps = STATS_APPS;
+  statsToolGroups = STATS_TOOL_GROUPS;
+
   constructor(
     private router: Router,
+    public authService: AuthService,
     public appState: AppStateService,
     ) {
   }
 
   ngOnInit() {
-    this.appState.setActiveTool('Home');
   }
 
-  navigateToApp(app: StatsApp) {
-    this.router.navigateByUrl(app.route);
+  navigateToApp(tool: STATSTOOL) {
+    this.router.navigateByUrl(tool.route);
   }
 }

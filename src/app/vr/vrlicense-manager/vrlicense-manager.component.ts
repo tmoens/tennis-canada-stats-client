@@ -5,6 +5,7 @@ import {Observable} from 'rxjs';
 import {TENNIS_ASSOCIATIONS} from '../../../assets/provinces';
 import {FormArray, FormBuilder, FormGroup} from '@angular/forms';
 import {AppStateService} from '../../app-state.service';
+import {STATSTOOL} from '../../../assets/stats-tools';
 
 
 @Component({
@@ -35,7 +36,7 @@ export class VRLicenseManagerComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.appState.setActiveTool('License Manager');
+    this.appState.setActiveTool(STATSTOOL.LICENSE_MANAGER);
     this.getLicensesWithoutProvinces();
   }
 

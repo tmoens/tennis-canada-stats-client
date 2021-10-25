@@ -1,0 +1,24 @@
+<div fxLayout="column" fxLayoutAlign="center" *ngIf="authService.isAuthenticated">
+
+    <!-- The toolbar specific to User manager -->
+    <mat-toolbar  color="primary">
+
+      <!-- The button to toggle the sidenav is disabled while an item is being edited -->
+      User Administration
+      <span class="fill-remaining-space"></span>
+      <app-user-menu></app-user-menu>
+    </mat-toolbar>
+
+    <mat-sidenav-container>
+      <mat-sidenav #selector mode="side" role="navigation" style="width: 340px"
+                   [opened]="!(service.inEditMode)">
+        <app-user-selector></app-user-selector>
+      </mat-sidenav>
+
+      <mat-sidenav-content>
+        <div>
+          <router-outlet></router-outlet>
+        </div>
+      </mat-sidenav-content>
+    </mat-sidenav-container>
+</div>

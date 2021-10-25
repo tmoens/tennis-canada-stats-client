@@ -7,6 +7,7 @@ import { MAT_DATE_FORMATS } from '@angular/material/core';
 import * as moment from 'moment';
 import { TC_DATE_FORMATS } from '../dateFormats';
 import {FormControl} from '@angular/forms';
+import {STATSTOOL} from '../../assets/stats-tools';
 
 @Component({
   selector: 'app-tournament-strength',
@@ -47,7 +48,7 @@ export class TournamentStrengthComponent implements OnInit {
     { label: 'Ontario Tennis Association', value: 'ON'},
     { label: 'Tennis Saskatchewan', value: 'SK'},
     { label: 'Tennis PEI', value: 'PE'},
-    { label: 'Tennis Canada', value: 'CAN'}
+    { label: 'Tennis Canada', value: 'TC'}
   ];
 
   genders = [
@@ -67,7 +68,7 @@ export class TournamentStrengthComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.appState.setActiveTool('Tournament Rating Tool');
+    this.appState.setActiveTool(STATSTOOL.TOURNAMENT_STRENGTH_REPORTER);
     this.resetFilters();
   }
 
@@ -190,6 +191,7 @@ export class TournamentStrengthComponent implements OnInit {
 
   // Construct the URL which is used to build the report.
   buildReportURL(): string {
+    this.state.ratingsReady = false;
     const searchString = [];
 
     if (this.filterCriteria.jurisdiction.value !==  '' ) {
@@ -247,9 +249,13 @@ export class TournamentStrengthComponent implements OnInit {
     // send back a string with a file name where the file can be downloaded.
     this.http.get<string>(this.buildReportURL(), httpOptions)
       .subscribe((res: any) => {
-        this.downloadURL = environment.serverPrefix + '/downloadReport?filename=' + res.filename;
+        this.downloadURL = environment.serverPrefix + '/event/downloadRatingsReport?filename=' + res.filename;
         this.state.buildingRatings = false;
         this.state.ratingsReady = true;
       });
+  }
+
+  ratingsDownloaded() {
+    this.state.ratingsReady = false;
   }
 }

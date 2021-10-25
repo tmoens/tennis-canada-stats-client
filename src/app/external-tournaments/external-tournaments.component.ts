@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import {AppStateService} from "../app-state.service";
+import {AppStateService} from '../app-state.service';
+import {STATSTOOL} from '../../assets/stats-tools';
 
 @Component({
   selector: 'app-external-tournaments',
@@ -28,7 +29,7 @@ export class ExternalTournamentsComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.appState.setActiveTool("External Competitive Results Admin");
+    this.appState.setActiveTool(STATSTOOL.EXTERNAL_DATA_ADMIN);
   }
 
 }

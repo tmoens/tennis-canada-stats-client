@@ -2,8 +2,11 @@ import {Component, OnInit} from '@angular/core';
 
 import {Router} from '@angular/router';
 import {AppStateService} from './app-state.service';
-import {OktaAuthService, UserClaims} from '@okta/okta-angular';
-import {STATS_APPS} from '../assets/stats-apps';
+import {MatDialog} from '@angular/material/dialog';
+import {AuthApiService} from './auth/auth-api.service';
+import {AuthService} from './auth/auth.service';
+import {STATS_TOOL_GROUPS} from '../assets/stats-tool-groups';
+import {STATSTOOL} from '../assets/stats-tools';
 
 @Component({
   selector: 'app-tc-stats-app',
@@ -11,39 +14,33 @@ import {STATS_APPS} from '../assets/stats-apps';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent implements OnInit {
-  isAuthenticated: boolean;
-  user: UserClaims;
-  statsApps = STATS_APPS;
+  statsToolGroups = STATS_TOOL_GROUPS;
+  statsTools = STATSTOOL;
 
   constructor(
     public router: Router,
     public appState: AppStateService,
-    public oktaAuth: OktaAuthService,
+    private passwordChangeDialog: MatDialog,
+    private authApiService: AuthApiService,
+    public authService: AuthService,
+
   ) {
-    // subscribe to authentication state changes
-    this.oktaAuth.$authenticationState.subscribe(
-      (isAuthenticated: boolean)  => {
-        this.isAuthenticated = isAuthenticated;
-        this.onLoginStateChange(isAuthenticated);
-      }
-    );
   }
 
-  async onLoginStateChange (newLoginState: boolean) {
-    this.isAuthenticated = newLoginState;
-    this.user = await this.oktaAuth.getUser();
-    this.appState.setRights(this.user);
+  ngOnInit() {
   }
 
-  async ngOnInit() {
-    // get authentication state for immediate use
-    this.onLoginStateChange(await this.oktaAuth.isAuthenticated());
+  login() {
+    this.router.navigateByUrl('/login').then();
   }
 
-  async logout() {
-    // Terminates the session with Okta and removes current tokens.
-    await this.oktaAuth.logout();
-    this.router.navigateByUrl('/');
+  logout() {
+    if (this.authService.isAuthenticated) {
+      this.authApiService.logout().subscribe( () => {
+        this.authService.onLogout();
+        this.router.navigateByUrl('/login').then();
+      });
+    }
   }
 
 }

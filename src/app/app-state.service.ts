@@ -1,44 +1,71 @@
-import { Injectable } from '@angular/core';
+import {Inject, Injectable} from '@angular/core';
 import {BehaviorSubject} from 'rxjs';
-import {UserClaims} from '@okta/okta-angular';
-import {RIGHTS, StatsApp} from '../assets/stats-app';
-
-const OKTA_BC_MEMBERSHIP_GROUP = 'BC Membership';
-const OKTA_TC_ADMIN_GROUP = 'Tennis Canada Admin';
+import {LOCAL_STORAGE, StorageService} from 'ngx-webstorage-service';
+import {Router} from '@angular/router';
+import {environment} from '../environments/environment';
+import {STATSTOOL} from '../assets/stats-tools';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AppStateService {
-  public activeTool$: BehaviorSubject<string>;
-  userRights: boolean[] = [];
+  state: { [name: string]: any } = {};
+  persistentState: { [name: string]: any } = {};
 
-  constructor() {
-    this.activeTool$ = new BehaviorSubject('None');
-    this.userRights[RIGHTS.ADMIN] = false;
-    this.userRights[RIGHTS.BC_MEMBERSHIP] = false;
+  private _activeTool$: BehaviorSubject<STATSTOOL> = new BehaviorSubject<STATSTOOL>(STATSTOOL.HOME);
+  private get activeTool$() {
+    return this._activeTool$;
   }
 
-  setActiveTool(t: string) {
-    this.activeTool$.next(t);
+  public get activeTool() {
+    return this.activeTool$.value;
   }
 
-  setRights(claims: UserClaims | undefined) {
-    if (claims && claims.groups) {
-      this.userRights[RIGHTS.ADMIN] = claims.groups.includes(OKTA_TC_ADMIN_GROUP);
-      this.userRights[RIGHTS.BC_MEMBERSHIP] = claims.groups.includes(OKTA_BC_MEMBERSHIP_GROUP);
+  constructor(
+    private router: Router,
+    @Inject(LOCAL_STORAGE)private localStorage: StorageService,
+  ) {
+  }
+
+  initialize() {
+    // load up the persistentState
+    if (this.localStorage.get('persistentState')) {
+      this.persistentState = this.localStorage.get('persistentState');
+    }
+    if (!this.getState('confirmMessageDuration')) {
+      this.setState('confirmMessageDuration', 2000);
+    }
+    if (!this.getState('errorMessageDuration')) {
+      this.setState('errorMessageDuration', 10000);
+    }
+    if (!environment.serverPrefix) {
+      throw new Error('serverPrefix needs to be set in your environment.');
     } else {
-      this.userRights[RIGHTS.ADMIN] = false;
-      this.userRights[RIGHTS.BC_MEMBERSHIP] = false;
+      this.setState('serverPrefix', environment.serverPrefix);
     }
   }
 
-  hasRight(app: StatsApp) {
-    for (const right of app.rights) {
-      if (this.userRights[right]) {
-        return true;
-      }
-    }
-    return false;
+  setActiveTool(tool: STATSTOOL) {
+    this._activeTool$.next(tool);
   }
+
+  setState(name: string, value: any, persist: boolean = false) {
+    if (persist) {
+      this.persistentState[name] = value;
+    } else {
+      this.state[name] = value;
+    }
+  }
+
+  deleteState(name: string) {
+    if (this.persistentState[name]) { delete this.persistentState[name]; }
+    if (this.state[name]) { delete this.state[name]; }
+  }
+
+  getState(name): any {
+    if (this.persistentState[name]) { return this.persistentState[name]; }
+    if (this.state[name]) { return this.state[name]; }
+    return null;
+  }
+
 }

@@ -1,29 +1,44 @@
 <div class="mat-typography" fxLayout="column" style="min-height: 600px">
-  <mat-sidenav-container class="sidenav-container">
-    <mat-sidenav #drawer mode="over" hasBackdrop="true" role="navigation">
-      <mat-nav-list >
-        <a mat-list-item routerLink="/" (click)="drawer.toggle()">Home</a>
-        <div *ngFor="let app of statsApps">
-          <a mat-list-item *ngIf="appState.hasRight(app)"
-             (click)="drawer.toggle()" [routerLink]="app.route">{{app.name}}
-          </a>
+  <mat-toolbar color="primary">
+    <button mat-button (click)="toolList.toggle()">
+      <mat-icon>menu</mat-icon>
+    </button>
+    <span>Tennis Canada Data Management Tools</span>
+    <span class="fill-remaining-space"></span>
+    <button mat-button *ngIf="!authService.isAuthenticated" (click)="login()" color="priary">
+      <mat-icon>login</mat-icon>
+      Login
+    </button>
+    <button mat-button *ngIf="authService.isAuthenticated" (click)="logout()" color="priary">
+      <mat-icon>logout</mat-icon>
+      Logout
+    </button>
+  </mat-toolbar>
+  <mat-sidenav-container>
+    <mat-sidenav  #toolList mode="over" role="navigation" style="width: 340px">
+      <mat-nav-list dense>
+        <mat-list-item routerLink="{{statsTools.HOME.route}}" (click)="toolList.toggle()">
+          {{statsTools.HOME.displayName}}
+        </mat-list-item>
+        <div *ngFor="let tg of authService.authorizedToolGroups">
+          <mat-expansion-panel dense>
+            <mat-expansion-panel-header>
+              <mat-panel-title>{{tg.displayName}}</mat-panel-title>
+            </mat-expansion-panel-header>
+            <mat-list *ngFor="let tool of tg.tools">
+              <mat-list-item>
+                <p mat-line >
+                  <button mat-button color="primary" routerLink="{{tool.route}}" (click)="toolList.toggle()">
+                    {{tool.displayName}}
+                  </button>
+                </p>
+              </mat-list-item>
+            </mat-list>
+          </mat-expansion-panel>
         </div>
       </mat-nav-list>
     </mat-sidenav>
     <mat-sidenav-content style="min-height: 600px">
-      <mat-toolbar color="primary">
-        <button
-          type="button"
-          aria-label="Toggle sidenav"
-          mat-icon-button
-          (click)="drawer.toggle()">
-          <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
-        </button>
-        <span>{{appState.activeTool$ | async}}</span>
-        <span class="fill-remaining-space"></span>
-        <button mat-button color="white" *ngIf="!isAuthenticated" routerLink="/login"> Login </button>
-        <button mat-button color="white" *ngIf="isAuthenticated" (click)="logout()"> Logout </button>
-      </mat-toolbar>
       <router-outlet></router-outlet>
     </mat-sidenav-content>
   </mat-sidenav-container>

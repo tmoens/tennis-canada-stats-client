@@ -1,9 +1,10 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders, HttpParams} from '@angular/common/http';
-import {Observable, of} from "rxjs/index";
-import {VRLicense} from "./vrlicense-manager/VRLicense";
-import { environment } from '../../environments/environment';
-import {OktaAuthService} from "@okta/okta-angular";
+import { HttpClient, HttpHeaders} from '@angular/common/http';
+import {Observable} from 'rxjs';
+import {VRLicense} from './vrlicense-manager/VRLicense';
+import {AppStateService} from '../app-state.service';
+import {catchError} from 'rxjs/operators';
+import {HttpErrorHandlerService} from '../http-error-handler';
 
 const httpOptions = {
   headers: new HttpHeaders({ 'Content-Type': 'application/json' })
@@ -13,41 +14,31 @@ const httpOptions = {
   providedIn: 'root'
 })
 export class VRLicenseService {
-  private serverURL = environment.serverPrefix;
+  private readonly serverURL: string;
 
   constructor(
     private http: HttpClient,
-    private authService: OktaAuthService,  // this is needed to get the access token in the interceptor.
-    )
-  { }
+    private httpErrorHandlerService: HttpErrorHandlerService,
+    private appState: AppStateService,
+  ) {
+    this.serverURL = this.appState.getState('serverPrefix');
+  }
 
   /** POST: a list of licenses with provinces */
-  //TODO Handle error;
-  updateLicensesWithMissingProvince(licenses:VRLicense[]):Observable<VRLicense[]> {
-    let url = `${this.serverURL}/license/fixLicensesWithoutProvinces`;
-    return this.http.post<VRLicense[]>(url , licenses, httpOptions);
+  updateLicensesWithMissingProvince(licenses: VRLicense[]): Observable<VRLicense[]> {
+    const url = `${this.serverURL}/license/fixLicensesWithoutProvinces`;
+    return this.http.post<VRLicense[]>(url , licenses, httpOptions)
+      .pipe(
+        catchError(this.httpErrorHandlerService.handleError('Failed: update VR Licenses.', []))
+      );
   }
 
   /** GET: list of licenses with missing province */
-  //TODO Handle error;
-  getLicensesWithMissingProvince():Observable<VRLicense[]> {
-    let url = `${this.serverURL}/license/missingProvince`;
-    return this.http.get<VRLicense[]>(url , httpOptions);
-  }
-
-  /**
-   * Handle Http operation that failed.
-   * Let the app continue.
-   * @param operation - name of the operation that failed
-   * @param result - optional value to return as the observable result
-   */
-  private handleError<T> (operation = 'operation', result?: T) {
-    return (error: any): Observable<T> => {
-
-      // TODO:  transforming error for user consumption
-
-      // Let the app keep running by returning an empty result.
-      return of(result as T);
-    };
+  getLicensesWithMissingProvince(): Observable<VRLicense[]> {
+    const url = `${this.serverURL}/license/missingProvince`;
+    return this.http.get<VRLicense[]>(url , httpOptions)
+      .pipe(
+        catchError(this.httpErrorHandlerService.handleError('Failed: get licenses with missing provinces.', []))
+      );
   }
 }

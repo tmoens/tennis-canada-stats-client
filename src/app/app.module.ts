@@ -1,8 +1,8 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FlexLayoutModule } from '@angular/flex-layout';
-import { NgModule } from '@angular/core';
-import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
+import {APP_INITIALIZER, NgModule} from '@angular/core';
+import {HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { LayoutModule } from '@angular/cdk/layout';
 
@@ -28,8 +28,6 @@ import { MatTableModule } from '@angular/material/table';
 import { MatToolbarModule } from '@angular/material/toolbar';
 
 import { NgxUploaderModule } from 'ngx-uploader';
-import { OKTA_CONFIG, OktaAuthModule, OktaAuthGuard, OktaCallbackComponent } from '@okta/okta-angular';
-
 
 import { AppRoutingModule } from './app-routing.module';
 
@@ -38,33 +36,45 @@ import { VRLicenseManagerComponent } from './vr/vrlicense-manager/vrlicense-mana
 import { VRLicenseReporterComponent } from './vr/license-reporter/license-reporter.component';
 import { PlayerImportComponent } from './vr/player-import/player-import.component';
 import { PlayerMergeImportComponent } from './vr/player-merge-import/player-merge-import.component';
-import { LoginComponent } from './auth/login.component';
 import { HomeComponent } from './home/home.component';
-import { AuthTokenInterceptor } from './auth/AuthTokenInterceptor';
 import { TournamentStrengthComponent } from './tournament-strength/tournament-strength.component';
 import { UtrReportComponent } from './utr-report/utr-report.component';
 import { ExternalTournamentsModule } from './external-tournaments/external-tournaments.module';
-import { ItfExportsComponent } from './itf-exports/itf-exports.component';
 import { PlayerCheckComponent } from './vr/player-check/player-check.component';
-import {Router} from '@angular/router';
 
-import { environment } from '../environments/environment';
 import { PlayReportComponent } from './play-reporter/play-report.component';
+import {AuthModule} from './auth/auth.module';
+import {AppStateService} from './app-state.service';
+import {UserAdminService} from './auth/user-admin/user-admin.service';
+import {LocationStrategy, PathLocationStrategy} from '@angular/common';
+import {AuthService} from './auth/auth.service';
+import {CanDeactivateGuard} from './auth/guards/can-deactivate-guard';
+import {LoginGuardService} from './auth/guards/login-guard.service';
+import {RoleGuardService} from './auth/guards/role-guard.service';
+import {AuthTokenInterceptor} from './auth/auth-token.interceptor';
+import {DialogService} from './dialog.service';
+import {MatSnackBarModule} from '@angular/material/snack-bar';
+import {MatDialogModule} from '@angular/material/dialog';
+import {HttpErrorHandlerService} from './http-error-handler';
+import {MatMenuModule} from '@angular/material/menu';
 
-const oktaConfig = Object.assign({
-  onAuthRequired: (oktaAuth, injector) => {
-    const router = injector.get(Router);
-    router.navigate(['/login']);
-  }
-}, environment.oidc);
+export function appStateProviderFactory(provider: AppStateService) {
+  return () => provider.initialize();
+}
+
+export function userAdminServiceProviderFactory(provider: UserAdminService) {
+  return () => provider.initialize();
+}
+
+export function authServiceProviderFactory(provider: AppStateService) {
+  return () => provider.initialize();
+}
 
 
 @NgModule({
   declarations: [
     AppComponent,
     HomeComponent,
-    ItfExportsComponent,
-    LoginComponent,
     PlayerImportComponent,
     PlayerMergeImportComponent,
     PlayerCheckComponent,
@@ -82,21 +92,29 @@ const oktaConfig = Object.assign({
     HttpClientModule,
     LayoutModule,
     MatButtonModule, MatCardModule, MatCheckboxModule,
-    MatDatepickerModule, MatIconModule, MatExpansionModule,
+    MatDatepickerModule, MatDialogModule, MatIconModule, MatExpansionModule,
     MatFormFieldModule, MatGridListModule,
     MatInputModule, MatListModule, MatOptionModule, MatProgressBarModule,
     MatRadioModule, MatSelectModule, MatStepperModule, MatTableModule,
     MatSidenavModule,
-    MatSlideToggleModule, MatSortModule, MatToolbarModule,
+    MatSlideToggleModule, MatSnackBarModule, MatSortModule, MatToolbarModule,
     NgxUploaderModule,
-    OktaAuthModule,
     ReactiveFormsModule,
     ExternalTournamentsModule,
-    AppRoutingModule,
+    AppRoutingModule, AuthModule, MatMenuModule,
   ],
   providers: [
-    { provide: HTTP_INTERCEPTORS, useClass: AuthTokenInterceptor, multi: true },
-    { provide: OKTA_CONFIG, useValue: oktaConfig },
+    {provide: APP_INITIALIZER, useFactory: appStateProviderFactory, deps: [AppStateService], multi: true},
+    {provide: APP_INITIALIZER, useFactory: userAdminServiceProviderFactory, deps: [UserAdminService, AppStateService], multi: true},
+    {provide: LocationStrategy, useClass: PathLocationStrategy},
+    {provide: APP_INITIALIZER, useFactory: authServiceProviderFactory, deps: [AuthService], multi: true},
+    CanDeactivateGuard,
+    DialogService,
+    LoginGuardService,
+    RoleGuardService,
+    HttpErrorHandlerService,
+    {provide: HTTP_INTERCEPTORS, useClass: AuthTokenInterceptor, multi: true},
+
   ],
   bootstrap: [AppComponent]
 })

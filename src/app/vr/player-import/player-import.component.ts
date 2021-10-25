@@ -2,8 +2,9 @@ import {Component, EventEmitter, OnInit} from '@angular/core';
 import {humanizeBytes, UploaderOptions, UploadFile, UploadInput, UploadOutput} from 'ngx-uploader';
 import {JobState, JobStats, JobStatusService} from '../../job-status.service';
 import {AppStateService} from '../../app-state.service';
-import {OktaAuthService} from '@okta/okta-angular';
 import {environment} from '../../../environments/environment';
+import {STATSTOOL} from '../../../assets/stats-tools';
+import {AuthService} from '../../auth/auth.service';
 
 /* Note to self about the ngx-uploader 2018-10-05 on account of it having no
  * documentation.  The uploader maintains a queue of files which gets
@@ -68,7 +69,7 @@ export class PlayerImportComponent implements OnInit {
   constructor(
       private jobStatusService: JobStatusService,
       private appState: AppStateService,
-      private auth: OktaAuthService,
+      private authService: AuthService,
     ) {
     this.options = { concurrency: 1};
     this.files = [];
@@ -79,7 +80,7 @@ export class PlayerImportComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.appState.setActiveTool('Player Importer');
+    this.appState.setActiveTool(STATSTOOL.PLAYER_IMPORTER);
     // When initializing, check if there is already an upload in progress
     // If so, just join in to get status updates.
     this.jobStatusService.getStatus(PLAYER_IMPORT_ROUTE_ON_SERVER).subscribe(
@@ -122,7 +123,7 @@ export class PlayerImportComponent implements OnInit {
    * at any point.
    */
   onUploadOutput(output: UploadOutput): void {
-    console.log(JSON.stringify(output));
+    // console.log(JSON.stringify(output));
     if (output.type === 'allAddedToQueue') {
       // could call startUpload to upload automatically here
     } else if (output.type === 'addedToQueue' && typeof output.file !== 'undefined') {
@@ -134,7 +135,7 @@ export class PlayerImportComponent implements OnInit {
     } else if (output.type === 'removed') {
       this.file = null;
     } else if (output.type === 'rejected' && typeof output.file !== 'undefined') {
-      console.log(output.file.name + ' rejected');
+      // console.log(output.file.name + ' rejected');
     } else if (output.type === 'done') {
       this.file = output.file;
       if (this.file.responseStatus !== 201) {
@@ -147,15 +148,19 @@ export class PlayerImportComponent implements OnInit {
     }
   }
 
+  // NOTE: We are uploading with ngx-file-uploader and not through the Angular
+  // HTTP client.  Which means the AuthTokenInterceptor does not get hit,
+  // which means that the token does not go in the headers automagically.
+  // So we explicitly add the Authorization header here.
   async startUpload(): Promise<any | null> {
     const serverURL: string = environment.serverPrefix;
     const event: UploadInput = {
       type: 'uploadFile',
       url: `${serverURL}/Player/importVRPersonsCSV`,
       method: 'POST',
-      headers: { 'Authorization': 'bearer ' + await this.auth.getAccessToken() },
       file: this.file,
-      data: { }
+      data: { },
+      headers: {Authorization: 'Bearer ' + this.authService.accessToken}
     };
     this.setState('uploading');
     this.uploadInput.emit(event);

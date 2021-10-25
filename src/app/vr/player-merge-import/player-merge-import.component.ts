@@ -2,8 +2,9 @@ import {Component, EventEmitter, OnInit} from '@angular/core';
 import {JobState, JobStats, JobStatusService} from '../../job-status.service';
 import {AppStateService} from '../../app-state.service';
 import {humanizeBytes, UploaderOptions, UploadFile, UploadInput, UploadOutput} from 'ngx-uploader';
-import {OktaAuthService} from '@okta/okta-angular';
 import {environment} from '../../../environments/environment';
+import {STATSTOOL} from '../../../assets/stats-tools';
+import {AuthService} from '../../auth/auth.service';
 
 const PLAYER_MERGE_ROUTE_ON_SERVER = '/Player/importVRPersonMergesCSV';
 
@@ -68,7 +69,7 @@ export class PlayerMergeImportComponent implements OnInit {
   constructor(
     private jobStatusService: JobStatusService,
     private appState: AppStateService,
-    private auth: OktaAuthService,
+    private authService: AuthService,
   ) {
     this.options = { concurrency: 1};
     this.files = [];
@@ -81,7 +82,7 @@ export class PlayerMergeImportComponent implements OnInit {
 
   ngOnInit() {
     this.setState('not started');
-    this.appState.setActiveTool('Player Merge Import');
+    this.appState.setActiveTool(STATSTOOL.PLAYER_MERGE_IMPORTER);
     // When initializing, check if there is already an upload in progress
     // If so, just join in to get status updates.
     this.pollStatus();
@@ -128,7 +129,7 @@ export class PlayerMergeImportComponent implements OnInit {
     } else if (output.type === 'removed') {
       this.file = null;
     } else if (output.type === 'rejected' && typeof output.file !== 'undefined') {
-      console.log(output.file.name + ' rejected');
+      // console.log(output.file.name + ' rejected');
     } else if (output.type === 'done') {
       this.file = output.file;
       if (this.file.responseStatus !== 201) {
@@ -146,7 +147,7 @@ export class PlayerMergeImportComponent implements OnInit {
       type: 'uploadFile',
       url: environment.serverPrefix + PLAYER_MERGE_ROUTE_ON_SERVER,
       method: 'POST',
-      headers: { 'Authorization': 'bearer ' + await this.auth.getAccessToken() },
+      headers: { 'Authorization': 'bearer ' + this.authService.accessToken },
       file: this.file,
       data: { }
     };

@@ -1,0 +1,42 @@
+<mat-card>
+  <mat-card-content>
+    <div fxFlex *ngIf="service.selected">
+      <h2>Edit User {{getFC('username').value}}</h2>
+      <form [formGroup]="mfForm" fxLayout="column" fxLayoutGap="20px">
+        <div fxFlex="20px"></div>
+
+        <mat-form-field>
+          <input formControlName="name" matInput placeholder="Full Name" required type="text">
+          <mat-error *ngIf="getFC('name').invalid">{{getErrorMessage('name')}}</mat-error>
+          <mat-hint>Used throughout the user interface</mat-hint>
+        </mat-form-field>
+
+        <mat-form-field>
+          <input formControlName="username" matInput placeholder="User Id" required type="text">
+          <mat-error *ngIf="getFC('username').invalid">{{getErrorMessage('username')}}</mat-error>
+          <mat-hint>Used to log in</mat-hint>
+        </mat-form-field>
+
+        <mat-form-field>
+          <input formControlName="email" matInput placeholder="Email" required type="email">
+          <mat-error *ngIf="getFC('email').invalid">{{getErrorMessage('email')}}</mat-error>
+        </mat-form-field>
+
+        <mat-form-field>
+          <mat-select placeholder="Role" formControlName="role">
+            <mat-option *ngFor="let role of roles" [value]="role">{{role}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <div fxLayout="row" fxLayoutGap="10px">
+          <div class="fill-remaining-space"></div>
+          <button mat-button (click)="cancel()" color="primary">Cancel</button>
+          <button mat-button (click)="revert()" color="primary"
+                  [disabled]='mfForm.pristine'>Revert</button>
+          <button mat-button (click)="save()" color="primary"
+                  [disabled]='!mfForm.valid || mfForm.pristine'>Save</button>
+        </div>
+      </form>
+    </div>
+  </mat-card-content>
+</mat-card>

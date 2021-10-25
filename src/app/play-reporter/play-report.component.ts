@@ -8,7 +8,7 @@ import { TC_DATE_FORMATS } from '../dateFormats';
 import {FormControl, FormGroup} from '@angular/forms';
 import * as XLSX from 'xlsx';
 import {WorkBook, WorkSheet, utils} from 'xlsx';
-import {StatsApp} from '../../assets/stats-app';
+import {STATSTOOL} from '../../assets/stats-tools';
 
 @Component({
   selector: 'app-tournament-strength',
@@ -35,7 +35,7 @@ export class PlayReportComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.appState.setActiveTool('Play Reporter Tool');
+    this.appState.setActiveTool(STATSTOOL.PLAY_REPORTER);
     this.today = new Date();
     this.beginningOfTime = new Date('2014-01-01');
     this.toDate = new Date();
