@@ -3,6 +3,7 @@ import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {FormControl} from '@angular/forms';
 import {AuthApiService} from '../../auth-api.service';
 import {AuthService} from '../../auth.service';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-tc-login',
@@ -41,6 +42,7 @@ export class LoginComponent implements OnInit {
   passwordFC: FormControl = new FormControl();
 
   constructor(
+    public router: Router,
     public dialogRef: MatDialogRef<LoginComponent>,
     private authApiService: AuthApiService,
     private authService: AuthService,
@@ -59,6 +61,7 @@ export class LoginComponent implements OnInit {
       if (token) {
         this.dialogRef.close();
         this.authService.onLogin(token.access_token);
+        this.router.navigateByUrl('/home').then();
       } else {
         this.authService.onLoginFailed();
       }
