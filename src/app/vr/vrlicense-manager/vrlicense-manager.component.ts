@@ -3,7 +3,7 @@ import {VRLicenseService} from '../vrlicense.service';
 import {VRLicense} from './VRLicense';
 import {Observable} from 'rxjs';
 import {TENNIS_ASSOCIATIONS} from '../../../assets/provinces';
-import {FormArray, FormBuilder, FormGroup} from '@angular/forms';
+import {UntypedFormArray, UntypedFormBuilder, UntypedFormGroup} from '@angular/forms';
 import {AppStateService} from '../../app-state.service';
 import {STATSTOOL} from '../../../assets/stats-tools';
 
@@ -16,13 +16,13 @@ import {STATSTOOL} from '../../../assets/stats-tools';
 export class VRLicenseManagerComponent implements OnInit {
   tennisAssociations = TENNIS_ASSOCIATIONS;
 
-  licenseUpdateForm: FormGroup;
-  licenseForm: FormGroup;
+  licenseUpdateForm: UntypedFormGroup;
+  licenseForm: UntypedFormGroup;
 
   licensesWithoutProvince$: Observable<VRLicense[]>;
   public licensesWithoutProvince: VRLicense[] = [];
   constructor(
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     private licenseService: VRLicenseService,
     private appState: AppStateService,
   ) {
@@ -63,8 +63,8 @@ export class VRLicenseManagerComponent implements OnInit {
   }
 
   // This just makes the licenses form array available to the HTML
-  get licenses(): FormArray {
-    return this.licenseUpdateForm.get('licenses') as FormArray;
+  get licenses(): UntypedFormArray {
+    return this.licenseUpdateForm.get('licenses') as UntypedFormArray;
   }
 
   onSubmit() {

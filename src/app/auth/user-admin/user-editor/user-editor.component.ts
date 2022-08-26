@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {UserDTO} from '../../UserDTO';
-import {AbstractControl, AsyncValidatorFn, FormBuilder, ValidationErrors, Validators} from '@angular/forms';
+import {AbstractControl, AsyncValidatorFn, UntypedFormBuilder, ValidationErrors, Validators} from '@angular/forms';
 import {ActivatedRoute, ParamMap, Router} from '@angular/router';
 import {UserAdminService} from '../user-admin.service';
 import {Observable, of} from 'rxjs';
@@ -53,7 +53,7 @@ export class UserEditorComponent implements OnInit {
     public appState: AppStateService,
     private route: ActivatedRoute,
     private router: Router,
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     public service: UserAdminService,
     private deactivationDialogService: DialogService,
     private authService: AuthService,

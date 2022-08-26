@@ -120,5 +120,7 @@
       }
     }
   },
-  "defaultProject": "statsadmin"
+  "cli": {
+    "analytics": false
+  }
 }

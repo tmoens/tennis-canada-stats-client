@@ -5,7 +5,7 @@ import {HttpClient} from '@angular/common/http';
 import {HttpHeaders} from '@angular/common/http';
 import { MAT_DATE_FORMATS } from '@angular/material/core';
 import { TC_DATE_FORMATS } from '../dateFormats';
-import {FormControl, FormGroup} from '@angular/forms';
+import {UntypedFormControl, UntypedFormGroup} from '@angular/forms';
 import * as XLSX from 'xlsx';
 import {WorkBook, WorkSheet, utils} from 'xlsx';
 import {STATSTOOL} from '../../assets/stats-tools';
@@ -26,9 +26,9 @@ export class PlayReportComponent implements OnInit {
   fromDate: Date;
   toDate: Date;
 
-  dateRange = new FormGroup({
-    start: new FormControl(),
-    end: new FormControl()
+  dateRange = new UntypedFormGroup({
+    start: new UntypedFormControl(),
+    end: new UntypedFormControl()
   });
 
   constructor(private appState: AppStateService, private http: HttpClient) {

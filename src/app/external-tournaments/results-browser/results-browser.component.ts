@@ -4,7 +4,7 @@
  */
 import { Component, OnInit } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
-import { FormControl } from '@angular/forms';
+import { UntypedFormControl } from '@angular/forms';
 import { MAT_DATE_FORMATS } from '@angular/material/core';
 import * as moment from 'moment';
 
@@ -38,8 +38,8 @@ export class ResultsBrowserComponent implements OnInit {
   loadingResults = false;
   resultCount = -1;
 
-  endFilterPeriodFC: FormControl;
-  startFilterPeriodFC: FormControl;
+  endFilterPeriodFC: UntypedFormControl;
+  startFilterPeriodFC: UntypedFormControl;
 
   tournamentTypes = [
     {name: 'Any', value: null},
@@ -57,8 +57,8 @@ export class ResultsBrowserComponent implements OnInit {
     private dataService: ExternalTournamentService
   ) {
     this.results = new MatTableDataSource([]);
-    this.endFilterPeriodFC = new FormControl(moment());
-    this.startFilterPeriodFC = new FormControl(moment().subtract(14, 'days'));
+    this.endFilterPeriodFC = new UntypedFormControl(moment());
+    this.startFilterPeriodFC = new UntypedFormControl(moment().subtract(14, 'days'));
     this.selectedTournamentType = this.tournamentTypes[0];
     this.filter = new ResultFilter();
   }

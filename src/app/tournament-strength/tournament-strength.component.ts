@@ -6,7 +6,7 @@ import {HttpHeaders} from '@angular/common/http';
 import { MAT_DATE_FORMATS } from '@angular/material/core';
 import * as moment from 'moment';
 import { TC_DATE_FORMATS } from '../dateFormats';
-import {FormControl} from '@angular/forms';
+import {UntypedFormControl} from '@angular/forms';
 import {STATSTOOL} from '../../assets/stats-tools';
 
 @Component({
@@ -23,7 +23,7 @@ export class TournamentStrengthComponent implements OnInit {
   downloadURL: string;
   today: Date;
   beginningOfTime: Date;
-  toDateFC: FormControl;
+  toDateFC: UntypedFormControl;
   fromDate;
   filterCriteria: any;
 
@@ -60,7 +60,7 @@ export class TournamentStrengthComponent implements OnInit {
   constructor(
     private appState: AppStateService,
     private http: HttpClient) {
-    this.toDateFC =  new FormControl(moment());
+    this.toDateFC =  new UntypedFormControl(moment());
     this.fromDate = moment();
     this.today = new Date();
     this.beginningOfTime = new Date('2014-01-01');
@@ -109,7 +109,7 @@ export class TournamentStrengthComponent implements OnInit {
           { id: '2.5', value: true, code: 'L7'}]
       }
     };
-    this.toDateFC =  new FormControl(moment());
+    this.toDateFC =  new UntypedFormControl(moment());
   }
 
   // For managing which junior categories are selected.
