@@ -27,6 +27,12 @@ export const STATS_TOOL_GROUPS: StatsToolGroup[] = [
   ),
 
   new StatsToolGroup(
+    'Grading Checker',
+    'Review and approve the gradng of leagues (and tournaments)',
+    [ STATSTOOL.GRADER ]
+  ),
+
+  new StatsToolGroup(
     'BC Membership Checker',
     'Validate membership lists for update',
     [STATSTOOL.PLAYER_CHECK],

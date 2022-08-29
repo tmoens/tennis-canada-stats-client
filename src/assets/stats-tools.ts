@@ -65,6 +65,12 @@ export class STATSTOOL {
     'Browse and update results imported from the ITF.',
     ''
   );
+  static readonly GRADER = new STATSTOOL(
+    'Grade Checker',
+    'grader',
+    'Check and approve the grade of leagues and tournaments as assigned by the TD.',
+    ''
+  );
   static readonly PLAYER_CHECK = new STATSTOOL(
     'BC Membership List Checker',
     'player_check',

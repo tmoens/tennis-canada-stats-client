@@ -15,6 +15,7 @@ import {LoginComponent} from './auth/login/login/login.component';
 import {CanDeactivateGuard} from './auth/guards/can-deactivate-guard';
 import {RoleGuardService as RoleGuard} from './auth/guards/role-guard.service';
 import {ADMIN_ROLE, BC_MEMBERSHIP_ROLE, GUEST_ROLE, USER_ROLE} from './auth/app-roles';
+import {GraderComponent} from './grader/grader.component';
 
 const routes: Routes = [
   {
@@ -103,6 +104,15 @@ const routes: Routes = [
   {
     path: 'external_data_admin',
     component: ExternalTournamentsComponent,
+    canDeactivate: [CanDeactivateGuard],
+    canActivate: [RoleGuard],
+    data: {
+      permittedRole: USER_ROLE
+    }
+  },
+  {
+    path: 'grader',
+    component: GraderComponent,
     canDeactivate: [CanDeactivateGuard],
     canActivate: [RoleGuard],
     data: {

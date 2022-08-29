@@ -57,6 +57,8 @@ import {MatSnackBarModule} from '@angular/material/snack-bar';
 import {MatDialogModule} from '@angular/material/dialog';
 import {HttpErrorHandlerService} from './http-error-handler';
 import {MatMenuModule} from '@angular/material/menu';
+import { GraderComponent } from './grader/grader.component';
+import {GraderService} from './grader/grader-service';
 
 export function appStateProviderFactory(provider: AppStateService) {
   return () => provider.initialize();
@@ -83,6 +85,7 @@ export function authServiceProviderFactory(provider: AppStateService) {
     VRLicenseManagerComponent,
     VRLicenseReporterComponent,
     UtrReportComponent,
+    GraderComponent,
   ],
   imports: [
     BrowserModule,
@@ -112,6 +115,7 @@ export function authServiceProviderFactory(provider: AppStateService) {
     DialogService,
     LoginGuardService,
     RoleGuardService,
+    GraderService,
     HttpErrorHandlerService,
     {provide: HTTP_INTERCEPTORS, useClass: AuthTokenInterceptor, multi: true},
 

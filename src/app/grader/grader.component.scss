@@ -1,0 +1,41 @@
+
+mat-cell, .mat-cell {
+  padding-left: 4px;
+}
+
+mat-header-cell, .mat-header-cell {
+  padding-left: 4px;
+}
+
+.mat-cell .mat-button {
+  font-size: 12px;
+  min-width: 30px;
+  padding: 0px;
+}
+
+.mat-column-endDate {
+  flex: 0 0 10%;
+}
+
+.mat-column-endDate {
+  flex: 0 0 10%;
+}
+
+.mat-column-type {
+  flex: 0 0 10%;
+}
+.mat-column-vrGrade {
+  flex: 0 0 10%;
+}
+.mat-column-approvedGrade {
+  flex: 0 0 25%;
+}
+
+.mat-table {
+  overflow: auto;
+}
+
+.filter-form-field {
+  width: 170px;
+}
+

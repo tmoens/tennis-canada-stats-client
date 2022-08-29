@@ -103,8 +103,8 @@
           <mat-header-cell *matHeaderCellDef>Tournament</mat-header-cell>
           <mat-cell *matCellDef="let t">
             <button mat-button color="primary"
-                    [matTooltip]="t.tournamentName"
-                    (click)="onTournamentNameSelected(t.tournamentName)">{{ t.tournamentName }}</button>
+                    (click)="onTournamentNameSelected(t.tournamentName)">{{ t.tournamentName }}
+            </button>
           </mat-cell>
         </ng-container>
 
