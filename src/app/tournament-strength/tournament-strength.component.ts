@@ -254,8 +254,4 @@ export class TournamentStrengthComponent implements OnInit {
         this.state.ratingsReady = true;
       });
   }
-
-  ratingsDownloaded() {
-    this.state.ratingsReady = false;
-  }
 }
