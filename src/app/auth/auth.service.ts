@@ -75,10 +75,12 @@ export class AuthService {
           // if the token is expired, (this could happen when a session is restarted and an
           // expired token is read from local storage) set it to null, effectively logging the user out.
           this.accessToken$.next(null);
-        } else if (this.decryptToken(token).passwordChangeRequired) {
+
+          // 2023-03-17 this is not working.  So, ugh, we just do not force the password change.
+          // } else if (this.decryptToken(token).passwordChangeRequired) {
 
           // If the user is supposed to change their password, force that.
-          this.router.navigateByUrl('change_password').then();
+          // this.router.navigateByUrl('/change_password').then();
         } else {
 
           // well, finally this looks like a good access token, so mark the user as logged in

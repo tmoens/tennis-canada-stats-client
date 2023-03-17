@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpRequest, HttpHandler, HttpEvent, HttpInterceptor} from '@angular/common/http';
-import { Observable, from } from 'rxjs';
+import {Observable, from, lastValueFrom} from 'rxjs';
 import {AuthService} from './auth.service';
 /**
  * This just intercepts the outbound http requests and inserts the jwt
@@ -33,8 +33,8 @@ export class AuthTokenInterceptor implements HttpInterceptor {
       });
     } else {
       // TODO Log this.
-      // console.log("No token available for url: " + request.url);
+      console.log('No token available for url: ' + request.url);
     }
-    return next.handle(request).toPromise();
+    return lastValueFrom(next.handle(request));
   }
 }

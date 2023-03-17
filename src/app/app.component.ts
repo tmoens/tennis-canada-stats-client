@@ -33,6 +33,9 @@ export class AppComponent implements OnInit {
   login() {
     this.router.navigateByUrl('/login').then();
   }
+  changePassword() {
+    this.router.navigateByUrl('/change_password').then();
+  }
 
   logout() {
     if (this.authService.isAuthenticated) {
