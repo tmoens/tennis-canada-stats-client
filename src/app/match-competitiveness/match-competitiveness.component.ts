@@ -34,7 +34,7 @@ export class MatchCompetitivenessComponent implements OnInit {
   }
 
   buildReport() {
-    this.state.buildingRatings = true;
+    this.state.buildingReport = true;
     this.state.reportReady = false;
     const httpOptions = {
       headers: new HttpHeaders({ 'Content-Type': 'application/json'})
