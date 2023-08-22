@@ -32,6 +32,11 @@ export class STATSTOOL {
     'tournament_strength',
     'Rate a set of tournaments based on their strength.'
   );
+  static readonly MATCH_COMPETITIVENESS_REPORTER = new STATSTOOL(
+    'Match Competitiveness Reporter',
+    'match_competitiveness',
+    'Report competitive of all matches since 2022-01-01'
+  );
   static readonly PLAY_REPORTER = new STATSTOOL(
     'Play Reporter',
     'play_reporter',

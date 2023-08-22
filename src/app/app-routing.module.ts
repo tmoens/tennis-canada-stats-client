@@ -16,6 +16,7 @@ import {CanDeactivateGuard} from './auth/guards/can-deactivate-guard';
 import {RoleGuardService as RoleGuard} from './auth/guards/role-guard.service';
 import {ADMIN_ROLE, BC_MEMBERSHIP_ROLE, GUEST_ROLE, USER_ROLE} from './auth/app-roles';
 import {GraderComponent} from './grader/grader.component';
+import {MatchCompetitivenessComponent} from './match-competitiveness/match-competitiveness.component';
 
 const routes: Routes = [
   {
@@ -79,6 +80,14 @@ const routes: Routes = [
   },
   { path: 'tournament_strength',
     component: TournamentStrengthComponent,
+    canDeactivate: [CanDeactivateGuard],
+    canActivate: [RoleGuard],
+    data: {
+      permittedRole: USER_ROLE
+    }
+  },
+  { path: 'match_competitiveness',
+    component: MatchCompetitivenessComponent,
     canDeactivate: [CanDeactivateGuard],
     canActivate: [RoleGuard],
     data: {

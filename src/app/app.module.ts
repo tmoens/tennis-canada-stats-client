@@ -59,6 +59,7 @@ import {HttpErrorHandlerService} from './http-error-handler';
 import {MatMenuModule} from '@angular/material/menu';
 import { GraderComponent } from './grader/grader.component';
 import {GraderService} from './grader/grader-service';
+import {MatchCompetitivenessComponent} from './match-competitiveness/match-competitiveness.component';
 
 export function appStateProviderFactory(provider: AppStateService) {
   return () => provider.initialize();
@@ -78,6 +79,7 @@ export function authServiceProviderFactory(provider: AppStateService) {
     AppComponent,
     HomeComponent,
     PlayerImportComponent,
+    MatchCompetitivenessComponent,
     PlayerMergeImportComponent,
     PlayerCheckComponent,
     PlayReportComponent,

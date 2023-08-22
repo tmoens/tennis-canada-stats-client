@@ -1,0 +1,19 @@
+<div fxLayout="column" fxLayoutGap="20px" class="mat-elevation-z3 app-box">
+  <h2 fxFlexAlign="center">Report competitiveness of every match since 2022-01-01</h2>
+  <p>Create a pivot table in the resulting spreadsheet to analyze competitiveness in any which way.</p>
+  <mat-divider></mat-divider>
+  <div fxFlexAlign="center" fxLayout="row"  fxLayoutGap="20px">
+    <button mat-button  color="primary"  (click)="buildReport()">
+      <mat-icon>build</mat-icon> Build Report
+    </button>
+    <a mat-button color="primary" type="button"
+       [href]="downloadURL"
+       [disabled]="!state.reportReady"
+    >
+      <mat-icon>cloud_download</mat-icon> Download Report
+    </a>
+  </div>
+  <mat-progress-bar mode="indeterminate" *ngIf="state.buildingReport">
+    <div>Please wait while we build your report.</div>
+  </mat-progress-bar>
+</div>
