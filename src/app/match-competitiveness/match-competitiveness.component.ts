@@ -46,7 +46,7 @@ export class MatchCompetitivenessComponent implements OnInit {
       .subscribe((res: any) => {
         console.log(JSON.stringify(res, null, 2));
         this.downloadURL = environment.serverPrefix + '/Exports/downloadMatchCompetitivenessReport?filename=' + res.data.filename;
-        this.state.buildingRatings = false;
+        this.state.buildingReport = false;
         this.state.reportReady = true;
       });
   }
