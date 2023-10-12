@@ -77,4 +77,10 @@
   <mat-progress-bar mode="indeterminate" *ngIf="state.buildingRatings">
     <div>Please wait while we build your ratings data.</div>
   </mat-progress-bar>
+  <mat-divider></mat-divider>
+  <div *ngIf="ratingsStatus">
+      <p>Categories to do: {{ratingsStatus.toDo}}  done: {{ratingsStatus.counters.done}}</p>
+      <p>Events rated: {{ratingsStatus.counters.eventsProcessed}}</p>
+      <p>Current event: {{ratingsStatus.data.currentEvent}}</p>
+    </div>
 </div>

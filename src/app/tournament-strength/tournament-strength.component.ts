@@ -8,6 +8,10 @@ import * as moment from 'moment';
 import { TC_DATE_FORMATS } from '../dateFormats';
 import {UntypedFormControl} from '@angular/forms';
 import {STATSTOOL} from '../../assets/stats-tools';
+import {JobState, JobStats, JobStatusService} from '../job-status.service';
+
+const BUILD_RATINGS_REPORT_URL = '/Event/buildRatingsReport';
+const DOWNLOAD_RATINGS_REPORT_URL = '/Event/downloadRatingsReport';
 
 @Component({
   selector: 'app-tournament-strength',
@@ -26,6 +30,8 @@ export class TournamentStrengthComponent implements OnInit {
   toDateFC: UntypedFormControl;
   fromDate;
   filterCriteria: any;
+  ratingsStatus: JobStats;
+  ratingsStatusDisplayString = '';
 
   periods = [
     { label: '1 month prior', value: '31'},
@@ -59,17 +65,21 @@ export class TournamentStrengthComponent implements OnInit {
 
   constructor(
     private appState: AppStateService,
-    private http: HttpClient) {
+    private http: HttpClient,
+    private jobStatusService: JobStatusService,
+  ) {
     this.toDateFC =  new UntypedFormControl(moment());
     this.fromDate = moment();
     this.today = new Date();
     this.beginningOfTime = new Date('2014-01-01');
-
   }
 
   ngOnInit() {
     this.appState.setActiveTool(STATSTOOL.TOURNAMENT_STRENGTH_REPORTER);
     this.resetFilters();
+    // When initializing, check if there is already an upload in progress
+    // If so, just join in to get status updates.
+    this.pollStatus();
   }
 
   resetFilters() {
@@ -188,7 +198,6 @@ export class TournamentStrengthComponent implements OnInit {
   }
 
 
-
   // Construct the URL which is used to build the report.
   buildReportURL(): string {
     this.state.ratingsReady = false;
@@ -235,23 +244,45 @@ export class TournamentStrengthComponent implements OnInit {
       }
     }
     searchString.push('categories=' + adjustedCategories);
-    return environment.serverPrefix + '/event/buildRatingsReport?' + searchString.join('&');
+    return `${environment.serverPrefix}${BUILD_RATINGS_REPORT_URL}?${searchString.join('&')}`;
   }
 
-  buildReport() {
+  async buildReport() {
     this.state.buildingRatings = true;
     this.state.ratingsReady = false;
     const httpOptions = {
       headers: new HttpHeaders({ 'Content-Type': 'application/json'})
     };
 
-    // When the query string is built, send it to the server and the server
-    // send back a string with a file name where the file can be downloaded.
+    // Because the query can take a long time, we don't do anything with the response.
+    // Instead, we start polling for status of the report building.
     this.http.get<string>(this.buildReportURL(), httpOptions)
-      .subscribe((res: any) => {
-        this.downloadURL = environment.serverPrefix + '/event/downloadRatingsReport?filename=' + res.filename;
-        this.state.buildingRatings = false;
-        this.state.ratingsReady = true;
+      .subscribe(() => {
+        this.pollStatus();
       });
+  }
+
+  pollStatus(): void {
+    this.jobStatusService.getStatus(BUILD_RATINGS_REPORT_URL).subscribe(
+      data => {
+        this.ratingsStatus = data;
+        this.ratingsStatusDisplayString = JSON.stringify(data, null, 2);
+        if (this.ratingsStatus.status === JobState.IN_PROGRESS  ) {
+          setTimeout(() => this.pollStatus(), 200);
+        } else if (this.ratingsStatus.status === JobState.DONE) {
+          this.state.buildingRatings = false;
+          if (this.ratingsStatus.data.filename) {
+            this.state.ratingsReady = true;
+            this.downloadURL = `${environment.serverPrefix}${DOWNLOAD_RATINGS_REPORT_URL}?filename=${this.ratingsStatus.data.filename}`;
+          } else {
+            // If the job is finished, there should be a filename. But just in case, fail silently.
+            this.state.ratingsReady = false;
+          }
+        } else {
+          this.state.ratingsReady = false;
+          this.state.buildingRatings = false;
+        }
+      }
+    );
   }
 }
