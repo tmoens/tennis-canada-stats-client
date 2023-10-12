@@ -66,7 +66,6 @@ export class MatchCompetitivenessComponent implements OnInit {
             this.downloadURL = `${environment.serverPrefix}${REPORT_REQUEST_URL}/download?filename=${this.requestStatus.data.filename}`;
           } else {
             // If the job is finished, there should be a filename. But just in case, fail silently.
-            console.log('Really???????????????????????????????????');
             this.state.reportReady = false;
           }
         } else {

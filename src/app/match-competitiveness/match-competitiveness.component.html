@@ -15,12 +15,26 @@
   </div>
   <mat-progress-bar mode="indeterminate" *ngIf="state.buildingReport">
   </mat-progress-bar>
-  <mat-divider></mat-divider>
-  <p>Request Status: {{requestStatus?.currentActivity}}</p>
   <div *ngIf="requestStatus && requestStatus.toDo > 0">
+    <mat-divider></mat-divider>
+    <p>Request Status: {{requestStatus.currentActivity}}</p>
+    <p>Tournaments without matches: {{requestStatus.counters.tournamentsWithoutMatches}}</p>
     <p>Tournaments to do: {{requestStatus.toDo}}  done: {{requestStatus.counters.done}}</p>
     <p>Events processed: {{requestStatus.counters.eventsProcessed}}</p>
     <p>Matches processed: {{requestStatus.counters.matchesProcessed}}</p>
+    <h3>Matches not included</h3>
+    <ul>
+      <li>Matches without dates: {{requestStatus.counters.missingMatchDate}}</li>
+      <li>Byes: {{requestStatus.counters.scorelineIsBye}}</li>
+      <li>Inferred byes: {{requestStatus.counters.inferredBye}} (missing a winner or a loser)</li>
+      <li>Walkovers, Retirements, Withdrawals etc.: {{requestStatus.counters.nonZeroScoreStatus}}</li>
+      <li>Unplayed: {{requestStatus.counters.unplayed}} (no winner code)</li>
+    </ul>
+    <div *ngIf="requestStatus.history.length > 0">
+      <h3>Notes:</h3>
+      <p *ngFor="let h of requestStatus.history">{{h}}</p>
+    </div>
     <p>file: {{requestStatus.data.filename}}</p>
+
   </div>
 </div>
