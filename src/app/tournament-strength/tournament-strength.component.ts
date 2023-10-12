@@ -30,8 +30,7 @@ export class TournamentStrengthComponent implements OnInit {
   toDateFC: UntypedFormControl;
   fromDate;
   filterCriteria: any;
-  ratingsStatus: JobStats;
-  ratingsStatusDisplayString = '';
+  requestStatus: JobStats;
 
   periods = [
     { label: '1 month prior', value: '31'},
@@ -265,15 +264,14 @@ export class TournamentStrengthComponent implements OnInit {
   pollStatus(): void {
     this.jobStatusService.getStatus(BUILD_RATINGS_REPORT_URL).subscribe(
       data => {
-        this.ratingsStatus = data;
-        this.ratingsStatusDisplayString = JSON.stringify(data, null, 2);
-        if (this.ratingsStatus.status === JobState.IN_PROGRESS  ) {
+        this.requestStatus = data;
+        if (this.requestStatus.status === JobState.IN_PROGRESS  ) {
           setTimeout(() => this.pollStatus(), 200);
-        } else if (this.ratingsStatus.status === JobState.DONE) {
+        } else if (this.requestStatus.status === JobState.DONE) {
           this.state.buildingRatings = false;
-          if (this.ratingsStatus.data.filename) {
+          if (this.requestStatus.data.filename) {
             this.state.ratingsReady = true;
-            this.downloadURL = `${environment.serverPrefix}${DOWNLOAD_RATINGS_REPORT_URL}?filename=${this.ratingsStatus.data.filename}`;
+            this.downloadURL = `${environment.serverPrefix}${DOWNLOAD_RATINGS_REPORT_URL}?filename=${this.requestStatus.data.filename}`;
           } else {
             // If the job is finished, there should be a filename. But just in case, fail silently.
             this.state.ratingsReady = false;

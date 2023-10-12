@@ -14,6 +14,13 @@
     </a>
   </div>
   <mat-progress-bar mode="indeterminate" *ngIf="state.buildingReport">
-    <div>Please wait while we build your report.</div>
   </mat-progress-bar>
+  <mat-divider></mat-divider>
+  <p>Request Status: {{requestStatus?.currentActivity}}</p>
+  <div *ngIf="requestStatus && requestStatus.toDo > 0">
+    <p>Tournaments to do: {{requestStatus.toDo}}  done: {{requestStatus.counters.done}}</p>
+    <p>Events processed: {{requestStatus.counters.eventsProcessed}}</p>
+    <p>Matches processed: {{requestStatus.counters.matchesProcessed}}</p>
+    <p>file: {{requestStatus.data.filename}}</p>
+  </div>
 </div>

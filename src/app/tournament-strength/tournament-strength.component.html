@@ -36,29 +36,29 @@
     </div>
     <div fxLayout="row" fxLayoutGap="20px" fxLayoutAlign="center">
       <div fxLayout="column">
-          <mat-checkbox (change)="allJuniorsSelected()" color="primary"
-                        [(ngModel)]="filterCriteria.categories.allJuniorCategories"
-                        name="allJuniors">All Junior Categories</mat-checkbox>
-          <mat-checkbox *ngFor="let c of filterCriteria.categories.juniorCategories"
-                        [(ngModel)]="c.value" (change)="juniorCategorySelected(c)"
-                        [name]="c.id" color="primary">{{c.id}}</mat-checkbox>
+        <mat-checkbox (change)="allJuniorsSelected()" color="primary"
+                      [(ngModel)]="filterCriteria.categories.allJuniorCategories"
+                      name="allJuniors">All Junior Categories</mat-checkbox>
+        <mat-checkbox *ngFor="let c of filterCriteria.categories.juniorCategories"
+                      [(ngModel)]="c.value" (change)="juniorCategorySelected(c)"
+                      [name]="c.id" color="primary">{{c.id}}</mat-checkbox>
       </div>
 
       <div fxLayout="column">
-          <mat-checkbox (change)="allAdultsSelected()" color="primary"
-                        [(ngModel)]="filterCriteria.categories.allAdultCategories"
-                        name="allAdults">All Adult Categories</mat-checkbox>
-          <mat-checkbox *ngFor="let c of filterCriteria.categories.adultCategories"
-                        [(ngModel)]="c.value" (change)="adultCategorySelected(c)"
-                        [name]="c.id" color="primary">{{c.id}}</mat-checkbox>
+        <mat-checkbox (change)="allAdultsSelected()" color="primary"
+                      [(ngModel)]="filterCriteria.categories.allAdultCategories"
+                      name="allAdults">All Adult Categories</mat-checkbox>
+        <mat-checkbox *ngFor="let c of filterCriteria.categories.adultCategories"
+                      [(ngModel)]="c.value" (change)="adultCategorySelected(c)"
+                      [name]="c.id" color="primary">{{c.id}}</mat-checkbox>
       </div>
       <div fxLayout="column">
-          <mat-checkbox (change)="allSeniorsSelected()" color="primary"
-                        [(ngModel)]="filterCriteria.categories.allSeniorCategories"
-                        name="allSeniors">All Senior Categories</mat-checkbox>
-          <mat-checkbox *ngFor="let c of filterCriteria.categories.seniorCategories"
-                        [(ngModel)]="c.value" (change)="seniorCategorySelected(c)"
-                        [name]="c.id" color="primary">{{c.id}}</mat-checkbox>
+        <mat-checkbox (change)="allSeniorsSelected()" color="primary"
+                      [(ngModel)]="filterCriteria.categories.allSeniorCategories"
+                      name="allSeniors">All Senior Categories</mat-checkbox>
+        <mat-checkbox *ngFor="let c of filterCriteria.categories.seniorCategories"
+                      [(ngModel)]="c.value" (change)="seniorCategorySelected(c)"
+                      [name]="c.id" color="primary">{{c.id}}</mat-checkbox>
       </div>
     </div>
   </form>
@@ -78,9 +78,9 @@
     <div>Please wait while we build your ratings data.</div>
   </mat-progress-bar>
   <mat-divider></mat-divider>
-  <div *ngIf="ratingsStatus">
-      <p>Categories to do: {{ratingsStatus.toDo}}  done: {{ratingsStatus.counters.done}}</p>
-      <p>Events rated: {{ratingsStatus.counters.eventsProcessed}}</p>
-      <p>Current event: {{ratingsStatus.data.currentEvent}}</p>
-    </div>
+  <div *ngIf="requestStatus">
+    <p>Categories to do: {{requestStatus.toDo}}  done: {{requestStatus.counters.done}}</p>
+    <p>Events rated: {{requestStatus.counters.eventsProcessed}}</p>
+    <p>Current event: {{requestStatus.data.currentEvent}}</p>
+  </div>
 </div>
