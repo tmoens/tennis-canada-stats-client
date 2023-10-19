@@ -1,40 +1,56 @@
-<mat-card *ngIf="licensesWithoutProvince.length == 0">
-  <h3>All VR license have provinces associated with them. Nothing needs to be done at this time.</h3>
-</mat-card>
-<div *ngIf="licensesWithoutProvince.length > 0"
-     fxLayout="column" class="mat-elevation-z3 app-box">
-  <h2>Fix VR licenses with missing Provincial Tennis Association</h2>
-  <form [formGroup]="licenseUpdateForm" (ngSubmit)="onSubmit()">
-    <div formArrayName="licenses">
-      <mat-list>
-        <mat-list-item *ngFor="let l of licenses.controls; let i=index"
-                       [formGroupName]="i" style="padding: 15px">
-          <mat-form-field style="width: 400px">
-            <input matInput placeholder="License Name"
-                   class="form-control"
-                   formControlName="licenseName">
-          </mat-form-field>
-          <mat-form-field style="padding-left: 15px; width: 200px">
-            <mat-select formControlName="province" placeholder="Tennis Association">
-              <mat-option value="TBD">--select--</mat-option>
-              <mat-option *ngFor="let ta of tennisAssociations" [value]="ta.abbrv">{{ta.ptaName}}</mat-option>
-            </mat-select>
-          </mat-form-field>
-          <span class="fill-remaining-space"></span>
-        </mat-list-item>
-      </mat-list>
-    </div>
-    <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="start center">
-      <button mat-button color="primary" type="button" (click)="getLicensesWithoutProvinces()">
-        Reload List
-      </button>
-      <button mat-button color="primary" type="button" (click)="rebuildForm()"
-              [disabled]="licenseUpdateForm.pristine">
-        Revert
-      </button>
-      <button mat-button color="primary" type="submit" [disabled]="licenseUpdateForm.pristine">
-        Save Changes
-      </button>
-    </div>
-  </form>
+<div fxLayout="column" fxLayoutGap="10px" fxFlexAlign="start start"
+     class="app-box mat-elevation-z3">
+  <div fxLayout="row" fxLayoutGap="20px">
+    <H2>Manage Licenses</H2>
+    <div class="fill-remaining-space"></div>
+    <form>
+      <mat-form-field floatLabel="always">
+        <mat-label>Filter in license names...</mat-label>
+        <input [formControl]="filterFC" matInput type="text">
+        <button *ngIf="filterFC.value" mat-icon-button matSuffix type="button"
+                (click)="clearFilterText()">
+          <mat-icon>close</mat-icon>
+        </button>
+      </mat-form-field>
+    </form>
+  </div>
+  <div *ngIf="missingPTACount === 0">
+    <H2>All licenses have a PTA assigned.</H2>
+  </div>
+  <div *ngIf="meetsFilterCount === 0">
+    <p>You can set the filter to look for license and change the associated PTA if required</p>
+  </div>
+  <div style="overflow-y: scroll; overflow-x: hidden">
+        <mat-list>
+          <ng-container *ngFor="let e of licenseEditors; let i=index">
+            <mat-list-item style="padding: 15px" *ngIf="meetsFilter(e) || missingPTA(e) || hasChanged(e)">
+              <mat-form-field style="width: 400px">
+                <input matInput placeholder="License Name"
+                       class="form-control"
+                       [(ngModel)]="e.licenseName"
+                [disabled]=true>
+              </mat-form-field>
+              <mat-form-field style="padding-left: 15px; width: 200px">
+                <mat-select [(ngModel)]="e.currentProvince" (selectionChange)="recount()" placeholder="Tennis Association">
+                  <mat-option value="TBD">--select--</mat-option>
+                  <mat-option *ngFor="let ta of tennisAssociations" [value]="ta.abbrv">{{ta.ptaName}}</mat-option>
+                </mat-select>
+                <mat-hint style="color: #8b2c1d">{{getHint(e)}}</mat-hint>
+              </mat-form-field>
+            </mat-list-item>
+          </ng-container>
+        </mat-list>
+  </div>
+  <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="start center">
+    <div *ngIf="filterFC.value">{{meetsFilterCount}} licenses meet filter</div>
+    <div class="fill-remaining-space"></div>
+    <button mat-button color="primary" type="button" (click)="revert()"
+            [disabled]="changeCount === 0">
+      Revert
+    </button>
+    <button mat-button color="primary" [disabled]="changeCount === 0"
+            (click)="onSubmit()">
+      Save Changes
+    </button>
+  </div>
 </div>

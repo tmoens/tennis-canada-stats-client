@@ -15,6 +15,14 @@ const httpOptions = {
 })
 export class VRLicenseService {
   private readonly serverURL: string;
+  private _licenseFilter: string | null = null;
+  get licenseFilter(): string | null {
+    return this._licenseFilter;
+  }
+
+  set licenseFilter(value: string | null) {
+    this._licenseFilter = value;
+  }
 
   constructor(
     private http: HttpClient,
@@ -25,17 +33,17 @@ export class VRLicenseService {
   }
 
   /** POST: a list of licenses with provinces */
-  updateLicensesWithMissingProvince(licenses: VRLicense[]): Observable<VRLicense[]> {
-    const url = `${this.serverURL}/license/fixLicensesWithoutProvinces`;
+  updateLicenses(licenses: VRLicense[]): Observable<VRLicense[]> {
+    const url = `${this.serverURL}/license/setTennisAssociationForLicenses`;
     return this.http.post<VRLicense[]>(url , licenses, httpOptions)
       .pipe(
         catchError(this.httpErrorHandlerService.handleError('Failed: update VR Licenses.', []))
       );
   }
 
-  /** GET: list of licenses with missing province */
-  getLicensesWithMissingProvince(): Observable<VRLicense[]> {
-    const url = `${this.serverURL}/license/missingProvince`;
+  /** GET: list of licenses */
+  getLicenses(): Observable<VRLicense[]> {
+    const url = `${this.serverURL}/license`;
     return this.http.get<VRLicense[]>(url , httpOptions)
       .pipe(
         catchError(this.httpErrorHandlerService.handleError('Failed: get licenses with missing provinces.', []))

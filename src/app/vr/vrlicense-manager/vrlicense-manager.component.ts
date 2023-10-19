@@ -1,11 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import {VRLicenseService} from '../vrlicense.service';
-import {VRLicense} from './VRLicense';
-import {Observable} from 'rxjs';
+import {LicenseUpdate, VRLicense} from './VRLicense';
 import {TENNIS_ASSOCIATIONS} from '../../../assets/provinces';
-import {UntypedFormArray, UntypedFormBuilder, UntypedFormGroup} from '@angular/forms';
+import {FormControl} from '@angular/forms';
 import {AppStateService} from '../../app-state.service';
 import {STATSTOOL} from '../../../assets/stats-tools';
+import {debounceTime} from 'rxjs/operators';
 
 
 @Component({
@@ -16,78 +16,108 @@ import {STATSTOOL} from '../../../assets/stats-tools';
 export class VRLicenseManagerComponent implements OnInit {
   tennisAssociations = TENNIS_ASSOCIATIONS;
 
-  licenseUpdateForm: UntypedFormGroup;
-  licenseForm: UntypedFormGroup;
+  // The filter form.
+  filterFC: FormControl<string> = new FormControl<string>('');
 
-  licensesWithoutProvince$: Observable<VRLicense[]>;
-  public licensesWithoutProvince: VRLicense[] = [];
+  missingPTACount = 0;
+  meetsFilterCount = 0;
+  changeCount = 0;
+
+  public licenseEditors: LicenseUpdate[] = [];
   constructor(
-    private fb: UntypedFormBuilder,
+    // private fb: UntypedFormBuilder,
     private licenseService: VRLicenseService,
     private appState: AppStateService,
   ) {
-    this.buildForm();
-  }
-
-  buildForm() {
-    this.licenseUpdateForm = this.fb.group({
-      licenses: this.fb.array([]),
-    });
   }
 
   ngOnInit() {
     this.appState.setActiveTool(STATSTOOL.LICENSE_MANAGER);
-    this.getLicensesWithoutProvinces();
+    this.getLicenses();
+
+    this.filterFC.valueChanges
+      .pipe(debounceTime(300))
+      .subscribe(() => {
+        this.recount();
+      });
   }
 
-  getLicensesWithoutProvinces() {
-    this.licensesWithoutProvince$ = this.licenseService.getLicensesWithMissingProvince();
-    this.licensesWithoutProvince$.subscribe(data => {
-        this.licensesWithoutProvince = data;
-        this.rebuildForm();
+  getLicenses() {
+    this.licenseService.getLicenses().subscribe(data => {
+        this.licenseEditors = data.map ((license: VRLicense): LicenseUpdate => {
+          return new LicenseUpdate(license);
+        });
+        this.recount();
       }
     );
   }
 
-  rebuildForm() {
-    this.licenseUpdateForm.reset();
-    const licenseFGs = this.licensesWithoutProvince.map(
-      license => this.fb.group({
-        licenseName: {value: license.licenseName, disabled: true},
-        // licenseName: license.licenseName,
-        province: license.province,
-      })
-    );
-    const licenseFGArray = this.fb.array(licenseFGs);
-    this.licenseUpdateForm.setControl('licenses', licenseFGArray);
+  getHint(license: LicenseUpdate): string | null {
+    if (this.hasChanged(license)) {
+      return `Changed from ${license.originalProvince}`;
+    }
+    if (this.missingPTA(license)) {
+      return `Missing Tennis Association`;
+    }
   }
 
-  // This just makes the licenses form array available to the HTML
-  get licenses(): UntypedFormArray {
-    return this.licenseUpdateForm.get('licenses') as UntypedFormArray;
-  }
 
   onSubmit() {
-    // We have to go looking through the form structure rather than
-    // just use the form values.  WHY? Because we disabled the
-    // licenseName field and for whatever reason, that means it does
-    // not show up in the form data model.
-    // Also we do not send back un-updated licenses for processing.
+    // We have to go looking through the form for licenses that have changed.
     const updates: VRLicense[] = [];
-    for (let i = 0; i < this.licenses.length; i++) {
-      const p = this.licenses.at(i).get('province').value;
-      if ('TBD' != p) {
-        // TODO a proper check for a valid province
+    for (const licenseUpdate of this.licenseEditors) {
+      if (this.hasChanged(licenseUpdate)) {
         const newL: VRLicense = new VRLicense();
-        newL.province = p;
-        newL.licenseName = this.licenses.at(i).get('licenseName').value;
+        newL.province = licenseUpdate.currentProvince;
+        newL.licenseName = licenseUpdate.licenseName;
         updates.push(newL);
       }
     }
-    // TODO eror handling
-    this.licenseService.updateLicensesWithMissingProvince(updates).subscribe(
-      (_) => this.getLicensesWithoutProvinces()
+    this.licenseService.updateLicenses(updates).subscribe(
+      (_) => this.getLicenses()
     );
+  }
 
+  revert() {
+    if (this.changeCount === 0) {
+      return;
+    }
+    for (const license of this.licenseEditors) {
+      if (this.hasChanged(license)) {
+        license.currentProvince = license.originalProvince;
+      }
+    }
+    this.recount();
+  }
+
+  recount() {
+    this.missingPTACount = 0;
+    this.meetsFilterCount = 0;
+    this.changeCount = 0;
+    for (const license of this.licenseEditors) {
+      if (this.missingPTA(license)) { this.missingPTACount++; }
+      if (this.hasChanged(license)) { this.changeCount++; }
+      if (this.meetsFilter(license)) { this.meetsFilterCount++; }
+    }
+  }
+
+  missingPTA(license: LicenseUpdate): boolean {
+    return (license.currentProvince === 'TBD');
+  }
+
+  meetsFilter(license: LicenseUpdate): boolean {
+    return (
+      this.filterFC.value &&
+      (license.licenseName.toLowerCase().includes(this.filterFC.value.toLowerCase()) ||
+        license.currentProvince.includes(this.filterFC.value)));
+  }
+
+  hasChanged(license: LicenseUpdate): boolean {
+    return (license.currentProvince !== license.originalProvince);
+  }
+
+
+  clearFilterText() {
+    this.filterFC.setValue('');
   }
 }
