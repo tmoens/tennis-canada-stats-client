@@ -47,11 +47,9 @@ export class ResultsBrowserComponent implements OnInit {
     {name: 'ATP', value: 'ATP'},
     {name: 'ITF Pro Women', value: 'ITF Pro Women'},
     {name: 'ITF Pro Men', value: 'ITF Pro Men'},
-    {name: 'ITF TT Women (2019)', value: 'ITF TT Women'},
-    {name: 'ITF TT Men (2019)', value: 'ITF TT Men'},
     {name: 'ITF Junior', value: 'ITF Junior'},
   ];
-  selectedTournamentType;
+  selectedTournamentType: {name: string, value: string};
 
   constructor(
     private dataService: ExternalTournamentService
