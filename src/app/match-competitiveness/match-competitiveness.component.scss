@@ -1,3 +1,16 @@
-mat-form-field.mat-form-field {
+mat-form-field.mat-mdc-form-field {
   width: 125px;
+}
+.progress-container {
+  width: 100%;
+  margin: 20px 0;
+  text-align: center;
+}
+
+.current-activity {
+  margin: 10px 0;
+}
+
+.progress-info {
+  color: rgba(0, 0, 0, 0.6);
 }

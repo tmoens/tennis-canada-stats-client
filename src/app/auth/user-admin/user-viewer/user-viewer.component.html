@@ -1,50 +1,53 @@
-<mat-card>
+<mat-card class="small-tool">
+  <mat-card-header>
+    <mat-card-title>User Details</mat-card-title>
+    <div class="fill-remaining-space"></div>
+    <button mat-button [disabled]="user.id === authService.loggedInUserId()" (click)="edit()">
+      <mat-icon>edit</mat-icon>
+    </button>
+  </mat-card-header>
+
   <mat-card-content>
-    <div fxLayout="column" *ngIf="service.selected">
-      <div fxLayout="row" fxLayoutGap="5px" fxLayoutAlign="start center" >
-        <h2>User Details</h2>
-        <button mat-icon-button [disabled]="user.id === authService.loggedInUserId()" color="primary" (click)="edit()">
-          <mat-icon>edit</mat-icon>
-        </button>
+    <div class="flex-row" *ngIf="service.selected">
+      <div class="flex-row gap-10">
       </div>
-      <form fxLayout="column" [formGroup]="mfForm">
+      <form class="flex-column" [formGroup]="mfForm">
         <mat-form-field *ngIf="service.selected.name">
-          <label>
-            <input formControlName="name" matInput placeholder="Full Name" type="text">
-          </label>
+          <mat-label>Full Name</mat-label>
+          <input formControlName="name" matInput type="text">
         </mat-form-field>
 
-        <mat-form-field>
-          <label>
-            <input formControlName="username" matInput placeholder="User Id" type="text">
-          </label>
+        <mat-form-field floatLabel="always">
+          <mat-label>User Id</mat-label>
+          <input formControlName="username" matInput type="text">
         </mat-form-field>
 
-        <mat-form-field>
-          <label>
-            <input formControlName="email" matInput placeholder="Email" type="email">
-          </label>
+        <mat-form-field floatLabel="always">
+          <mat-label>Email</mat-label>
+          <input formControlName="email" matInput type="email">
         </mat-form-field>
 
-        <mat-form-field>
-          <label>
-            <input formControlName="role" matInput placeholder="Role" type="text">
-          </label>
+        <mat-form-field floatLabel="always">
+          <mat-label>Role</mat-label>
+          <input formControlName="role" matInput type="text">
         </mat-form-field>
 
-        <mat-checkbox formControlName="isActive" color="primary">Activated</mat-checkbox>
-        <mat-checkbox color="primary" formControlName="isLoggedIn">Currently Logged In</mat-checkbox>
-        <mat-checkbox formControlName="passwordChangeRequired" color="primary">Requires password change</mat-checkbox>
-        <div fxLayout="row" fxLayoutAlign="end">
-          <button (click)="service.activate(user)" [disabled]="user.isActive" color="primary"
-                  mat-button>Activate
+        <!-- Here are a few "one-stop" operations you can perform on a user without having to go to -->
+        <!-- the editor screen -->
+        <mat-checkbox formControlName="isActive">Activated</mat-checkbox>
+        <mat-checkbox formControlName="isLoggedIn">Currently Logged In</mat-checkbox>
+        <mat-checkbox formControlName="passwordChangeRequired">Requires password change</mat-checkbox>
+        <div class="flex-row">
+          <button (click)="service.activate(user)" [disabled]="user.isActive" mat-button>Activate</button>
+          <button (click)="service.deactivate(user)"
+                  [disabled]="!user.isActive || user.id === authService.loggedInUserId()"
+                  mat-button>
+            Deactivate
           </button>
-          <button (click)="service.deactivate(user)" [disabled]="!user.isActive || user.id === authService.loggedInUserId()"
-                  color="primary"
-                  mat-button>Deactivate
-          </button>
-          <button (click)="service.forceLogout(user)" [disabled]="!user.isLoggedIn || user.id === authService.loggedInUserId()" color="primary"
-                  mat-button>Force Logout
+          <button (click)="service.forceLogout(user)"
+                  [disabled]="!user.isLoggedIn || user.id === authService.loggedInUserId()"
+                  mat-button>
+            Force Logout
           </button>
         </div>
       </form>

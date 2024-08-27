@@ -1,40 +1,45 @@
-<mat-card>
+<mat-card class="small-tool">
+  <mat-card-header>
+    <mat-card-title>User Editor</mat-card-title>
+    <mat-card-subtitle>Edit details for {{getFC('username').value}}</mat-card-subtitle>
+  </mat-card-header>
   <mat-card-content>
-    <div fxFlex *ngIf="service.selected">
-      <h2>Edit User {{getFC('username').value}}</h2>
-      <form [formGroup]="mfForm" fxLayout="column" fxLayoutGap="20px">
-        <div fxFlex="20px"></div>
+    <div class="flex-row" *ngIf="service.selected">
+      <form [formGroup]="mfForm" class="flex-column gap-20">
+        <div class="vertical-spacer-medium"></div>
 
-        <mat-form-field>
-          <input formControlName="name" matInput placeholder="Full Name" required type="text">
+        <mat-form-field floatLabel="always">
+          <mat-label>Full Name</mat-label>
+          <input formControlName="name" matInput required type="text">
           <mat-error *ngIf="getFC('name').invalid">{{getErrorMessage('name')}}</mat-error>
           <mat-hint>Used throughout the user interface</mat-hint>
         </mat-form-field>
 
-        <mat-form-field>
-          <input formControlName="username" matInput placeholder="User Id" required type="text">
+        <mat-form-field floatLabel="always">
+          <mat-label>User Id</mat-label>
+          <input formControlName="username" matInput required type="text">
           <mat-error *ngIf="getFC('username').invalid">{{getErrorMessage('username')}}</mat-error>
           <mat-hint>Used to log in</mat-hint>
         </mat-form-field>
 
-        <mat-form-field>
-          <input formControlName="email" matInput placeholder="Email" required type="email">
+        <mat-form-field floatLabel="always">
+          <mat-label>Email</mat-label>
+          <input formControlName="email" matInput required type="email">
           <mat-error *ngIf="getFC('email').invalid">{{getErrorMessage('email')}}</mat-error>
         </mat-form-field>
 
-        <mat-form-field>
-          <mat-select placeholder="Role" formControlName="role">
+        <mat-form-field floatLabel="always">
+          <mat-label>Role</mat-label>
+          <mat-select formControlName="role">
             <mat-option *ngFor="let role of roles" [value]="role">{{role}}</mat-option>
           </mat-select>
         </mat-form-field>
 
-        <div fxLayout="row" fxLayoutGap="10px">
+        <div class="flex-row gap-20">
           <div class="fill-remaining-space"></div>
-          <button mat-button (click)="cancel()" color="primary">Cancel</button>
-          <button mat-button (click)="revert()" color="primary"
-                  [disabled]='mfForm.pristine'>Revert</button>
-          <button mat-button (click)="save()" color="primary"
-                  [disabled]='!mfForm.valid || mfForm.pristine'>Save</button>
+          <button mat-button (click)="cancel()">Cancel</button>
+          <button mat-button (click)="revert()" [disabled]='mfForm.pristine'>Revert</button>
+          <button mat-button (click)="save()" [disabled]='!mfForm.valid || mfForm.pristine'>Save</button>
         </div>
       </form>
     </div>

@@ -1,19 +1,18 @@
-import { Component,  OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 
 import { VRPlayer } from '../VRPlayer';
 import { ExternalPlayer } from './external-player';
 import { ExternalTournamentService } from '../external-tournament.service';
 
-import {Observable, BehaviorSubject, of} from 'rxjs';
+import { BehaviorSubject, Observable, of } from 'rxjs';
 
-import {catchError, debounceTime, switchMap} from 'rxjs/operators';
+import { catchError, debounceTime, switchMap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-itf-player-list',
   templateUrl: './external-player-manager.component.html',
   styleUrls: ['./external-player-manager.component.scss'],
 })
-
 export class ExternalPlayerManagerComponent implements OnInit {
   // The filtered set of ITF Players the user is looking at to give them VR IDs
   ITFPlayers$: Observable<ExternalPlayer[]>;
@@ -49,22 +48,16 @@ export class ExternalPlayerManagerComponent implements OnInit {
   // When it changes, it triggers a new ITF player search via the itfDataService
   // which in turn causes the ITFPLayers Observable to be updated.
   // Note if it is a Subject (as per the Angular demo) and not a BehaviorSubject,
-  // Then the initial http response from the server does not make it to the GUI
-  private ITFSearchTerms = new BehaviorSubject('nothing');
+  lastUpdateStatus = -1;
 
   // Similar thing for keeping the VR Player List updated.
   // It effectively holds an observable steam of the selected ITF player IDs
+  // Then the initial http response from the server does not make it to the GUI
+  private ITFSearchTerms = new BehaviorSubject('nothing');
   // When it changes, it triggers a new request for VR Players.
   private VRSearchTerms = new BehaviorSubject<string>('');
 
-  // An Observable for the response to an update request
-  private updateStatus$ = new Observable<number>();
-  lastUpdateStatus = -1;
-
-  constructor(
-    private externalTournamentService: ExternalTournamentService
-  ) {}
-
+  constructor(private externalTournamentService: ExternalTournamentService) {}
 
   ngOnInit() {
     // By default, filter out ITF players that already have a VR ID
@@ -72,33 +65,36 @@ export class ExternalPlayerManagerComponent implements OnInit {
 
     // This is where the work gets done to keep the ITF Players List
     // up to date whenever the search filter changes.
-    // Ideally, I think the filter terms should be in the BehaviorSubject
+    // Ideally, I think the filter terms should be in the BehaviorSubject,
     // but I am just pulling them from local variables.
     this.ITFPlayers = [];
-    this.ITFPlayers$ = this.ITFSearchTerms
-      .pipe(
-      debounceTime(300),        // wait 100ms after each keystroke before considering the term
-      switchMap(() => this.externalTournamentService.searchPlayers(this.searchString, this.onlyPlayersWithoutVRID)),
-      catchError(error => {
-        console.log(error);
+    this.ITFPlayers$ = this.ITFSearchTerms.pipe(
+      debounceTime(300), // wait 100ms after each keystroke before considering the term
+      switchMap(() =>
+        this.externalTournamentService.searchPlayers(
+          this.searchString,
+          this.onlyPlayersWithoutVRID
+        )
+      ),
+      catchError(() => {
         return of<ExternalPlayer[]>([]);
       })
-  );
+    );
 
     // Watch for the arrival of the ITF Players from the Server
     this.VRPlayers = [];
-    this.ITFPlayers$.subscribe(
-      data => {
-        this.ITFPlayersArrived(data);
-      },
-    );
+    this.ITFPlayers$.subscribe((data) => {
+      this.ITFPlayersArrived(data);
+    });
 
     this.VRPlayers$ = this.VRSearchTerms.pipe(
       debounceTime(300),
-      switchMap((id: string) => this.externalTournamentService.findVRMatches(id))
-  );
+      switchMap((id: string) =>
+        this.externalTournamentService.findVRMatches(id)
+      )
+    );
 
-    this.VRPlayers$.subscribe(data => {
+    this.VRPlayers$.subscribe((data) => {
       this.VRPlayersArrived(data);
     });
 
@@ -164,13 +160,14 @@ export class ExternalPlayerManagerComponent implements OnInit {
     // TODO priority: lowest -> next 5 lines are a duplication of the validation on the form.
     // would like to just check the form validation, but ok.
     const n = parseInt(this.newVRIdentifier, 10);
-    if (isNaN(n) || (10000000 > n || 100000000 < n)) {
+    if (isNaN(n) || 10000000 > n || 100000000 < n) {
       return;
     }
 
     // The supplied VR ID syntactically valid (8 digits) - go look for the player.
-    this.externalTournamentService.getVRPlayerById(this.newVRIdentifier)
-      .then(player => {
+    this.externalTournamentService
+      .getVRPlayerById(this.newVRIdentifier)
+      .then((player) => {
         if (player != null) {
           this.newVRPlayer = player;
         } else {
@@ -179,7 +176,7 @@ export class ExternalPlayerManagerComponent implements OnInit {
       });
   }
 
-  ITFPlayersArrived(data): void {
+  ITFPlayersArrived(data: ExternalPlayer[]): void {
     this.ITFPlayers = data;
     this.externalPlayersLoading = false;
     this.VRPlayersLoading = false;
@@ -187,11 +184,11 @@ export class ExternalPlayerManagerComponent implements OnInit {
     this.matchesCompleted = 0;
   }
 
-  VRPlayersArrived(data): void {
+  VRPlayersArrived(data: VRPlayer[]): void {
     this.VRPlayers = data;
     this.VRPlayerCount = data.length;
     this.VRPlayersLoading = false;
-    this.showVRMatchHelp = (this.VRPlayerCount === 0);
+    this.showVRMatchHelp = this.VRPlayerCount === 0;
     this.lookupVRPlayer();
   }
 
@@ -202,8 +199,12 @@ export class ExternalPlayerManagerComponent implements OnInit {
   // The match is correct - it is shown clearly to the user and the user confirmed
   // So DO IT
   onConfirmMatch(): void {
-    this.externalTournamentService.setExternalPlayerVRID(this.selectedITFPlayer.playerId, this.newVRPlayer.playerId)
-      .then(updatedPlayer => {
+    this.externalTournamentService
+      .setExternalPlayerVRID(
+        this.selectedITFPlayer.playerId,
+        this.newVRPlayer.playerId
+      )
+      .then((updatedPlayer) => {
         if (updatedPlayer) {
           // Touch up the ITF player list without reloading it.
           // TODO - why the heck is this not for...of rather than for...in?
@@ -239,7 +240,10 @@ export class ExternalPlayerManagerComponent implements OnInit {
    */
   lookupVRPlayer() {
     for (const p of this.VRPlayers) {
-      if (this.selectedITFPlayer.tcPlayer && p.playerId === this.selectedITFPlayer.tcPlayer.playerId) {
+      if (
+        this.selectedITFPlayer.tcPlayer &&
+        p.playerId === this.selectedITFPlayer.tcPlayer.playerId
+      ) {
         this.onSelectVRPlayer(p);
         return;
       }

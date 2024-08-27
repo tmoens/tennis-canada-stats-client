@@ -1,31 +1,32 @@
-import {Inject, Injectable} from '@angular/core';
-import {BehaviorSubject, interval} from 'rxjs';
-import {Router} from '@angular/router';
-import {LOCAL_STORAGE, StorageService} from 'ngx-webstorage-service';
-import {plainToClass} from 'class-transformer';
-import {AccessTokenPayload} from './access-token-payload';
-import {AppStateService} from '../app-state.service';
-import {Roles} from './app-roles';
-import {STATS_TOOL_GROUPS} from '../../assets/stats-tool-groups';
-import {StatsToolGroup} from '../../assets/stats-tool-group';
+import { Inject, Injectable } from '@angular/core';
+import { BehaviorSubject, interval } from 'rxjs';
+import { Router } from '@angular/router';
+import { LOCAL_STORAGE, StorageService } from 'ngx-webstorage-service';
+import { plainToClass } from 'class-transformer';
+import { AccessTokenPayload } from './access-token-payload';
+import { AppStateService } from '../app-state.service';
+import { Roles } from './app-roles';
+import { STATS_TOOL_GROUPS } from '../../assets/stats-tool-groups';
+import { StatsToolGroup } from '../../assets/stats-tool-group';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
-
 export class AuthService {
   public allToolGroups = STATS_TOOL_GROUPS;
   public authorizedToolGroups: StatsToolGroup[] = [];
   public intendedPath: string;
 
-  public loggedIn$: BehaviorSubject<boolean> = new BehaviorSubject(false);
+  public loggedIn$ = new BehaviorSubject<boolean>(false);
 
   // This is used in case the GUI needs to know if the user has been authenticated, i.e. logged in.
   get isAuthenticated(): boolean {
     return this.loggedIn$.value;
   }
 
-  private accessToken$: BehaviorSubject<string> = new BehaviorSubject<string>(null);
+  private accessToken$: BehaviorSubject<string> = new BehaviorSubject<string>(
+    null
+  );
 
   get accessToken(): string {
     return this.accessToken$.value;
@@ -37,17 +38,15 @@ export class AuthService {
   constructor(
     private appState: AppStateService,
     private router: Router,
-    @Inject(LOCAL_STORAGE) private localStorage: StorageService,
-  ) {
-  }
-
+    @Inject(LOCAL_STORAGE) private localStorage: StorageService
+  ) {}
 
   initialize() {
     // tight loop, every 60 seconds check if the access token has expired and if so,
     // redirect to home page. Prevents the user from trying something and then finding out that
     // their session has effectively timed out.
     const checkExpiry = interval(60000);
-    checkExpiry.subscribe(_ => {
+    checkExpiry.subscribe((_) => {
       if (this.isAuthenticated && this.isTokenExpired(this.accessToken)) {
         this.accessToken$.next(null);
         this.router.navigateByUrl('login').then();
@@ -58,49 +57,45 @@ export class AuthService {
     this.accessToken$.next(this.localStorage.get('access_token'));
 
     // Whenever the access token changes, do some work
-    this.accessToken$.subscribe(
-      (token: string) => {
+    this.accessToken$.subscribe((token: string) => {
+      // wipe the cached token payload.
+      this.tokenPayload = null;
 
-        // wipe the cached token payload.
-        this.tokenPayload = null;
+      // Put a copy of the new token in local storage.
+      this.localStorage.set('access_token', token);
 
-        // Put a copy of the new token in local storage.
-        this.localStorage.set('access_token', token);
+      if (!token) {
+        // if there was no token, broadcast the fact that the user has logged out.
+        this.loggedIn$.next(false);
+      } else if (this.isTokenExpired(token)) {
+        // if the token is expired, (this could happen when a session is restarted and an
+        // expired token is read from local storage) set it to null, effectively logging the user out.
+        this.accessToken$.next(null);
 
-        if (!token) {
-          // if there was no token, broadcast the fact that the user has logged out.
-          this.loggedIn$.next(false);
-        } else if (this.isTokenExpired(token)) {
+        // 2023-03-17 this is not working.  So, ugh, we just do not force the password change.
+        // } else if (this.decryptToken(token).passwordChangeRequired) {
 
-          // if the token is expired, (this could happen when a session is restarted and an
-          // expired token is read from local storage) set it to null, effectively logging the user out.
-          this.accessToken$.next(null);
+        // If the user is supposed to change their password, force that.
+        // this.router.navigateByUrl('/change_password').then();
+      } else {
+        // well, finally this looks like a good access token, so mark the user as logged in
+        // and cache the token payload.
+        this.loggedIn$.next(true);
+        this.tokenPayload = this.decryptToken(token);
 
-          // 2023-03-17 this is not working.  So, ugh, we just do not force the password change.
-          // } else if (this.decryptToken(token).passwordChangeRequired) {
-
-          // If the user is supposed to change their password, force that.
-          // this.router.navigateByUrl('/change_password').then();
-        } else {
-
-          // well, finally this looks like a good access token, so mark the user as logged in
-          // and cache the token payload.
-          this.loggedIn$.next(true);
-          this.tokenPayload = this.decryptToken(token);
-
-          // If the user was heading somewhere when they were forced to log in, go there now.
-          if (this.intendedPath) {
-            const path = this.intendedPath;
-            this.intendedPath = null;
-            this.router.navigateByUrl(path).then();
-          }
-
-          // If the user is just logging in to no path in particular
-          if ('/login' === location.pathname) {
-            this.router.navigateByUrl('/').then();
-          }
+        // If the user was heading somewhere when they were forced to log in, go there now.
+        if (this.intendedPath) {
+          const path = this.intendedPath;
+          this.intendedPath = null;
+          this.router.navigateByUrl(path).then();
         }
-      });
+
+        // If the user is just logging in to no path in particular
+        if ('/login' === location.pathname) {
+          this.router.navigateByUrl('/').then();
+        }
+      }
+    });
 
     // in case the user is returning and there is a valid token.
     this.authorizedToolGroups = this.computeAuthorizedTools();
@@ -120,11 +115,13 @@ export class AuthService {
     this.onLogout();
   }
 
-
   // this decodes the access token and stuffs it in typed object.
   decryptToken(token): AccessTokenPayload {
     if (token) {
-      return plainToClass(AccessTokenPayload, JSON.parse(atob(token.split('.')[1])));
+      return plainToClass(
+        AccessTokenPayload,
+        JSON.parse(atob(token.split('.')[1]))
+      );
     } else {
       return null;
     }
@@ -143,30 +140,33 @@ export class AuthService {
     }
   }
 
-  // Check if the logged in user is allowed to perform a particular role.
+  // Check if the logged-in user is allowed to perform a particular role.
   canPerformRole(roleInQuestion: string): boolean {
     if (!this.isAuthenticated) {
       return false;
     } else {
-      return Roles.isAuthorized(this.decryptToken(this.accessToken).role, roleInQuestion);
+      return Roles.isAuthorized(
+        this.decryptToken(this.accessToken).role,
+        roleInQuestion
+      );
     }
   }
 
   getLoggedInUserName(): string {
-    return (this.isAuthenticated) ? this.tokenPayload.username : null;
+    return this.isAuthenticated ? this.tokenPayload.username : null;
   }
 
   loggedInUserId(): string {
-    return (this.isAuthenticated) ? this.tokenPayload.sub : null;
+    return this.isAuthenticated ? this.tokenPayload.sub : null;
   }
 
   computeAuthorizedTools(): StatsToolGroup[] {
     const authorizedToolGroups: StatsToolGroup[] = [];
     if (this.isAuthenticated) {
       for (const tg of this.allToolGroups) {
-        // make a copy of the tool group because not all of the tools in the group
-        // may be authorized and we dont want to alter the actual tool group
-        const authorizedTg = {...tg};
+        // make a copy of the tool group because not all the tools in the group
+        // may be authorized, and we don't want to alter the actual tool group
+        const authorizedTg = { ...tg };
         authorizedTg.tools = [];
         for (const tool of tg.tools) {
           if (this.canPerformRole(tool.requiredRole)) {

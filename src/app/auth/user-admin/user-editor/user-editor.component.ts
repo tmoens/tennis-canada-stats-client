@@ -1,15 +1,21 @@
-import {Component, OnInit} from '@angular/core';
-import {UserDTO} from '../../UserDTO';
-import {AbstractControl, AsyncValidatorFn, UntypedFormBuilder, ValidationErrors, Validators} from '@angular/forms';
-import {ActivatedRoute, ParamMap, Router} from '@angular/router';
-import {UserAdminService} from '../user-admin.service';
-import {Observable, of} from 'rxjs';
-import {map} from 'rxjs/operators';
-import {AuthService} from '../../auth.service';
-import {AppStateService} from '../../../app-state.service';
-import {Roles} from '../../app-roles';
-import {DialogService} from '../../../dialog.service';
-import {STATSTOOL} from '../../../../assets/stats-tools';
+import { Component, OnInit } from '@angular/core';
+import { UserDTO } from '../../UserDTO';
+import {
+  AbstractControl,
+  AsyncValidatorFn,
+  UntypedFormBuilder,
+  ValidationErrors,
+  Validators,
+} from '@angular/forms';
+import { ActivatedRoute, ParamMap, Router } from '@angular/router';
+import { UserAdminService } from '../user-admin.service';
+import { Observable, of } from 'rxjs';
+import { map } from 'rxjs/operators';
+import { AuthService } from '../../auth.service';
+import { AppStateService } from '../../../app-state.service';
+import { Roles } from '../../app-roles';
+import { DialogService } from '../../../dialog.service';
+import { STATSTOOL } from '../../../../assets/stats-tools';
 
 export enum EditMode {
   CREATE = 'create',
@@ -19,9 +25,8 @@ export enum EditMode {
 @Component({
   selector: 'app-user-editor',
   templateUrl: './user-editor.component.html',
-  styleUrls: ['./user-editor.component.scss']
+  styleUrls: ['./user-editor.component.scss'],
 })
-
 export class UserEditorComponent implements OnInit {
   roles: string[] = Roles.getRoles(); // so it is available to the gui
   user: UserDTO; // the item we are editing.
@@ -33,21 +38,29 @@ export class UserEditorComponent implements OnInit {
   // these need to call the api service to do their checks, but not if the email/username
   // is the same as it was when we started editing the user.  For this the validator needs
   // to be able to see both the api service and the "original" user.  I can pass the api
-  // service to the validator function easily enough but I cannot pass the current user dto.
-  // SO, out comes the sledge hammer and I pass the whole of "this" to the validators, which
+  // service to the validator function easily enough, but I cannot pass the current user dto.
+  // So, here comes my sledgehammer and I pass the whole of "this" to the validators, which
   // now have everything they need.
-  mfForm = this.fb.group({
-    email: ['', [Validators.required, Validators.email], [existingEmailValidatorFn(this)]],
+  protected mfForm = this.fb.group({
+    email: [
+      '',
+      [Validators.required, Validators.email],
+      [existingEmailValidatorFn(this)],
+    ],
     id: [null],
-    isActive: [{value: true, disabled: true}],
-    isLoggedIn: [{value: false, disabled: true}],
+    isActive: [{ value: true, disabled: true }],
+    isLoggedIn: [{ value: false, disabled: true }],
     name: [null, [Validators.required], [existingNameValidatorFn(this)]],
-    passwordChangeRequired: [{value: false, disabled: true}],
+    passwordChangeRequired: [{ value: false, disabled: true }],
     phone: [null],
     isDeletable: [null],
     role: ['guest', [Validators.required]],
-    username: [null, [Validators.required], [existingUsernameValidatorFn(this)]],
-  } );
+    username: [
+      null,
+      [Validators.required],
+      [existingUsernameValidatorFn(this)],
+    ],
+  });
 
   constructor(
     public appState: AppStateService,
@@ -56,7 +69,7 @@ export class UserEditorComponent implements OnInit {
     private fb: UntypedFormBuilder,
     public service: UserAdminService,
     private deactivationDialogService: DialogService,
-    private authService: AuthService,
+    private authService: AuthService
   ) {}
 
   ngOnInit(): void {
@@ -96,7 +109,7 @@ export class UserEditorComponent implements OnInit {
 
   save() {
     this.saved = true;
-    const editedDTO: UserDTO = (this.mfForm.getRawValue());
+    const editedDTO: UserDTO = this.mfForm.getRawValue();
     switch (this.editMode) {
       case EditMode.CREATE:
         this.service.create(editedDTO);
@@ -108,7 +121,7 @@ export class UserEditorComponent implements OnInit {
   }
 
   cancel() {
-    this.router.navigate([STATSTOOL.USER_MANAGER.route + '/view']);
+    this.router.navigate([STATSTOOL.USER_MANAGER.route + '/view']).then();
   }
 
   revert() {
@@ -116,14 +129,16 @@ export class UserEditorComponent implements OnInit {
   }
 
   /* To support deactivation check  */
-  canDeactivate(): boolean | Observable<boolean> |Promise <boolean> {
+  canDeactivate(): boolean | Observable<boolean> | Promise<boolean> {
     if (this.saved) {
       return true;
     }
     if (this.mfForm.pristine) {
       return true;
     } else {
-      return this.deactivationDialogService.confirm('There are unsaved changes to the user you are editing.');
+      return this.deactivationDialogService.confirm(
+        'There are unsaved changes to the user you are editing.'
+      );
     }
   }
 
@@ -150,36 +165,48 @@ export class UserEditorComponent implements OnInit {
 }
 
 function existingEmailValidatorFn(t: UserEditorComponent): AsyncValidatorFn {
-  return (control: AbstractControl): Promise<ValidationErrors | null> | Observable<ValidationErrors | null> => {
+  return (
+    control: AbstractControl
+  ): Promise<ValidationErrors | null> | Observable<ValidationErrors | null> => {
     // don't bother with the going to the server if the email belongs to the user being edited.
-    if (t.user && t.user.email && t.user.email === control.value) { return of(null); }
+    if (t.user && t.user.email && t.user.email === control.value) {
+      return of(null);
+    }
     return t.service.isEmailInUse(control.value).pipe(
       map((result: boolean) => {
-        return result ? {inUse: true} : null;
+        return result ? { inUse: true } : null;
       })
     );
   };
 }
 
 function existingUsernameValidatorFn(t: UserEditorComponent): AsyncValidatorFn {
-  return (control: AbstractControl): Promise<ValidationErrors | null> | Observable<ValidationErrors | null> => {
+  return (
+    control: AbstractControl
+  ): Promise<ValidationErrors | null> | Observable<ValidationErrors | null> => {
     // don't bother with the going to the server if the username belongs to the user being edited.
-    if (t.user && t.user.username && t.user.username === control.value) { return of(null); }
+    if (t.user && t.user.username && t.user.username === control.value) {
+      return of(null);
+    }
     return t.service.isUsernameInUse(control.value).pipe(
       map((result: boolean) => {
-        return result ? {inUse: true} : null;
+        return result ? { inUse: true } : null;
       })
     );
   };
 }
 
 function existingNameValidatorFn(t: UserEditorComponent): AsyncValidatorFn {
-  return (control: AbstractControl): Promise<ValidationErrors | null> | Observable<ValidationErrors | null> => {
+  return (
+    control: AbstractControl
+  ): Promise<ValidationErrors | null> | Observable<ValidationErrors | null> => {
     // don't bother with the going to the server if the name belongs to the user being edited.
-    if (t.user && t.user.name && t.user.name === control.value) { return of(null); }
+    if (t.user && t.user.name && t.user.name === control.value) {
+      return of(null);
+    }
     return t.service.isNameInUse(control.value).pipe(
       map((result: boolean) => {
-        return result ? {inUse: true} : null;
+        return result ? { inUse: true } : null;
       })
     );
   };

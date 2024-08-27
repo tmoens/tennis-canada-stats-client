@@ -1,86 +1,115 @@
-<div fxLayout="column" fxLayoutGap="20px" class="mat-elevation-z3 app-box">
-  <h2 fxFlexAlign="center">Evaluate strengths of events which match the criteria below</h2>
-  <form class="form-inline " fxLayout="column" fxLayoutAlign="center" fxLayoutGap="20px">
-    <div fxLayout="row" fxLayoutAlign="center" fxLayoutGap="20px">
-      <mat-form-field>
-        <mat-select name="jurisdictionSelector"
-                    [(ngModel)]="filterCriteria.jurisdiction"
-                    (selectionChange)="filterChange()"
-                    placeholder="Jurisdiction">
-          <mat-option *ngFor="let j of jurisdictions" [value]="j">{{j.label}}</mat-option>
-        </mat-select>
-      </mat-form-field>
-      <mat-form-field>
-        <mat-select name="genderSelector"
-                    [(ngModel)]="filterCriteria.gender"
-                    (selectionChange)="filterChange()"
-                    placeholder="Gender">
-          <mat-option *ngFor="let g of genders" [value]="g">{{g.label}}</mat-option>
-        </mat-select>
-      </mat-form-field>
-      <mat-form-field>
-        <input matInput [matDatepicker]="todateDP" placeholder="Until" [formControl]="toDateFC"
-               [min]="beginningOfTime"
-               [max]="today">
-        <mat-datepicker-toggle matSuffix [for]="todateDP"></mat-datepicker-toggle>
-        <mat-datepicker #todateDP></mat-datepicker>
-      </mat-form-field>
-      <mat-form-field>
-        <mat-select name="periodSelector"
-                    placeholder="Period"
-                    [(ngModel)]="filterCriteria.period"
-                    (selectionChange)="filterChange()">
-          <mat-option *ngFor="let p of periods" [value]="p">{{p.label}}</mat-option>
-        </mat-select>
-      </mat-form-field>
+<mat-card class="medium-tool">
+  <mat-card-header>
+    <mat-card-title>Event Strength Report</mat-card-title>
+    <mat-card-subtitle class="mat-body-medium">Generate a report of the relative playing strength of the selected events.</mat-card-subtitle>
+  </mat-card-header>
+  <mat-card-content>
+    <div class="vertical-spacer-medium"></div>
+    <form class="form-inline flex-column flex-align-center gap-10">
+      <div class="flex-row flex-align-center gap-20">
+        <mat-form-field floatLabel="always">
+          <mat-label></mat-label>
+          <mat-label>Jurisdiction</mat-label>
+          <mat-select name="jurisdictionSelector"
+                      [(ngModel)]="filterCriteria.jurisdiction"
+                      (selectionChange)="filterChange()">
+            <mat-option *ngFor="let j of jurisdictions" [value]="j">{{j.label}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field floatLabel="always">
+          <mat-label>Gender</mat-label>
+          <mat-select name="genderSelector"
+                      [(ngModel)]="filterCriteria.gender"
+                      (selectionChange)="filterChange()">
+            <mat-option *ngFor="let g of genders" [value]="g">{{g.label}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field floatLabel="always">
+          <mat-label>Until</mat-label>
+          <input matInput [matDatepicker]="todateDP" [formControl]="toDateFC"
+                 [min]="beginningOfTime"
+                 [max]="today">
+          <mat-datepicker-toggle matSuffix [for]="todateDP"></mat-datepicker-toggle>
+          <mat-datepicker #todateDP></mat-datepicker>
+        </mat-form-field>
+        <mat-form-field floatLabel="always">
+          <mat-label>Period</mat-label>
+          <mat-select name="periodSelector"
+
+                      [(ngModel)]="filterCriteria.period"
+                      (selectionChange)="filterChange()">
+            <mat-option *ngFor="let p of periods" [value]="p">{{p.label}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+      <div class="flex-row flex-align-start gap-30">
+        <div class="flex-column">
+          <mat-checkbox (change)="allJuniorsSelected()"
+                        [(ngModel)]="filterCriteria.categories.allJuniorCategories"
+                        name="allJuniors">All Junior Categories
+          </mat-checkbox>
+          <mat-checkbox class="stubby-checkbox"
+                        *ngFor="let c of filterCriteria.categories.juniorCategories"
+                        [(ngModel)]="c.value" (change)="juniorCategorySelected(c)"
+                        [name]="c.id">{{c.id}}
+          </mat-checkbox>
+        </div>
+
+        <div class="flex-column">
+          <mat-checkbox (change)="allAdultsSelected()"
+                        [(ngModel)]="filterCriteria.categories.allAdultCategories"
+                        name="allAdults">All Adult Categories
+          </mat-checkbox>
+          <mat-checkbox class="stubby-checkbox"
+                        *ngFor="let c of filterCriteria.categories.adultCategories"
+                        [(ngModel)]="c.value" (change)="adultCategorySelected(c)"
+                        [name]="c.id">{{c.id}}
+          </mat-checkbox>
+        </div>
+        <div class="flex-column">
+          <mat-checkbox (change)="allSeniorsSelected()"
+                        [(ngModel)]="filterCriteria.categories.allSeniorCategories"
+                        name="allSeniors">All Senior Categories
+          </mat-checkbox>
+          <mat-checkbox class="stubby-checkbox"
+                        *ngFor="let c of filterCriteria.categories.seniorCategories"
+                        [(ngModel)]="c.value" (change)="seniorCategorySelected(c)"
+                        [name]="c.id">{{c.id}}
+          </mat-checkbox>
+        </div>
+      </div>
+    </form>
+    <div class="vertical-spacer-medium"></div>
+    <div class="flex-row flex-justify-center gap-20">
+      <button mat-button (click)="buildReport()">
+        <mat-icon>build</mat-icon> Build Ratings
+      </button>
+      <a mat-button type="button" [href]="downloadURL" [disabled]="!state.ratingsReady">
+        <mat-icon>cloud_download</mat-icon> Download Ratings
+      </a>
     </div>
-    <div fxLayout="row" fxLayoutGap="20px" fxLayoutAlign="center">
-      <div fxLayout="column">
-        <mat-checkbox (change)="allJuniorsSelected()" color="primary"
-                      [(ngModel)]="filterCriteria.categories.allJuniorCategories"
-                      name="allJuniors">All Junior Categories</mat-checkbox>
-        <mat-checkbox *ngFor="let c of filterCriteria.categories.juniorCategories"
-                      [(ngModel)]="c.value" (change)="juniorCategorySelected(c)"
-                      [name]="c.id" color="primary">{{c.id}}</mat-checkbox>
+    <div class="vertical-spacer-medium"></div>
+
+    <!-- Progress of the current or most recent report build -->
+    <div *ngIf="requestStatus && state.buildingRatings" class="progress-container">
+      <!-- Progress Info -->
+      <div class="progress-info mat-caption">
+        {{ requestStatus.counters.done}} of {{ requestStatus.toDo }} categories completed
       </div>
 
-      <div fxLayout="column">
-        <mat-checkbox (change)="allAdultsSelected()" color="primary"
-                      [(ngModel)]="filterCriteria.categories.allAdultCategories"
-                      name="allAdults">All Adult Categories</mat-checkbox>
-        <mat-checkbox *ngFor="let c of filterCriteria.categories.adultCategories"
-                      [(ngModel)]="c.value" (change)="adultCategorySelected(c)"
-                      [name]="c.id" color="primary">{{c.id}}</mat-checkbox>
+      <mat-progress-bar mode="determinate" [value]="requestStatus.percentComplete"></mat-progress-bar>
+
+      <!-- Current Activity -->
+      <div class="current-activity mat-body-medium">
+        Working on: {{ requestStatus.data.currentEvent | truncate }}
       </div>
-      <div fxLayout="column">
-        <mat-checkbox (change)="allSeniorsSelected()" color="primary"
-                      [(ngModel)]="filterCriteria.categories.allSeniorCategories"
-                      name="allSeniors">All Senior Categories</mat-checkbox>
-        <mat-checkbox *ngFor="let c of filterCriteria.categories.seniorCategories"
-                      [(ngModel)]="c.value" (change)="seniorCategorySelected(c)"
-                      [name]="c.id" color="primary">{{c.id}}</mat-checkbox>
-      </div>
+
     </div>
-  </form>
-  <mat-divider></mat-divider>
-  <div fxFlexAlign="center" fxLayout="row"  fxLayoutGap="20px">
-    <button mat-button  color="primary"  (click)="buildReport()">
-      <mat-icon>build</mat-icon> Build Ratings
-    </button>
-    <a mat-button color="primary" type="button"
-       [href]="downloadURL"
-       [disabled]="!state.ratingsReady"
-    >
-      <mat-icon>cloud_download</mat-icon> Download Ratings
-    </a>
-  </div>
-  <mat-progress-bar mode="indeterminate" *ngIf="state.buildingRatings">
-    <div>Please wait while we build your ratings data.</div>
-  </mat-progress-bar>
-  <mat-divider></mat-divider>
-  <div *ngIf="requestStatus">
-    <p>Categories to do: {{requestStatus.toDo}}  done: {{requestStatus.counters.done}}</p>
-    <p>Events rated: {{requestStatus.counters.eventsProcessed}}</p>
-    <p>Current event: {{requestStatus.data.currentEvent}}</p>
-  </div>
-</div>
+
+    <div *ngIf="requestStatus && state.ratingsReady">
+      <div class="mat-body-small">Categories done: {{requestStatus.counters.done}}</div>
+      <div class="mat-body-small">Events rated: {{requestStatus.counters.eventsProcessed}}</div>
+      <div class="mat-body-small">Report ready for download.</div>
+    </div>
+  </mat-card-content>
+</mat-card>

@@ -1,23 +1,24 @@
-.mat-cell {
-  font-size: 12px
+.mat-mdc-cell {
+  font-size: 12px;
 }
 
-mat-cell, .mat-cell {
+mat-cell, .mat-mdc-cell {
   padding-left: 4px;
 }
 
-mat-header-cell, .mat-header-cell {
+mat-header-cell, .mat-mdc-header-cell {
+  font-size: 16px;
   padding-left: 4px;
 }
 
-.mat-cell .mat-button {
+.mat-mdc-cell .mat-mdc-button {
   font-size: 12px;
   min-width: 30px;
-  padding: 0px;
+  padding: 0;
 }
 
 .mat-column-endDate {
-  flex: 0 0 7%;
+  flex: 0 0 9%;
 }
 .mat-column-tournamentType {
   flex: 0 0 8%;
@@ -26,11 +27,11 @@ mat-header-cell, .mat-header-cell {
 .mat-column-fullName {
   flex: 0 0 12%;
 }
-.mat-column-id {
-  flex: 0 0 8%;
-}
 .mat-column-vrid {
   flex: 0 0 7%;
+}
+.mat-column-id {
+  flex: 0 0 8%;
 }
 .mat-column-drawSize {
   justify-content: flex-end;
@@ -50,17 +51,17 @@ mat-header-cell, .mat-header-cell {
 }
 .mat-column-externalPts {
   justify-content: flex-end;
-  flex: 0 0 5%;
+  flex: 0 0 7%;
 }
 .mat-column-epOverride {
   justify-content: flex-end;
-  flex: 0 0 7%;
+  flex: 0 0 10%;
 }
-.mat-table {
+.mat-mdc-table {
   overflow: auto;
 }
 
 .filter-form-field {
-  width: 170px;
+  width: 190px;
 }
 

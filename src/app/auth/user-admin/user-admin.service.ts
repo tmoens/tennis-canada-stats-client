@@ -1,49 +1,47 @@
-import {Injectable} from '@angular/core';
-import {UserDTO} from '../UserDTO';
-import {BehaviorSubject, Observable} from 'rxjs';
-import {MatSnackBar} from '@angular/material/snack-bar';
-import {AppStateService} from '../../app-state.service';
-import {AuthApiService} from '../auth-api.service';
-import {Router} from '@angular/router';
-import {UserFilter} from './user-filter';
-import {STATSTOOL} from '../../../assets/stats-tools';
+import { Injectable } from '@angular/core';
+import { UserDTO } from '../UserDTO';
+import { BehaviorSubject, Observable } from 'rxjs';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { AppStateService } from '../../app-state.service';
+import { AuthApiService } from '../auth-api.service';
+import { Router } from '@angular/router';
+import { STATSTOOL } from '../../../assets/stats-tools';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class UserAdminService {
-  filter: UserFilter;
-  public selected$: BehaviorSubject<UserDTO> = new BehaviorSubject<UserDTO>(null);
-  get selected() { return this.selected$.getValue(); }
-
+  public selected$: BehaviorSubject<UserDTO> = new BehaviorSubject<UserDTO>(
+    null
+  );
   // This keeps track of whether the user is editing or browsing
   public inEditMode = false;
-
-  filteredList: UserDTO[] = [];
+  userList: UserDTO[] = [];
 
   constructor(
     private authApiService: AuthApiService,
     private message: MatSnackBar,
     private appState: AppStateService,
-    private router: Router,
-  ) {
+    private router: Router
+  ) {}
+
+  get selected() {
+    return this.selected$.getValue();
   }
 
   initialize() {
-      this.filter = new UserFilter();
+    // Intentionally left blank.
   }
 
-  applyFilter(filter: UserFilter) {
-    this.filter = filter;
-    this.authApiService.getUsers(filter)
-      .subscribe((data: UserDTO[]) => {
-        if (data) {
-          this.filteredList = data;
-          if (!this.selected && this.filteredList.length > 0) {
-            this.select(this.filteredList[0]);
-          }
+  getAllUsers() {
+    this.authApiService.getUsers().subscribe((data: UserDTO[]) => {
+      if (data) {
+        this.userList = data;
+        if (!this.selected && this.userList.length > 0) {
+          this.select(this.userList[0]);
         }
-      });
+      }
+    });
   }
 
   select(user: UserDTO) {
@@ -67,56 +65,59 @@ export class UserAdminService {
   }
 
   create(user: UserDTO) {
-    this.authApiService.create(user)
-      .subscribe((u: UserDTO) => this.refilterAndNavigate(u));
+    this.authApiService
+      .create(user)
+      .subscribe((u: UserDTO) => this.reloadAndNavigate(u));
   }
 
   delete(id: string) {
     this.authApiService.delete(id).subscribe((result) => {
       if (result) {
-        this.message.open(result.name + ' deleted.', null, {duration: this.appState.getState('confirmMessageDuration')});
-        this.refilterAndNavigate(null);
+        this.message.open(result.name + ' deleted.', null, {
+          duration: this.appState.getState('confirmMessageDuration'),
+        });
+        this.reloadAndNavigate(null);
       }
     });
   }
 
   update(user: UserDTO) {
-    this.authApiService.update(user)
-      .subscribe((u: UserDTO) => {
-        this.refilterAndNavigate(u);
-      });
+    this.authApiService.update(user).subscribe((u: UserDTO) => {
+      this.reloadAndNavigate(u);
+    });
   }
 
   activate(user: UserDTO) {
-    this.authApiService.activate(user)
-      .subscribe((u: UserDTO) => {
-        this.refilterAndNavigate(u);
-      });
+    this.authApiService.activate(user).subscribe((u: UserDTO) => {
+      this.reloadAndNavigate(u);
+    });
   }
 
   deactivate(user: UserDTO) {
-    this.authApiService.deactivate(user)
-      .subscribe((u: UserDTO) => {
-        this.refilterAndNavigate(u);
-      });
+    this.authApiService.deactivate(user).subscribe((u: UserDTO) => {
+      this.reloadAndNavigate(u);
+    });
   }
 
   forceLogout(user: UserDTO) {
-    this.authApiService.forceLogout(user)
-      .subscribe((u: UserDTO) => {
-        this.refilterAndNavigate(u);
-      });
+    this.authApiService.forceLogout(user).subscribe((u: UserDTO) => {
+      this.reloadAndNavigate(u);
+    });
   }
 
-  refilterAndNavigate(user?: UserDTO) {
+  reloadAndNavigate(user?: UserDTO) {
     // In case any of the changes drop or add the user from or to the filtered set.
     if (user) {
       this.selectById(user.id);
     } else {
       this.select(null);
     }
-    this.applyFilter(this.filter);
-    this.router.navigateByUrl(STATSTOOL.USER_MANAGER.route + '/view' + ((user) ? '/' + user.id : ''));
+    this.getAllUsers();
+    this.router
+      .navigateByUrl(
+        STATSTOOL.USER_MANAGER.route + '/view' + (user ? '/' + user.id : '')
+      )
+      .then();
   }
 
   isEmailInUse(email: string): Observable<boolean> {
@@ -129,14 +130,6 @@ export class UserAdminService {
 
   isNameInUse(email: string): Observable<boolean> {
     return this.authApiService.isNameInUse(email);
-  }
-
-  isInitialsInUse(email: string): Observable<boolean> {
-    return this.authApiService.isInitialsInUse(email);
-  }
-
-  enterEditMode() {
-    this.inEditMode = true;
   }
 
   enterBrowseMode() {

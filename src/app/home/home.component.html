@@ -1,22 +1,27 @@
-<mat-card fxFlexAlign="center">
+<mat-card class="large-tool">
+  <mat-card-header>
+    <mat-card-title>Tennis Canada Stats Tools</mat-card-title>
+    <mat-card-subtitle class="mat-title-small">A collection of tools that use the stats database.</mat-card-subtitle>
+  </mat-card-header>
   <mat-card-content>
+    <div class="vertical-spacer-medium"></div>
     <mat-accordion>
-      <div *ngFor="let tg of authService.authorizedToolGroups">
+      <ng-container *ngFor="let tg of authService.authorizedToolGroups">
         <mat-expansion-panel>
           <mat-expansion-panel-header>
-            <mat-panel-title>{{tg.displayName}}</mat-panel-title>
-            <mat-panel-description>{{tg.description}}</mat-panel-description>
+            <mat-panel-title class="mat-title-small">{{tg.displayName}}</mat-panel-title>
+            <mat-panel-description class="mat-body-small">{{tg.description}}</mat-panel-description>
           </mat-expansion-panel-header>
-          <mat-list *ngFor="let tool of tg.tools">
-            <mat-list-item>
-              <p mat-line >
-                <button mat-button color="primary" routerLink="/{{tool.route}}">{{tool.displayName}}</button>
-              </p>
-              <p mat-line>{{tool.description}}</p>
-            </mat-list-item>
-          </mat-list>
+
+          <div class="flex-column flex-align-start">
+            <ng-container *ngFor="let tool of tg.tools">
+              <button mat-button routerLink="/{{tool.route}}">{{ tool.displayName }}</button>
+              <div class="mat-body-small">{{ tool.description }}</div>
+              <div class="vertical-spacer-small"></div>
+            </ng-container>
+          </div>
         </mat-expansion-panel>
-      </div>
+      </ng-container>
     </mat-accordion>
   </mat-card-content>
 </mat-card>

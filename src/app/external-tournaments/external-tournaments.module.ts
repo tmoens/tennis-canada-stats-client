@@ -2,9 +2,8 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 import { ExternalTournamentsRoutingModule } from './external-tournaments-routing.module';
-import {FormsModule, ReactiveFormsModule} from "@angular/forms";
-import {HttpClientModule} from "@angular/common/http";
-import {FlexLayoutModule} from "@angular/flex-layout";
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { HttpClientModule } from '@angular/common/http';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatCheckboxModule } from '@angular/material/checkbox';
@@ -22,9 +21,9 @@ import { MatTableModule } from '@angular/material/table';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import {MomentDateModule} from "@angular/material-moment-adapter";
-import {ExternalPlayerManagerComponent} from "./external-player-manager/external-player-manager.component";
-import {ResultsBrowserComponent} from "./results-browser/results-browser.component";
+import { MomentDateModule } from '@angular/material-moment-adapter';
+import { ExternalPlayerManagerComponent } from './external-player-manager/external-player-manager.component';
+import { ResultsBrowserComponent } from './results-browser/results-browser.component';
 import { ExternalTournamentsComponent } from './external-tournaments.component';
 
 @NgModule({
@@ -40,16 +39,27 @@ import { ExternalTournamentsComponent } from './external-tournaments.component';
     FormsModule,
     ReactiveFormsModule,
     HttpClientModule,
-    FlexLayoutModule,
-    MatButtonModule, MatCardModule, MatCheckboxModule, MatDatepickerModule,
-    MatFormFieldModule, MatInputModule, MatListModule, MatNativeDateModule,
-    MatOptionModule, MatRadioModule, MatSelectModule, MatTabsModule, MatToolbarModule,
+    MatButtonModule,
+    MatCardModule,
+    MatCheckboxModule,
+    MatDatepickerModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatListModule,
+    MatNativeDateModule,
+    MatOptionModule,
+    MatRadioModule,
+    MatSelectModule,
+    MatTabsModule,
+    MatToolbarModule,
     MatTableModule,
     MatProgressBarModule,
     MatTooltipModule,
     MatIconModule,
     MatSlideToggleModule,
     MomentDateModule,
-  ]
+  ],
 })
-export class ExternalTournamentsModule { }
+export class ExternalTournamentsModule {
+  // Intentionally left empty.
+}

@@ -1,4 +1,4 @@
-import {VRPlayer} from "../VRPlayer";
+import { VRPlayer } from '../VRPlayer';
 
 export class ExternalPlayer {
   playerId: string;

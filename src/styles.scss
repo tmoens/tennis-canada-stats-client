@@ -1,26 +1,80 @@
 @use '@angular/material' as mat;
-@import '../node_modules/@angular/material/theming';
-// Note to self - import component .scss files here if you have component specific scss
+@use './app/external-tournaments/external-player-manager/external-player-manager.component.theme' as externalPlayerManagerComponent;
 
-// From the documentation - mat-core should not be imported in other scss files
 @include mat.core();
-@import "tc-tools-theme.scss";
 
-@include mat.all-component-themes($tc-tools-theme);
-@import './app/app.component';
-@include tc-stats-app($tc-tools-theme);
-@import './app/external-tournaments/external-player-manager/external-player-manager.component.theme';
-@include itf-player-list-theme($tc-tools-theme);
+$primary-color: mat.$azure-palette;
 
-.fill-remaining-space {
-  // This fills the remaining space, by using flexbox.
-  // Every toolbar row uses a flexbox row layout.
-  flex: 1 1 auto;
+$tc-tools-theme: mat.define-theme((
+  color: (
+    theme-type: light,
+    primary: $primary-color,
+    tertiary: mat.$blue-palette,
+  ),
+  typography: (
+    brand-family: 'Roboto',
+    bold-weight: 900
+  ),
+  density: (
+    scale:0,
+  )
+));
+
+@import "flexbox_layout";
+
+:root {
+  @include mat.all-component-themes($tc-tools-theme);
+  @include mat.all-component-typographies($tc-tools-theme);
+  @include mat.typography-hierarchy($tc-tools-theme);
+  @include externalPlayerManagerComponent.itf-player-list-theme($tc-tools-theme);
+}
+
+.app-width{
+  max-width: 1400px;
 }
 
 .app-box {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
   padding: 8px;
   margin: 5px;
-  max-width: 1000px;
-  max-height: 80vh;
+  min-height: 500px;
+}
+
+.small-tool {
+  width: 600px;
+  padding: 10px;
+}
+
+.medium-tool {
+  width: 800px;
+  padding: 10px;
+}
+
+.large-tool {
+  min-width: 800px;
+  padding: 10px;
+}
+
+.extra-large-tool {
+  min-width: 1400px;
+  padding: 10px;
+}
+
+.vertical-spacer-medium {
+  height: 20px;
+}
+
+.vertical-spacer-small {
+  height: 10px;
+}
+
+.pad-10 {
+  padding: 10px;
+}
+
+.mat-toolbar {
+  background-color: mat.get-theme-color($tc-tools-theme, primary, 90) !important;
+  color: mat.get-theme-color($tc-tools-theme, primary, 10) !important;
 }

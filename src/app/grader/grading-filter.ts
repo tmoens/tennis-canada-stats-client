@@ -1,5 +1,7 @@
+import { TournamentCategory } from './tournament-category-enum';
+
 export class GradingFilter {
-  showTournaments = false;
+  tournamentCategory: string = TournamentCategory.Leagues;
   showAll = false;
   since: string = null;
 }

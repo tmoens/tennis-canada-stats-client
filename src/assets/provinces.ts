@@ -1,4 +1,4 @@
-import {TennisAssociation} from '../app/util/province';
+import { TennisAssociation } from '../app/util/province';
 
 // TODO - this data is redundant with the TennisAssociation table in the database
 // it should be fetched rather than hard coded.
@@ -8,56 +8,56 @@ export const TENNIS_ASSOCIATIONS: TennisAssociation[] = [
     'Alberta',
     'AB',
     'Tennis Alberta',
-    'tennisalberta.com',
+    'tennisAlberta.com',
     'tc.tournamentsoftware.com'
   ),
   new TennisAssociation(
     'British Columbia',
     'BC',
     'Tennis BC',
-    'tennisbc.org',
+    'tennisBC.org',
     'tc.tournamentsoftware.com'
   ),
   new TennisAssociation(
     'Manitoba',
     'MB',
     'Tennis Manitoba',
-    'tennismanitoba.com',
+    'tennisManitoba.com',
     'tc.tournamentsoftware.com'
   ),
   new TennisAssociation(
     'New Brunswick',
     'NB',
     'Tennis New Brunswick',
-    'newbrunswick.tenniscanada.com',
+    'newBrunswick.tennisCanada.com',
     'tc.tournamentsoftware.com'
   ),
   new TennisAssociation(
     'Newfoundland and Labrador',
     'NL',
     'Tennis Newfoundland',
-    'newfoundland.tenniscanada.com',
+    'newfoundland.tennisCanada.com',
     'tc.tournamentsoftware.com'
   ),
   new TennisAssociation(
     'Nova Scotia',
     'NS',
     'Tennis Nova Scotia',
-    'novascotia.tenniscanada.com',
+    'novaScotia.tennisCanada.com',
     'tc.tournamentsoftware.com'
   ),
   new TennisAssociation(
     'Ontario',
     'ON',
     'Ontario Tennis Association',
-    'www.tennisontario.com',
+    'www.tennisOntario.com',
     'ota.tournamentsoftware.com'
   ),
   new TennisAssociation(
     'Prince Edward Island',
     'PE',
     'Tennis PEI',
-    'pei.tenniscanada.com',
+    'pei.tennisCanada.com',
     'tc.tournamentsoftware.com'
   ),
   new TennisAssociation(
@@ -71,14 +71,14 @@ export const TENNIS_ASSOCIATIONS: TennisAssociation[] = [
     'Saskatchewan',
     'SK',
     'Tennis Saskatchewan',
-    'tennissask.com',
+    'tennisSask.com',
     'tc.tournamentsoftware.com'
   ),
   new TennisAssociation(
     'Canada',
     'TC',
     'Tennis Canada',
-    'tenniscanada.com',
+    'tennisCSanada.com',
     'tc.tournamentsoftware.com'
-  )
+  ),
 ];

@@ -1,7 +1,6 @@
-<div fxLayout="column" fxLayoutAlign="center" *ngIf="authService.isAuthenticated">
-
+<div class="flex-column flex-align-center mat-elevation-z3" *ngIf="authService.isAuthenticated">
     <!-- The toolbar specific to User manager -->
-    <mat-toolbar  color="primary">
+    <mat-toolbar color="primary">
 
       <!-- The button to toggle the sidenav is disabled while an item is being edited -->
       User Administration
@@ -15,7 +14,7 @@
         <app-user-selector></app-user-selector>
       </mat-sidenav>
 
-      <mat-sidenav-content>
+      <mat-sidenav-content style="min-height: 700px">
         <div>
           <router-outlet></router-outlet>
         </div>

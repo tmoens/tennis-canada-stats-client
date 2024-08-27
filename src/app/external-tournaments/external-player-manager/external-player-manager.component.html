@@ -1,163 +1,206 @@
-<div fxLayout="row" fxLayoutGap="10px" >
-  <div fxLayout="column" fxLayoutGap="10px" fxFlexAlign="start start" fxFlex="17%"
-       class="app-box mat-elevation-z3">
-    <div>
-      <h3>Link ITF to VR IDs</h3>
-      <p>This application allows you to link Canadian players with ITF IDs to their VR IDs
-        allowing ITF, ATP and WTA results to be incorporated into the Canadian Ranking System.
-      <p>Adjust the filters on the ITF Player List to see specific players or all the players who do not have a VR ID.
-      <p>Choose a player from the ITF player list and the system will show you the VR players with a matching last name.
-      <p>If there is a matching player in the VR list, select it to establish a link between the player's ITF and VR ID.
-      <p>You can enter a VR ID directly for the ITF player, but be sure it is the right one.
+<mat-card class="large-tool">
+  <mat-card-header>
+    <div class="flex-row gap-20 flex-justify-start" style="width: 100%">
+      <div class="flex-column">
+        <mat-card-title>Link a player's ITF ID to their VR ID</mat-card-title>
+        <mat-slide-toggle [(ngModel)]="onlyPlayersWithoutVRID" (change)="onITFPlayerFilterChange()">
+          Only show players with unmatched ITF IDs.
+        </mat-slide-toggle>
+      </div>
+      <div class="fill-remaining-space"></div>
+      <mat-form-field floatLabel="always" class="filter-form-field">
+        <mat-icon matPrefix>search</mat-icon>
+        <mat-label>Partial last name in the ITF</mat-label>
+        <input matInput [(ngModel)]="searchString" name="searchString"
+               type="search"
+               (keyup)="onITFPlayerFilterChange()" (search)="onITFPlayerFilterChange()">
+      </mat-form-field>
     </div>
-    <mat-divider></mat-divider>
-    <h3>Player Filter</h3>
-    <mat-slide-toggle color="primary"
-                      matTooltip="Only list players who do not have a VR Id yet"
-                      [(ngModel)]="onlyPlayersWithoutVRID" (change)="onITFPlayerFilterChange()">
-      VR Mismatches Only
-    </mat-slide-toggle>
-    <mat-form-field class="filter-form-field">
-      <mat-icon matPrefix>search</mat-icon>
-      <input matInput [(ngModel)]="searchString" name="searchString"
-             matTooltip="Enter part of a last name or Id to filter the player list."
-             placeholder="Search by last name or Id" type="search"
-             (keyup)="onITFPlayerFilterChange()" (search)="onITFPlayerFilterChange()">
-    </mat-form-field>
-  </div>
-  <div fxFlex="38%" class="app-box mat-elevation-z3" fxLayout="column"
-       style="overflow-y: auto">
-    <h2>ITF Player List ({{ITFPlayers.length - matchesCompleted}})</h2>
-    <div *ngIf="externalPlayersLoading">
-      <mat-progress-bar mode="indeterminate"></mat-progress-bar>
-      <H3>Loading Players</H3>
-    </div>
-    <div class="instruction" *ngIf="ITFPlayers.length === 0">
-      <h3> </h3>
-      <h3>No players match the filter settings.</h3>
-    </div>
-    <mat-list class="player-list">
-      <mat-list-item  *ngFor="let player of ITFPlayers"
-                      class="player-list-item"
-                      [class.selected]="player == selectedITFPlayer"
-                      (click)="onSelectITFPlayer(player)">
-        <h4 mat-line>
-          <span *ngIf="player.tcPlayer">
-            <mat-icon class="green-icon">done</mat-icon>
-          </span>
-          {{player.lastName}}, {{player.firstName}} ({{player.gender}}, IPIN: {{player.ipin}})
-        </h4>
-        <p mat-line *ngIf="player == selectedITFPlayer">
-          DOB: {{player.DOB.substr(0,10)}}
-        </p>
-        <form mat-line *ngIf="player == selectedITFPlayer">
-          <mat-form-field>
-            <input matInput [(ngModel)]="newVRIdentifier"
-                   [ngModelOptions]="{standalone: true}"
-                   maxlength="8"
-                   pattern="\d{8}"
-                   placeholder="Enter VRID or choose a candidate"
-                   (keyup)="onVRIDChange()">
-            <mat-error>A VR ID is 8 digits</mat-error>
-          </mat-form-field>
-        </form>
-        <div mat-line *ngIf="player == selectedITFPlayer && failedVRPlayerLookup">
-          <mat-error>No VR player found with ID {{newVRIdentifier}}</mat-error>
+  </mat-card-header>
+  <mat-card-content>
+    <div class="vertical-spacer-medium"></div>
+    <p class="mat-body-small">This application allows you to link Canadian players with ITF IDs to their VR IDs
+      allowing ITF, ATP and WTA results to be incorporated into the Canadian Ranking System.</p>
+    <p class="mat-body-small">When you choose a player from the ITF player list and the system will show you the VR
+      players with a matching last name.</p>
+    <p class="mat-body-small">If there is a player in the VR Player List that matches selected player in the ITF Player List,
+      select it to establish a link between the player's ITF and VR ID.</p>
+    <p class="mat-body-small">Or, if you know the player's VR Id, you can enter that VR Id for the ITF player,
+      but be sure it is the right one.</p>
+
+    <div class="flex-row gap-10 flex-align-start">
+
+      <!-- The list of ITF ids who either have no associated VR ID or whose name matches the filter.   -->
+      <div class="flex-column mat-elevation-z3 pad-10 flex-35-percent" style="overflow-y: auto">
+        <div class="mat-title-medium">ITF Player List ({{ITFPlayers.length - matchesCompleted}})</div>
+
+        <!-- It takes a little while to get the ITF Player list, so show a progress bar -->
+        <div *ngIf="externalPlayersLoading">
+          <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+          <div class="mat-title-medium">Loading Players</div>
         </div>
-        <div mat-line class="candidate"
-             *ngIf="player == selectedITFPlayer && newVRPlayer">
-          <div fxLayout="column">
-            <div fxLayout="row">
-              <p fxFlex="20%"></p>
-              <p fxFlex="35%" class="mat-header-cell">ITF</p>
-              <p class="mat-header-cell">VR</p>
-            </div>
-            <div fxLayout="row">
-              <p fxFlex="20%" class="mat-header-cell">DOB</p>
-              <p fxFlex="35%">{{player.DOB.substr(0,10)}}</p>
-              <p fxFlex="35%">{{newVRPlayer.DOB}}</p>
-            </div>
-            <div fxLayout="row">
-              <p fxFlex="20%" class="mat-header-cell">LN</p>
-              <p fxFlex="35%" class="mat-cell">{{player.lastName}}</p>
-              <p fxFlex="35%" class="mat-cell">{{newVRPlayer.lastName}}</p>
-            </div>
-            <div fxLayout="row">
-              <p fxFlex="20%" class="mat-header-cell">FN</p>
-              <p fxFlex="35%" class="mat-cell">{{player.firstName}}</p>
-              <p fxFlex="35%" class="mat-cell">{{newVRPlayer.firstName}}</p>
+
+        <!-- Give the user a notification if they have set a filter with no matches to ITF players -->
+        <div class="instruction" *ngIf="ITFPlayers.length === 0">
+          <div class="mat-title-medium">No players match the filter settings.</div>
+        </div>
+
+        <!-- Present the list of ITF Players that either have no associated VR Id or who match the filter -->
+        <div class="flex-column gap-10 player-list">
+          <div *ngFor="let player of ITFPlayers"
+               class="player-list-item"
+               [class.selected]="player === selectedITFPlayer"
+               (click)="onSelectITFPlayer(player)">
+            <div class="flex-row flex-align-top">
+
+              <!-- Give a visual indication of whether or not the ITF player is associated with a VR player -->
+              <ng-container *ngIf="player.tcPlayer">
+                <mat-icon class="green-icon">done</mat-icon>
+              </ng-container>
+              <ng-container *ngIf="!player.tcPlayer">
+                <mat-icon class="red-icon">close</mat-icon>
+              </ng-container>
+
+              <div class="fill-remaining-space">
+                <div class="mat-title-medium">{{player.lastName}}, {{player.firstName}} ({{player.gender}})</div>
+                <div class="mat-body-small">DOB: {{player.DOB.slice(0,10)}}, IPIN: {{player.ipin}}</div>
+
+                <!-- For the selected player we make a little form to allow them to be associated -->
+                <!-- with a VR player -->
+                <ng-container *ngIf="player == selectedITFPlayer">
+                  <div class="vertical-spacer-small"></div>
+                  <form>
+                    <mat-form-field floatLabel="always">
+                      <mat-label>Enter VR Id or choose a candidate</mat-label>
+                      <input matInput [(ngModel)]="newVRIdentifier"
+                             [ngModelOptions]="{standalone: true}"
+                             maxlength="8"
+                             pattern="\d{8}"
+                             (keyup)="onVRIDChange()">
+                      <mat-error>A VR ID is 8 digits</mat-error>
+                    </mat-form-field>
+                  </form>
+                  <div *ngIf="failedVRPlayerLookup">
+                    <mat-error>No VR player found with ID {{newVRIdentifier}}</mat-error>
+                  </div>
+                  <div class="candidate" *ngIf="newVRPlayer && newVRPlayer.playerId">
+
+                    <!-- show the key attributes of the ITF player and the VR player side by side. -->
+                    <!-- If I were less lazy, I would have made a table here. -->
+                    <div class="flex-column">
+                      <div class="flex-row flex-align-center">
+                        <p class="flex-20-percent"></p>
+                        <p class="flex-35-percent mat-label-medium">ITF</p>
+                        <p class="flex-35-percent mat-label-medium">VR</p>
+                      </div>
+                      <div class="flex-row flex-align-center">
+                        <p class="flex-20-percent mat-label-medium">DOB</p>
+                        <p class="flex-35-percent mat-body-medium">{{player.DOB.slice(0,10)}}</p>
+                        <p class="flex-35-percent mat-body-medium">{{newVRPlayer.DOB}}</p>
+                      </div>
+                      <div class="flex-row flex-align-center">
+                        <p class="flex-20-percent mat-label-medium">LN</p>
+                        <p class="flex-35-percent mat-body-medium">{{player.lastName}}</p>
+                        <p class="flex-35-percent mat-body-medium">{{newVRPlayer.lastName}}</p>
+                      </div>
+                      <div class="flex-row flex-align-center">
+                        <p class="flex-20-percent mat-label-medium">FN</p>
+                        <p class="flex-35-percent mat-body-medium">{{player.firstName}}</p>
+                        <p class="flex-35-percent mat-body-medium">{{newVRPlayer.firstName}}</p>
+                      </div>
+                    </div>
+                    <mat-divider></mat-divider>
+                    <div class="flex-row flex-justify-center">
+                      <button mat-button
+                              *ngIf="selectedITFPlayer.internalId != newVRIdentifier"
+                              (click)="onConfirmMatch()">
+                        Confirm Match
+                      </button>
+                      <button mat-button
+                              *ngIf="selectedITFPlayer.internalId != newVRIdentifier"
+                              (click)="onNoMatch()">Not A Match
+                      </button>
+                    </div>
+                    <div class="mat-body-small" *ngIf="selectedITFPlayer.internalId == newVRIdentifier">Currently Matched</div>
+                  </div>
+                </ng-container>
+              </div>
             </div>
           </div>
-          <span><button mat-button color="primary"
-                        *ngIf="selectedITFPlayer.internalId != newVRIdentifier"
-                        (click)="onConfirmMatch()">Confirm Match</button>
-          <button mat-button color="primary"
-                  *ngIf="selectedITFPlayer.internalId != newVRIdentifier"
-                  (click)="onNoMatch()">Not A Match</button>
-          </span>
-          <h3 *ngIf="selectedITFPlayer.internalId == newVRIdentifier">Currently Matched</h3>
         </div>
-        <!-- KLUDGE ALERT: the input field above did not quite fit properly -->
-        <!-- the next line just adds a bit of space.                        -->
-        <div mat-line *ngIf="player == selectedITFPlayer"></div>
-      </mat-list-item>
-    </mat-list>
-  </div>
-  <div fxFlex  class="app-box mat-elevation-z3" style="overflow-y: auto">
-    <mat-card  *ngIf="VRPlayersLoading">
-      <mat-progress-bar mode="indeterminate"></mat-progress-bar>
-      <mat-card-header><H3>Loading VR Players</H3></mat-card-header>
-    </mat-card>
-    <mat-card class="instruction" *ngIf="ITFPlayers.length > 0 && selectedITFPlayer == null && VRPlayerCount == 0">
-      <mat-card-content>
-        Select a Player from the ITF Player List to see a list of
-        potentially matching players in the VR database.
-      </mat-card-content>
-    </mat-card>
+      </div>
 
-    <div *ngIf="selectedITFPlayer && !VRPlayersLoading">
-      <h2>VR Players With Last Name {{selectedITFPlayer.lastName}}</h2>
-      <mat-list class="player-list">
-        <mat-list-item  *ngFor="let vrPlayer of VRPlayers"
-                        class="player-list-item"
-                        [class.selected]="newVRIdentifier == vrPlayer.playerId"
-                        (click)="onSelectVRPlayer(vrPlayer)">
-          <h4 mat-line>{{vrPlayer.lastName}}, {{vrPlayer.firstName}} ({{vrPlayer.gender}})</h4>
-          <p mat-line>
-            VR Id: {{vrPlayer.playerId}},
-            DOB: {{vrPlayer.DOB.substr(0,10)}},
-            city: {{vrPlayer.city}}
-          </p>
-          <p mat-line>
-            province: {{vrPlayer.province}},
-            email: {{vrPlayer.email}}
-          </p>
-        </mat-list-item>
-      </mat-list>
-      <button mat-button color="primary"
-              *ngIf="!showVRMatchHelp && !VRPlayersLoading"
-              (click)="onShowVRMatchHelp()">Can't find a match?</button>
+      <!-- List of VR players who are candidate matches for the selected ITF player. -->
+      <div class="flex-column mat-elevation-z3 pad-10 fill-remaining-space" style="overflow-y: auto">
 
-      <mat-card class="instruction" *ngIf="showVRMatchHelp && !VRPlayersLoading">
-        <mat-card-header><h3>Can't find match in VR</h3></mat-card-header>
-        <mat-card-content>
-          <ul>
-            <li>
-              This may be because of a minor discrepancy in spelling or special characters,
-              or because the player is not in the VR system.</li>
-            <li>
-              First, try to lookup the player in the VR Admin screens and if you find him or her,
-              you can enter the player's VR ID directly in the ITF Player List.
-            </li>
-            <li>
-              Otherwise, the player should be added to the VR System.
-              Once this has happened and the manual upload of VR players into the
-              Tennis Canada system has been completed (Player Importer), then you can complete
-              the matching process here.
-            </li>
-          </ul>
-        </mat-card-content>
-      </mat-card>
+        <!-- If no ITF player is selected yet, suggest that the user do so. -->
+        <mat-card class="instruction" *ngIf="ITFPlayers.length > 0 && selectedITFPlayer == null && VRPlayerCount == 0">
+          <mat-card-content>
+            Select a Player from the ITF Player List to see a list of
+            potentially matching players in the VR database.
+          </mat-card-content>
+        </mat-card>
+
+        <!-- If we are loading VR players, show a progress bar -->
+        <ng-container *ngIf="VRPlayersLoading">
+          <div class="flex-column flex-justify-start flex-align-center gap-20">
+            <div class="mat-title-small">Loading VR Players</div>
+            <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+          </div>
+        </ng-container>
+
+        <!-- The list of players in VR whose last names match the last name of the selected ITF player. -->
+        <div *ngIf="selectedITFPlayer && !VRPlayersLoading">
+          <div class="mat-title-medium">Candidates from VR with last name {{selectedITFPlayer.lastName}}</div>
+
+          <!-- If there are last-name candidates in VR, present a button so the user can -->
+          <!-- know what to do if none of those candidates are right -->
+          <button mat-button
+                  *ngIf="!showVRMatchHelp && !VRPlayersLoading"
+                  (click)="onShowVRMatchHelp()">No candidates match {{selectedITFPlayer.firstName}} {{selectedITFPlayer.lastName}}?
+          </button>
+
+          <!-- Give the user instructions if there is no candidate from VR that matches the ITF player. -->
+          <ng-container *ngIf="showVRMatchHelp && !VRPlayersLoading">
+            <div class="vertical-spacer-medium"></div>
+            <mat-card class="instruction">
+              <mat-card-header>
+                <div class="mat-title-small">No candidates from VR for {{selectedITFPlayer.firstName}} {{selectedITFPlayer.lastName}}</div>
+              </mat-card-header>
+              <mat-card-content>
+                <div class="vertical-spacer-small"></div>
+                <p class="mat-body-medium">
+                  This may be because of a minor discrepancy in spelling or special characters between the ITF
+                  and VR. Or, because the player is not in the VR system.
+                </p>
+                <p class="mat-body-medium">
+                  To resolve this, first try to lookup the player in the VR Admin screens and if you find them,
+                  you can enter the player's VR ID directly in the ITF Player List on the left.
+                </p>
+                <p class="mat-body-medium">
+                  Otherwise, the player should be added to the VR System.
+                  Once this has happened and the manual upload of VR players into the
+                  Tennis Canada system has been completed (Player Importer), then you can complete
+                  the matching process here.
+                </p>
+              </mat-card-content>
+            </mat-card>
+          </ng-container>
+
+          <!-- List all the players in VR whose last name matches the last name of the -->
+          <!-- selected ITF player.  These are "candidates" to be matched with the ITF player -->
+          <mat-list class="player-list">
+            <mat-list-item *ngFor="let vrPlayer of VRPlayers"
+                           class="player-list-item"
+                           [class.selected]="newVRIdentifier == vrPlayer.playerId"
+                           (click)="onSelectVRPlayer(vrPlayer)">
+              <span matListItemTitle>{{vrPlayer.lastName}}, {{vrPlayer.firstName}} ({{vrPlayer.gender}})</span>
+              <span matListItemLine class="mat-body-small">DOB: {{vrPlayer.DOB.slice(0,10)}}, VR Id: {{vrPlayer.playerId}}, city: {{vrPlayer.city}}</span>
+              <span matListItemLine class="mat-body-small">province: {{vrPlayer.province}}, email: {{vrPlayer.email}}</span>
+            </mat-list-item>
+          </mat-list>
+        </div>
+      </div>
     </div>
-  </div>
-</div>
+  </mat-card-content>
+</mat-card>

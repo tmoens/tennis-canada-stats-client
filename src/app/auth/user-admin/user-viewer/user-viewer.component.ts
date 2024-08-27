@@ -1,31 +1,31 @@
-import {Component, OnInit} from '@angular/core';
-import {ActivatedRoute, ParamMap, Router} from '@angular/router';
-import {UntypedFormBuilder} from '@angular/forms';
-import {UserAdminService} from '../user-admin.service';
-import {UserDTO} from '../../UserDTO';
-import {AuthService} from '../../auth.service';
-import {AppStateService} from '../../../app-state.service';
-import {STATSTOOL} from '../../../../assets/stats-tools';
-import {EditMode} from '../user-editor/user-editor.component';
+import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute, ParamMap, Router } from '@angular/router';
+import { UntypedFormBuilder } from '@angular/forms';
+import { UserAdminService } from '../user-admin.service';
+import { UserDTO } from '../../UserDTO';
+import { AuthService } from '../../auth.service';
+import { AppStateService } from '../../../app-state.service';
+import { STATSTOOL } from '../../../../assets/stats-tools';
+import { EditMode } from '../user-editor/user-editor.component';
 
 @Component({
   selector: 'app-user-viewer',
   templateUrl: './user-viewer.component.html',
-  styleUrls: ['./user-viewer.component.scss']
+  styleUrls: ['./user-viewer.component.scss'],
 })
 export class UserViewerComponent implements OnInit {
   // Build the filter form.
   mfForm = this.fb.group({
-    email: [{value: '', disabled: true}],
-    id: [{value: '', disabled: true}],
-    isActive: [{value: '', disabled: true}],
-    isLoggedIn: [{value: '', disabled: true}],
-    name: [{value: '', disabled: true}],
-    passwordChangeRequired: [{value: '', disabled: true}],
-    phone: [{value: '', disabled: true}],
-    role: [{value: '', disabled: true}],
-    username: [{value: '', disabled: true}],
-    isDeletable: [{value: '', disabled: true}],
+    email: [{ value: '', disabled: true }],
+    id: [{ value: '', disabled: true }],
+    isActive: [{ value: '', disabled: true }],
+    isLoggedIn: [{ value: '', disabled: true }],
+    name: [{ value: '', disabled: true }],
+    passwordChangeRequired: [{ value: '', disabled: true }],
+    phone: [{ value: '', disabled: true }],
+    role: [{ value: '', disabled: true }],
+    username: [{ value: '', disabled: true }],
+    isDeletable: [{ value: '', disabled: true }],
   });
 
   user: UserDTO = null;
@@ -35,7 +35,7 @@ export class UserViewerComponent implements OnInit {
     private route: ActivatedRoute,
     public service: UserAdminService,
     private fb: UntypedFormBuilder,
-    public authService: AuthService,
+    public authService: AuthService
   ) {
     this.service.enterBrowseMode();
   }
@@ -57,18 +57,28 @@ export class UserViewerComponent implements OnInit {
       } else {
         // if there is no id in the route, lets see a mutation is already selected and if so, navigate to it.
         if (this.service.selected) {
-          this.router.navigateByUrl(STATSTOOL.USER_MANAGER.route + '/view/' + this.service.selected.id, {replaceUrl: true});
+          this.router
+            .navigateByUrl(
+              STATSTOOL.USER_MANAGER.route +
+                '/view/' +
+                this.service.selected.id,
+              { replaceUrl: true }
+            )
+            .then();
         }
       }
     });
-
   }
 
   edit() {
-    this.router.navigate([STATSTOOL.USER_MANAGER.route + '/' + EditMode.EDIT, {
-      id: this.service.selected.id,
-      mode: EditMode.EDIT,
-    }]);
+    this.router
+      .navigate([
+        STATSTOOL.USER_MANAGER.route + '/' + EditMode.EDIT,
+        {
+          id: this.service.selected.id,
+          mode: EditMode.EDIT,
+        },
+      ])
+      .then();
   }
-
 }

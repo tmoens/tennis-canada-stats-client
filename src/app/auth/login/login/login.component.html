@@ -1,0 +1,28 @@
+<section class="mat-typography">
+  <div mat-dialog-title>Login</div>
+  <mat-dialog-content>
+    <div class="vertical-spacer-medium"></div>
+    <form>
+      <div class="flex-column">
+        <mat-form-field floatLabel="always">
+          <mat-label>Username</mat-label>
+          <input matInput name="username"  type="text" [formControl]="usernameFC">
+        </mat-form-field>
+        <mat-form-field floatLabel="always">
+          <mat-label>Password</mat-label>
+          <input matInput name="password" type="password"
+                 [formControl]="passwordFC">
+        </mat-form-field>
+      </div>
+      <div class="flex-row">
+        <div class="fill-remaining-space"></div>
+      </div>
+      <mat-dialog-actions>
+        <button mat-button type="submit" (click)="onSubmit()">Submit</button>
+      </mat-dialog-actions>
+    </form>
+  </mat-dialog-content>
+  <mat-dialog-actions>
+    <button mat-button (click)="onForgotPassword()" style="text-align: left; font-size: 12px">Forgot Password...</button>
+  </mat-dialog-actions>
+</section>

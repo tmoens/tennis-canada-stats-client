@@ -1,6 +1,5 @@
-import {Injectable} from '@angular/core';
-import {Observable} from 'rxjs';
-import {ActivatedRouteSnapshot, CanDeactivate, RouterStateSnapshot} from '@angular/router';
+import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
 
 /**
  * A service used to present a dialog box when a component (any component you want)
@@ -17,11 +16,8 @@ export interface CanComponentDeactivate {
 }
 
 @Injectable()
-export class CanDeactivateGuard implements CanDeactivate<CanComponentDeactivate> {
-  canDeactivate(component: CanComponentDeactivate,
-                route: ActivatedRouteSnapshot,
-                state: RouterStateSnapshot) {
-
+export class CanDeactivateGuard {
+  canDeactivate(component: CanComponentDeactivate) {
     return component.canDeactivate ? component.canDeactivate() : true;
   }
 }

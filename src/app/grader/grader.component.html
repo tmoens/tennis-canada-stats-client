@@ -1,90 +1,97 @@
-<div fxLayout="row" fxLayoutGap="10px" >
-  <div fxFlex="25" class="app-box mat-elevation-z3">
-    <h3>League and Tournament Grade Checker</h3>
-    <p>This application allows you to check that leagues and tournaments are properly graded.</p>
-    <mat-divider></mat-divider>
-    <form>
-      <div fxLayout="column" fxLayoutGap="10px">
-      <h3>Filters</h3>
+<mat-card class="extra-large-tool">
+  <mat-card-header>
+    <div class="flex-row gap-20 flex-justify-start" style="width: 100%">
+      <div class="flex-column">
+        <mat-card-title>League, Box Ladder and Tournament Grade Checker</mat-card-title>
+        <mat-card-subtitle class="mat-body-medium">Check that leagues and tournaments are properly graded.</mat-card-subtitle>
+      </div>
+      <div class="fill-remaining-space"></div>
 
-      <mat-checkbox [formControl]="includeLeaguesFC" color="primary">Include leagues</mat-checkbox>
-      <mat-checkbox [formControl]="includeTournamentsFC"  color="primary">Include tournaments</mat-checkbox>
-      <mat-checkbox [formControl]="includeGoodApprovalsFC" color="primary">Include good approvals</mat-checkbox>
-
-      <!-- "Gradings since" Filter-->
+      <!-- Allow the user to decide how far back in time to go -->
       <mat-form-field class="filter-form-field">
-        <input matInput [matDatepicker]="since" placeholder="Since..." [formControl]="gradingsSinceFC"
+        <mat-label>Since...</mat-label>
+        <input matInput [matDatepicker]="since" [formControl]="gradingsSinceFC"
                (dateChange)="onDateChanged()" (dateInput)="onDateChanged()">
         <mat-datepicker-toggle matSuffix [for]="since"></mat-datepicker-toggle>
         <mat-datepicker #since></mat-datepicker>
       </mat-form-field>
-      <button mat-button color="primary" (click)="refresh()">Refresh</button>
+    </div>
+  </mat-card-header>
+
+  <mat-card-content>
+    <div class="vertical-spacer-medium"></div>
+    <div class="flex-column gap-10">
+
+      <!-- Allow the user to choose what type of competition they want to review -->
+      <form>
+        <div class="flex-row flex-justify-center gap-10">
+          <mat-radio-group [formControl]="tournamentCategorySelectionFC">
+            <mat-radio-button [value]="TournamentCategory.Leagues">View {{ TournamentCategory.Leagues }}</mat-radio-button>
+            <mat-radio-button [value]="TournamentCategory.BoxLadders">View box ladders</mat-radio-button>
+            <mat-radio-button [value]="TournamentCategory.Tournaments">View tournaments</mat-radio-button>
+          </mat-radio-group><mat-checkbox [formControl]="includeGoodApprovalsFC">Include good approvals</mat-checkbox>
+        </div>
+      </form>
+      <div class="vertical-spacer-medium"></div>
+      <div class="pad-10 mat-elevation-z3">
+        <div *ngIf="loadingResults">
+          <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+          <div class="mat-title-medium">Loading Results</div>
+        </div>
+        <div *ngIf="resultCount == 0 && !loadingResults">
+          <div class="mat-title-medium">All {{tournamentCategorySelectionFC.value}}
+            since {{ gradingsSinceFC.getRawValue() }} are at the approved grade.
+          </div>
+        </div>
+
+        <!-- the table of competitions to be graded -->
+        <div *ngIf="resultCount > 0 && !loadingResults">
+          <mat-table #resultsTable [dataSource]="results">
+            <ng-container matColumnDef="name">
+              <mat-header-cell *matHeaderCellDef>Name</mat-header-cell>
+              <mat-cell *matCellDef="let t">
+                <a mat-button [href]="vrBaseURL + t.tournamentCode" target="_blank">{{ t.name }}</a>
+              </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="type">
+              <mat-header-cell *matHeaderCellDef>Type</mat-header-cell>
+              <mat-cell *matCellDef="let t">{{ t.type }}</mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="vrGrade">
+              <mat-header-cell *matHeaderCellDef>VR Grade</mat-header-cell>
+              <mat-cell *matCellDef="let t">{{ t.vrGrade }}</mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="endDate">
+              <mat-header-cell *matHeaderCellDef>End Date</mat-header-cell>
+              <mat-cell *matCellDef="let t">{{ t.endDate }}</mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="approvedGrade">
+              <mat-header-cell *matHeaderCellDef>ApprovedGrade</mat-header-cell>
+              <mat-cell *matCellDef="let t">
+                <mat-form-field appearance="fill" floatLabel="always">
+                  <mat-label>Set approved grade</mat-label>
+                  <mat-select [(value)]="t.approvedGrade" (selectionChange)="setApprovedGrade(t)">
+                    <mat-option>None</mat-option>
+                    <mat-option value="National">National</mat-option>
+                    <mat-option value="Provincial">Provincial</mat-option>
+                    <mat-option value="Regional">Regional</mat-option>
+                    <mat-option value="Community">Community</mat-option>
+                    <mat-option value="Club">Club</mat-option>
+                    <mat-option value="Recreational">Recreational</mat-option>
+                    <mat-option value="Rookie">Rookie</mat-option>
+                  </mat-select>
+                </mat-form-field>
+              </mat-cell>
+            </ng-container>
+            <mat-header-row *matHeaderRowDef="displayColumns"></mat-header-row>
+            <mat-row *matRowDef="let row; columns:displayColumns;"></mat-row>
+          </mat-table>
+        </div>
       </div>
-    </form>
-  </div>
-  <div class="app-box mat-elevation-z3" fxFlex>
-    <div *ngIf="loadingResults">
-      <mat-progress-bar mode="indeterminate"></mat-progress-bar>
-      <H3>Loading Results</H3>
     </div>
-    <div  *ngIf="resultCount == 0  && !loadingResults">
-      <H3>All leagues <ng-container *ngIf="includeTournamentsFC.getRawValue() === true"> and tournaments</ng-container>
-        since {{gradingsSinceFC.getRawValue()}} are at the approved grade.</H3>
-    </div>
-    <div class="instruction" *ngIf="resultCount == -1  && !loadingResults">
-      <h3>Fill in the appropriate filter criteria and hit "search"</h3>
-    </div>
-    <div fxFlex *ngIf="resultCount > 0 && !loadingResults" >
-      <mat-table fxFlex #resultsTable [dataSource]="results">
-        <!--Tournament Name column-->
-        <ng-container matColumnDef="name">
-          <mat-header-cell *matHeaderCellDef>Name</mat-header-cell>
-          <mat-cell *matCellDef="let t">
-            <a mat-button   [href]="vrBaseURL + t.tournamentCode" color="primary" target="_blank">{{t.name}}</a>
-          </mat-cell>
-        </ng-container>
-
-        <!--Tournament Type Column-->
-        <ng-container matColumnDef="type">
-          <mat-header-cell *matHeaderCellDef>Type</mat-header-cell>
-          <mat-cell *matCellDef="let t">{{ t.type }}</mat-cell>
-        </ng-container>
-
-        <!--VR Grade Column-->
-        <ng-container matColumnDef="vrGrade">
-          <mat-header-cell *matHeaderCellDef>VR Grade</mat-header-cell>
-          <mat-cell *matCellDef="let t">{{ t.vrGrade }}</mat-cell>
-        </ng-container>
-
-        <!--Tournament end date Column-->
-        <ng-container matColumnDef="endDate">
-          <mat-header-cell *matHeaderCellDef>End Date</mat-header-cell>
-          <mat-cell *matCellDef="let t">{{ t.endDate }}</mat-cell>
-        </ng-container>
-
-        <!--Action Column-->
-        <ng-container matColumnDef="approvedGrade">
-          <mat-header-cell *matHeaderCellDef>ApprovedGrade</mat-header-cell>
-          <mat-cell *matCellDef="let t">
-            <mat-form-field appearance="fill">
-              <mat-label>Set approved grade</mat-label>
-              <mat-select [(value)]="t.approvedGrade" (selectionChange)="setApprovedGrade(t)">
-                <mat-option>None</mat-option>
-                <mat-option value="National">National</mat-option>
-                <mat-option value="Provincial">Provincial</mat-option>
-                <mat-option value="Regional">Regional</mat-option>
-                <mat-option value="Community">Community</mat-option>
-                <mat-option value="Club">Club</mat-option>
-                <mat-option value="Recreational">Recreational</mat-option>
-                <mat-option value="Rookie">Rookie</mat-option>
-              </mat-select>
-            </mat-form-field>
-          </mat-cell>
-        </ng-container>
-
-        <mat-header-row *matHeaderRowDef="displayColumns"></mat-header-row>
-        <mat-row *matRowDef="let row;  columns:displayColumns;"></mat-row>
-      </mat-table>
-    </div>
-  </div>
-</div>
+  </mat-card-content>
+</mat-card>
