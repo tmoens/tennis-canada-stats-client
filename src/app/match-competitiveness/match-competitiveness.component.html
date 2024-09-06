@@ -1,40 +1,61 @@
-<div fxLayout="column" fxLayoutGap="20px" class="mat-elevation-z3 app-box">
-  <h2 fxFlexAlign="center">Report competitiveness of every match since 2022-01-01</h2>
-  <p>Create a pivot table in the resulting spreadsheet to analyze competitiveness in any which way.</p>
-  <mat-divider></mat-divider>
-  <div fxFlexAlign="center" fxLayout="row"  fxLayoutGap="20px">
-    <button mat-button  color="primary"  (click)="buildReport()">
-      <mat-icon>build</mat-icon> Build Report
-    </button>
-    <a mat-button color="primary" type="button"
-       [href]="downloadURL"
-       [disabled]="!state.reportReady"
-    >
-      <mat-icon>cloud_download</mat-icon> Download Report
-    </a>
-  </div>
-  <mat-progress-bar mode="indeterminate" *ngIf="state.buildingReport">
-  </mat-progress-bar>
-  <div *ngIf="requestStatus && requestStatus.toDo > 0">
-    <mat-divider></mat-divider>
-    <p>Request Status: {{requestStatus.currentActivity}}</p>
-    <p>Tournaments without matches: {{requestStatus.counters.tournamentsWithoutMatches}}</p>
-    <p>Tournaments to do: {{requestStatus.toDo}}  done: {{requestStatus.counters.done}}</p>
-    <p>Events processed: {{requestStatus.counters.eventsProcessed}}</p>
-    <p>Matches processed: {{requestStatus.counters.matchesProcessed}}</p>
-    <h3>Matches not included</h3>
-    <ul>
-      <li>Matches without dates: {{requestStatus.counters.missingMatchDate}}</li>
-      <li>Byes: {{requestStatus.counters.scorelineIsBye}}</li>
-      <li>Inferred byes: {{requestStatus.counters.inferredBye}} (missing a winner or a loser)</li>
-      <li>Walkovers, Retirements, Withdrawals etc.: {{requestStatus.counters.nonZeroScoreStatus}}</li>
-      <li>Unplayed: {{requestStatus.counters.unplayed}} (no winner code)</li>
-    </ul>
-    <div *ngIf="requestStatus.history.length > 0">
-      <h3>Notes:</h3>
-      <p *ngFor="let h of requestStatus.history">{{h}}</p>
+<mat-card class="medium-tool">
+  <mat-card-header>
+    <mat-card-title>Match Competitiveness Report</mat-card-title>
+    <mat-card-subtitle class="mat-title-small">Every match since 2022-01-01</mat-card-subtitle>
+  </mat-card-header>
+  <mat-card-content>
+    <div class="vertical-spacer-medium"></div>
+    <div class="mat-body-medium">
+      Once you have the Excel report, create a pivot table in the spreadsheet
+      to analyze competitiveness in any way you like.
     </div>
-    <p>file: {{requestStatus.data.filename}}</p>
+    <div class="vertical-spacer-medium"></div>
+    <div class="flex-row flex-justify-center gap-20">
+      <button mat-button (click)="buildReport()">
+        <mat-icon>build</mat-icon> Build Report
+      </button>
+      <a mat-button type="button"
+         [href]="downloadURL"
+         [disabled]="!state.reportReady"
+      >
+        <mat-icon>cloud_download</mat-icon> Download Report
+      </a>
+    </div>
+    <div class="vertical-spacer-medium"></div>
 
-  </div>
-</div>
+    <!-- Progress of the current or most recent report build -->
+    <div *ngIf="requestStatus && state.buildingReport" class="progress-container">
+      <!-- Progress Info -->
+      <div class="progress-info mat-caption">
+        {{ requestStatus.counters.done}} of {{ requestStatus.toDo }} tournaments processed
+      </div>
+
+      <!-- progress bar -->
+      <mat-progress-bar mode="determinate" [value]="requestStatus.percentComplete"></mat-progress-bar>
+
+      <!-- Current Activity -->
+      <div class="current-activity mat-body-medium">
+        Working on: {{ requestStatus.currentActivity | truncate }}
+      </div>
+    </div>
+
+    <div *ngIf="requestStatus && requestStatus.toDo > 0" class="flex-column gap-10">
+      <div class="mat-title-medium">Report Overview</div>
+      <div class="mat-body-medium">Status: {{requestStatus.currentActivity}}</div>
+      <div class="mat-body-medium">Tournaments without matches: {{requestStatus.counters.tournamentsWithoutMatches}}</div>
+      <div class="mat-body-medium">Tournaments done: {{requestStatus.counters.done}}</div>
+      <div class="mat-body-medium">Events processed: {{requestStatus.counters.eventsProcessed}}</div>
+      <div class="mat-body-medium">Matches processed: {{requestStatus.counters.matchesProcessed}}</div>
+      <div class="mat-title-small">Matches not included:</div>
+      <div class="mat-body-medium">Matches without dates: {{requestStatus.counters.missingMatchDate}}</div>
+      <div class="mat-body-medium">Byes: {{requestStatus.counters.scorelineIsBye}}</div>
+      <div class="mat-body-medium">Inferred byes: {{requestStatus.counters.inferredBye}} (missing a winner or a loser)</div>
+      <div class="mat-body-medium">Walkovers, Retirements, Withdrawals etc.: {{requestStatus.counters.nonZeroScoreStatus}}</div>
+      <div class="mat-body-medium">Unplayed: {{requestStatus.counters.unplayed}} (no winner code)</div>
+      <div *ngIf="requestStatus.history.length > 0">
+        <div class="mat-title-small">Notes:</div>
+        <div class="mat-body-medium" *ngFor="let h of requestStatus.history">{{h}}</div>
+      </div>
+    </div>
+  </mat-card-content>
+</mat-card>

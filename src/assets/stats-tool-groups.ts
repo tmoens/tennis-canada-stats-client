@@ -33,12 +33,6 @@ export const STATS_TOOL_GROUPS: StatsToolGroup[] = [
   ),
 
   new StatsToolGroup(
-    'BC Membership Checker',
-    'Validate membership lists for update',
-    [STATSTOOL.PLAYER_CHECK],
-  ),
-
-  new StatsToolGroup(
     'User Management',
     'Add, change, activate, users.',
     [STATSTOOL.USER_MANAGER],

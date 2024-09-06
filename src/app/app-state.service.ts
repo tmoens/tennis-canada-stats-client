@@ -1,30 +1,31 @@
-import {Inject, Injectable} from '@angular/core';
-import {BehaviorSubject} from 'rxjs';
-import {LOCAL_STORAGE, StorageService} from 'ngx-webstorage-service';
-import {Router} from '@angular/router';
-import {environment} from '../environments/environment';
-import {STATSTOOL} from '../assets/stats-tools';
+import { Inject, Injectable } from '@angular/core';
+import { BehaviorSubject } from 'rxjs';
+import { LOCAL_STORAGE, StorageService } from 'ngx-webstorage-service';
+import { Router } from '@angular/router';
+import { environment } from '../environments/environment';
+import { STATSTOOL } from '../assets/stats-tools';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class AppStateService {
-  state: { [name: string]: any } = {};
-  persistentState: { [name: string]: any } = {};
+  state: Record<string, any> = {};
+  persistentState: Record<string, any> = {};
 
-  private _activeTool$: BehaviorSubject<STATSTOOL> = new BehaviorSubject<STATSTOOL>(STATSTOOL.HOME);
-  private get activeTool$() {
-    return this._activeTool$;
-  }
+  constructor(
+    private router: Router,
+    @Inject(LOCAL_STORAGE) private localStorage: StorageService
+  ) {}
 
   public get activeTool() {
     return this.activeTool$.value;
   }
 
-  constructor(
-    private router: Router,
-    @Inject(LOCAL_STORAGE)private localStorage: StorageService,
-  ) {
+  private _activeTool$: BehaviorSubject<STATSTOOL> =
+    new BehaviorSubject<STATSTOOL>(STATSTOOL.HOME);
+
+  private get activeTool$() {
+    return this._activeTool$;
   }
 
   initialize() {
@@ -36,7 +37,7 @@ export class AppStateService {
       this.setState('confirmMessageDuration', 2000);
     }
     if (!this.getState('errorMessageDuration')) {
-      this.setState('errorMessageDuration', 10000);
+      this.setState('errorMessageDuration', 4000);
     }
     if (!environment.serverPrefix) {
       throw new Error('serverPrefix needs to be set in your environment.');
@@ -49,7 +50,7 @@ export class AppStateService {
     this._activeTool$.next(tool);
   }
 
-  setState(name: string, value: any, persist: boolean = false) {
+  setState(name: string, value: any, persist = false) {
     if (persist) {
       this.persistentState[name] = value;
     } else {
@@ -57,15 +58,13 @@ export class AppStateService {
     }
   }
 
-  deleteState(name: string) {
-    if (this.persistentState[name]) { delete this.persistentState[name]; }
-    if (this.state[name]) { delete this.state[name]; }
-  }
-
   getState(name): any {
-    if (this.persistentState[name]) { return this.persistentState[name]; }
-    if (this.state[name]) { return this.state[name]; }
+    if (this.persistentState[name]) {
+      return this.persistentState[name];
+    }
+    if (this.state[name]) {
+      return this.state[name];
+    }
     return null;
   }
-
 }

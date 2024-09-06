@@ -1,56 +1,59 @@
-<div fxLayout="column" fxLayoutGap="10px" fxFlexAlign="start start"
-     class="app-box mat-elevation-z3">
-  <div fxLayout="row" fxLayoutGap="20px">
-    <H2>Manage Licenses</H2>
+<mat-card class="large-tool">
+
+  <!-- The top line of the tool includes a title, description and a filter input. -->
+  <!-- I could not make it work in a mat-card-header, so it's a div. -->
+  <div class="flex-row">
+    <div class="flex-column">
+      <mat-card-title>License Manager</mat-card-title>
+      <mat-card-subtitle class="mat-body-small">
+        Set the filter to look for and change licenses.
+      </mat-card-subtitle>
+    </div>
     <div class="fill-remaining-space"></div>
-    <form>
-      <mat-form-field floatLabel="always">
-        <mat-label>Filter in license names...</mat-label>
-        <input [formControl]="filterFC" matInput type="text">
-        <button *ngIf="filterFC.value" mat-icon-button matSuffix type="button"
-                (click)="clearFilterText()">
-          <mat-icon>close</mat-icon>
-        </button>
-      </mat-form-field>
-    </form>
+    <div>
+      <form>
+        <mat-form-field floatLabel="always">
+          <mat-label>Filter licenses (min 2 characters)...</mat-label>
+          <input [formControl]="filterFC" matInput type="text">
+          <button *ngIf="filterFC.value" mat-icon-button matSuffix type="button"
+                  (click)="clearFilterText()">
+            <mat-icon>close</mat-icon>
+          </button>
+        </mat-form-field>
+      </form>
+    </div>
   </div>
-  <div *ngIf="missingPTACount === 0">
-    <H2>All licenses have a PTA assigned.</H2>
-  </div>
-  <div *ngIf="meetsFilterCount === 0">
-    <p>You can set the filter to look for license and change the associated PTA if required</p>
-  </div>
-  <div style="overflow-y: scroll; overflow-x: hidden">
-        <mat-list>
-          <ng-container *ngFor="let e of licenseEditors; let i=index">
-            <mat-list-item style="padding: 15px" *ngIf="meetsFilter(e) || missingPTA(e) || hasChanged(e)">
-              <mat-form-field style="width: 400px">
-                <input matInput placeholder="License Name"
-                       class="form-control"
-                       [(ngModel)]="e.licenseName"
-                [disabled]=true>
-              </mat-form-field>
-              <mat-form-field style="padding-left: 15px; width: 200px">
-                <mat-select [(ngModel)]="e.currentProvince" (selectionChange)="recount()" placeholder="Tennis Association">
-                  <mat-option value="TBD">--select--</mat-option>
-                  <mat-option *ngFor="let ta of tennisAssociations" [value]="ta.abbrv">{{ta.ptaName}}</mat-option>
-                </mat-select>
-                <mat-hint style="color: #8b2c1d">{{getHint(e)}}</mat-hint>
-              </mat-form-field>
-            </mat-list-item>
-          </ng-container>
-        </mat-list>
-  </div>
-  <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="start center">
-    <div *ngIf="filterFC.value">{{meetsFilterCount}} licenses meet filter</div>
-    <div class="fill-remaining-space"></div>
-    <button mat-button color="primary" type="button" (click)="revert()"
-            [disabled]="changeCount === 0">
-      Revert
-    </button>
-    <button mat-button color="primary" [disabled]="changeCount === 0"
-            (click)="onSubmit()">
-      Save Changes
-    </button>
-  </div>
-</div>
+
+  <!-- The body part is just a list of licenses that either have no associated PTA or that meet the filter criteria. -->
+  <mat-card-content>
+    <div class="vertical-spacer-medium"></div>
+    <div *ngIf="missingPTACount === 0">
+      <h2>All licenses have a PTA assigned.</h2>
+    </div>
+    <div style="overflow-y: scroll; overflow-x: hidden">
+      <ng-container *ngFor="let e of visibleLicenses; let i=index">
+        <div class="flex-row gap-10">
+          <mat-form-field class=fill-remaining-space>
+            <mat-label>License Name</mat-label>
+            <input matInput class="form-control" [(ngModel)]="e.licenseName" [disabled]=true>
+          </mat-form-field>
+          <mat-form-field class="flex-35-percent">
+            <mat-label>Tennis Association</mat-label>
+            <mat-select [(ngModel)]="e.currentProvince" (selectionChange)="recount()">
+              <mat-option value="TBD">--select--</mat-option>
+              <mat-option *ngFor="let ta of tennisAssociations" [value]="ta.abbrv">{{ta.ptaName}}</mat-option>
+            </mat-select>
+            <mat-hint style="color: #8b2c1d">{{getHint(e)}}</mat-hint>
+          </mat-form-field>
+        </div>
+      </ng-container>
+    </div>
+    <div class="flex-row gap-10 flex-justify-center flex-align-center">
+      <div *ngIf="filterFC.value">{{meetsFilterCount}} licenses meet filter</div>
+      <div class="fill-remaining-space"></div>
+      <button mat-button type="button" (click)="revert()" [disabled]="changeCount === 0">Revert</button>
+      <button mat-button [disabled]="changeCount === 0" (click)="onSubmit()">Save Changes</button>
+    </div>
+  </mat-card-content>
+</mat-card>
+

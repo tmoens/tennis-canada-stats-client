@@ -1,14 +1,20 @@
-<div fxLayout="column" class="mat-elevation-z3 app-box">
-  <h3>Find out how VR licenses are being used.</h3>
-  <h4>The following report lets you know how often each VR license is
-    used and when each was used last.
-  </h4>
-  <h4>
-    This will allow you to determine which licenses to renew each year.
-  </h4>
-  <div fxLayout="row"  fxLayoutAlign="start center">
-    <a mat-button color="primary" type="button" [href]="licenseReportURL">
-      Download VR License Usage Spreadsheet
-    </a>
-  </div>
-</div>
+<mat-card class="small-tool">
+  <mat-card-header>
+    <mat-card-title>License Usage Reporter</mat-card-title>
+  </mat-card-header>
+  <mat-card-content>
+    <div class="vertical-spacer-medium"></div>
+    <p class="mat-body-medium">The following report lets you know how often each VR license is
+      used and when each was used last.
+    </p>
+    <p class="mat-body-medium">
+      This will allow you to determine which licenses to renew each year.
+    </p>
+    <div class="flex-row flex-justify-center">
+      <a mat-button type="button" [href]="licenseReportURL">
+        Download VR License Usage Spreadsheet
+        <mat-icon>cloud_download</mat-icon>
+      </a>
+    </div>
+  </mat-card-content>
+</mat-card>

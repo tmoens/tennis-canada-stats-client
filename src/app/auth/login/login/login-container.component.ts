@@ -1,8 +1,8 @@
-import {Component, OnInit} from '@angular/core';
-import {MatDialog} from '@angular/material/dialog';
-import {ActivatedRoute} from '@angular/router';
-import {LoginComponent} from './login.component';
-import {PasswordResetComponent} from '../password-reset/password-reset.component';
+import { Component, OnInit } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+import { ActivatedRoute } from '@angular/router';
+import { LoginComponent } from './login.component';
+import { PasswordResetComponent } from '../password-reset/password-reset.component';
 
 /**
  * This container does two things:
@@ -10,29 +10,25 @@ import {PasswordResetComponent} from '../password-reset/password-reset.component
  * 2) provides a context for the back and forth between the login and password reset dialogs.
  */
 
-
 @Component({
   selector: 'app-login-container',
-  template: `
-    <div class="big-background"></div>
-  `,
-  styleUrls: ['./login-container.scss']
+  template: ` <div class="big-background"></div> `,
+  styleUrls: ['./login-container.scss'],
 })
-
 export class LoginContainerComponent implements OnInit {
-
   constructor(
     private loginDialog: MatDialog,
-    private route: ActivatedRoute,
-  ) { }
+    private route: ActivatedRoute
+  ) {}
 
   ngOnInit(): void {
     this.openLoginDialog();
   }
 
-
   openLoginDialog(username = null) {
-    const dialogRef = this.loginDialog.open(LoginComponent, {data: (username) ? {username: username} : {} });
+    const dialogRef = this.loginDialog.open(LoginComponent, {
+      data: username ? { username: username } : {},
+    });
     dialogRef.afterClosed().subscribe((result) => {
       if (result && result.reset) {
         this.openPasswordResetDialog(result.username);
@@ -40,15 +36,16 @@ export class LoginContainerComponent implements OnInit {
     });
   }
 
-  openPasswordResetDialog (username = null) {
-    const dialogRef = this.loginDialog.open(PasswordResetComponent, {data: (username) ? {username: username} : {} });
+  openPasswordResetDialog(username = null) {
+    const dialogRef = this.loginDialog.open(PasswordResetComponent, {
+      data: username ? { username: username } : {},
+    });
     dialogRef.afterClosed().subscribe((result) => {
       if (result && result.username) {
-        this.openLoginDialog( result.username);
+        this.openLoginDialog(result.username);
       } else {
         this.openLoginDialog();
       }
     });
-
   }
 }

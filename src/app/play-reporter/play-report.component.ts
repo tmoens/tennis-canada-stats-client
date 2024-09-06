@@ -1,25 +1,24 @@
 import { Component, OnInit } from '@angular/core';
-import {environment} from '../../environments/environment';
-import {AppStateService} from '../app-state.service';
-import {HttpClient} from '@angular/common/http';
-import {HttpHeaders} from '@angular/common/http';
+import { environment } from '../../environments/environment';
+import { AppStateService } from '../app-state.service';
+import { HttpClient } from '@angular/common/http';
+import { HttpHeaders } from '@angular/common/http';
 import { MAT_DATE_FORMATS } from '@angular/material/core';
 import { TC_DATE_FORMATS } from '../dateFormats';
-import {UntypedFormControl, UntypedFormGroup} from '@angular/forms';
+import { UntypedFormControl, UntypedFormGroup } from '@angular/forms';
 import * as XLSX from 'xlsx';
-import {WorkBook, WorkSheet, utils} from 'xlsx';
-import {STATSTOOL} from '../../assets/stats-tools';
+import { WorkBook, WorkSheet, utils } from 'xlsx';
+import { STATSTOOL } from '../../assets/stats-tools';
 
 @Component({
   selector: 'app-tournament-strength',
   templateUrl: './play-report.component.html',
   styleUrls: ['./play-report.component.scss'],
-  providers: [
-    {provide: MAT_DATE_FORMATS, useValue: TC_DATE_FORMATS},
-  ],
+  providers: [{ provide: MAT_DATE_FORMATS, useValue: TC_DATE_FORMATS }],
 })
 export class PlayReportComponent implements OnInit {
   buildingReport = false;
+  writingReport = false;
   result = 'nadda';
   today: Date;
   beginningOfTime: Date;
@@ -28,11 +27,13 @@ export class PlayReportComponent implements OnInit {
 
   dateRange = new UntypedFormGroup({
     start: new UntypedFormControl(),
-    end: new UntypedFormControl()
+    end: new UntypedFormControl(),
   });
 
-  constructor(private appState: AppStateService, private http: HttpClient) {
-  }
+  constructor(
+    private appState: AppStateService,
+    private http: HttpClient
+  ) {}
 
   ngOnInit() {
     this.appState.setActiveTool(STATSTOOL.PLAY_REPORTER);
@@ -46,16 +47,23 @@ export class PlayReportComponent implements OnInit {
 
   // Construct the URL which is used to build the report.
   buildReportURL(): string {
-    const searchString = [];
-    return environment.serverPrefix + '/tournament/buildPlayReport' +
-      '?to=' + this.dateRange.controls['end'].value.toISOString().substr(0, 10) +
-      '&from=' + this.dateRange.controls['start'].value.toISOString().substr(0, 10);
+    return (
+      environment.serverPrefix +
+      '/tournament/buildPlayReport' +
+      '?to=' +
+      this.dateRange.controls['end'].value.toISOString().slice(0, 10) +
+      '&from=' +
+      this.dateRange.controls['start'].value.toISOString().slice(0, 10)
+    );
   }
 
   getReport() {
     this.buildingReport = true;
-    const httpOptions = { headers: new HttpHeaders({ 'Content-Type': 'application/json'}) };
-    this.http.get<string>(this.buildReportURL(), httpOptions)
+    const httpOptions = {
+      headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
+    };
+    this.http
+      .get<string>(this.buildReportURL(), httpOptions)
       .subscribe((res: any) => {
         this.buildingReport = false;
         this.generatePlayReportWorkbook(res);
@@ -63,21 +71,35 @@ export class PlayReportComponent implements OnInit {
   }
 
   generatePlayReportWorkbook(data: any[]) {
+    this.writingReport = true;
     const wb: WorkBook = utils.book_new();
     const ws: WorkSheet = utils.json_to_sheet(data);
     ws['!cols'] = [
-      {wch: 35}, {wch: 9}, {wch: 11}, {wch: 11},
-      {wch: 15}, {wch: 15}, {wch: 4}, {wch: 15},
-      {wch: 8}, {wch: 8}, {wch: 8}, {wch: 8},
-      {wch: 8}, {wch: 8}, {wch: 15}, {wch: 9},
-      {wch: 12}, {wch: 12}, {wch: 4}, {wch: 11},
-      {wch: 4},
+      { wch: 35 },
+      { wch: 9 },
+      { wch: 11 },
+      { wch: 11 },
+      { wch: 15 },
+      { wch: 15 },
+      { wch: 4 },
+      { wch: 15 },
+      { wch: 8 },
+      { wch: 8 },
+      { wch: 8 },
+      { wch: 8 },
+      { wch: 8 },
+      { wch: 8 },
+      { wch: 15 },
+      { wch: 9 },
+      { wch: 12 },
+      { wch: 12 },
+      { wch: 4 },
+      { wch: 11 },
+      { wch: 4 },
     ];
     utils.book_append_sheet(wb, ws, 'Players');
     const now = new Date().toISOString();
     XLSX.writeFile(wb, 'PlayData-' + now + '.xlsx');
+    this.writingReport = false;
   }
 }
-
-
-

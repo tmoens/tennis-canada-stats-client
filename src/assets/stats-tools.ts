@@ -1,4 +1,4 @@
-import {ADMIN_ROLE, BC_MEMBERSHIP_ROLE, USER_ROLE} from '../app/auth/app-roles';
+import {ADMIN_ROLE, USER_ROLE} from '../app/auth/app-roles';
 
 export class STATSTOOL {
   static readonly HOME = new STATSTOOL(
@@ -65,7 +65,7 @@ export class STATSTOOL {
     ''
   );
   static readonly ITF_RESULTS_UPDATE = new STATSTOOL(
-    'ITF Reuslts Update',
+    'ITF Results Update',
     'external_data_admin/resultsBrowser',
     'Browse and update results imported from the ITF.',
     ''
@@ -75,14 +75,6 @@ export class STATSTOOL {
     'grader',
     'Check and approve the grade of leagues and tournaments as assigned by the TD.',
     ''
-  );
-  static readonly PLAYER_CHECK = new STATSTOOL(
-    'BC Membership List Checker',
-    'player_check',
-    'Given a a workbook with membership lists of partial player information, ' +
-    'or confirm the identity of players on the lists.',
-    '',
-    BC_MEMBERSHIP_ROLE
   );
   static readonly USER_MANAGER = new STATSTOOL(
     'User Manager',
@@ -102,7 +94,7 @@ export class STATSTOOL {
   ) {
   }
 
-  // If you talk about a particular tool without specifying an attribute, you get it's route.
+  // If you talk about a particular tool without specifying an attribute, you get its route.
   toString() {
     return this.route;
   }

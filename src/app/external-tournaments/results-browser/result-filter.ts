@@ -7,7 +7,7 @@ export class ResultFilter {
   sanctioningBody: string = null;
   category: string = null;
   subCategory: string = null;
-  start:string;
-  end:string;
+  start: string;
+  end: string;
   gender: string;
 }

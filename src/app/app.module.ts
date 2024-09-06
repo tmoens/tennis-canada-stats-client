@@ -1,8 +1,7 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { FlexLayoutModule } from '@angular/flex-layout';
-import {APP_INITIALIZER, NgModule} from '@angular/core';
-import {HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http';
+import { APP_INITIALIZER, NgModule } from '@angular/core';
+import { HTTP_INTERCEPTORS, provideHttpClient } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { LayoutModule } from '@angular/cdk/layout';
 
@@ -40,26 +39,27 @@ import { HomeComponent } from './home/home.component';
 import { TournamentStrengthComponent } from './tournament-strength/tournament-strength.component';
 import { UtrReportComponent } from './utr-report/utr-report.component';
 import { ExternalTournamentsModule } from './external-tournaments/external-tournaments.module';
-import { PlayerCheckComponent } from './vr/player-check/player-check.component';
 
 import { PlayReportComponent } from './play-reporter/play-report.component';
-import {AuthModule} from './auth/auth.module';
-import {AppStateService} from './app-state.service';
-import {UserAdminService} from './auth/user-admin/user-admin.service';
-import {LocationStrategy, PathLocationStrategy} from '@angular/common';
-import {AuthService} from './auth/auth.service';
-import {CanDeactivateGuard} from './auth/guards/can-deactivate-guard';
-import {LoginGuardService} from './auth/guards/login-guard.service';
-import {RoleGuardService} from './auth/guards/role-guard.service';
-import {AuthTokenInterceptor} from './auth/auth-token.interceptor';
-import {DialogService} from './dialog.service';
-import {MatSnackBarModule} from '@angular/material/snack-bar';
-import {MatDialogModule} from '@angular/material/dialog';
-import {HttpErrorHandlerService} from './http-error-handler';
-import {MatMenuModule} from '@angular/material/menu';
+import { AuthModule } from './auth/auth.module';
+import { AppStateService } from './app-state.service';
+import { UserAdminService } from './auth/user-admin/user-admin.service';
+import { LocationStrategy, PathLocationStrategy } from '@angular/common';
+import { AuthService } from './auth/auth.service';
+import { CanDeactivateGuard } from './auth/guards/can-deactivate-guard';
+import { LoginGuardService } from './auth/guards/login-guard.service';
+import { RoleGuardService } from './auth/guards/role-guard.service';
+import { AuthTokenInterceptor } from './auth/auth-token.interceptor';
+import { DialogService } from './dialog.service';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatDialogModule } from '@angular/material/dialog';
+import { HttpErrorHandlerService } from './http-error-handler';
+import { MatMenuModule } from '@angular/material/menu';
 import { GraderComponent } from './grader/grader.component';
-import {GraderService} from './grader/grader-service';
-import {MatchCompetitivenessComponent} from './match-competitiveness/match-competitiveness.component';
+import { GraderService } from './grader/grader-service';
+import { MatchCompetitivenessComponent } from './match-competitiveness/match-competitiveness.component';
+import { TruncatePipe } from './pipes/truncate/truncate.pipe';
+import { CanDeactivateComponent } from './auth/guards/can-deactivate-component';
 
 export function appStateProviderFactory(provider: AppStateService) {
   return () => provider.initialize();
@@ -73,7 +73,6 @@ export function authServiceProviderFactory(provider: AppStateService) {
   return () => provider.initialize();
 }
 
-
 @NgModule({
   declarations: [
     AppComponent,
@@ -81,47 +80,78 @@ export function authServiceProviderFactory(provider: AppStateService) {
     PlayerImportComponent,
     MatchCompetitivenessComponent,
     PlayerMergeImportComponent,
-    PlayerCheckComponent,
     PlayReportComponent,
     TournamentStrengthComponent,
     VRLicenseManagerComponent,
     VRLicenseReporterComponent,
     UtrReportComponent,
     GraderComponent,
+    TruncatePipe,
+    CanDeactivateComponent,
   ],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
-    FlexLayoutModule,
     FormsModule,
-    HttpClientModule,
     LayoutModule,
-    MatButtonModule, MatCardModule, MatCheckboxModule,
-    MatDatepickerModule, MatDialogModule, MatIconModule, MatExpansionModule,
-    MatFormFieldModule, MatGridListModule,
-    MatInputModule, MatListModule, MatOptionModule, MatProgressBarModule,
-    MatRadioModule, MatSelectModule, MatStepperModule, MatTableModule,
+    MatButtonModule,
+    MatCardModule,
+    MatCheckboxModule,
+    MatDatepickerModule,
+    MatDialogModule,
+    MatIconModule,
+    MatExpansionModule,
+    MatFormFieldModule,
+    MatGridListModule,
+    MatInputModule,
+    MatListModule,
+    MatOptionModule,
+    MatProgressBarModule,
+    MatRadioModule,
+    MatSelectModule,
+    MatStepperModule,
+    MatTableModule,
     MatSidenavModule,
-    MatSlideToggleModule, MatSnackBarModule, MatSortModule, MatToolbarModule,
+    MatSlideToggleModule,
+    MatSnackBarModule,
+    MatSortModule,
+    MatToolbarModule,
     NgxUploaderModule,
     ReactiveFormsModule,
     ExternalTournamentsModule,
-    AppRoutingModule, AuthModule, MatMenuModule,
+    AppRoutingModule,
+    AuthModule,
+    MatMenuModule,
   ],
   providers: [
-    {provide: APP_INITIALIZER, useFactory: appStateProviderFactory, deps: [AppStateService], multi: true},
-    {provide: APP_INITIALIZER, useFactory: userAdminServiceProviderFactory, deps: [UserAdminService, AppStateService], multi: true},
-    {provide: LocationStrategy, useClass: PathLocationStrategy},
-    {provide: APP_INITIALIZER, useFactory: authServiceProviderFactory, deps: [AuthService], multi: true},
+    provideHttpClient(),
+    {
+      provide: APP_INITIALIZER,
+      useFactory: appStateProviderFactory,
+      deps: [AppStateService],
+      multi: true,
+    },
+    {
+      provide: APP_INITIALIZER,
+      useFactory: userAdminServiceProviderFactory,
+      deps: [UserAdminService, AppStateService],
+      multi: true,
+    },
+    { provide: LocationStrategy, useClass: PathLocationStrategy },
+    {
+      provide: APP_INITIALIZER,
+      useFactory: authServiceProviderFactory,
+      deps: [AuthService],
+      multi: true,
+    },
     CanDeactivateGuard,
     DialogService,
     LoginGuardService,
     RoleGuardService,
     GraderService,
     HttpErrorHandlerService,
-    {provide: HTTP_INTERCEPTORS, useClass: AuthTokenInterceptor, multi: true},
-
+    { provide: HTTP_INTERCEPTORS, useClass: AuthTokenInterceptor, multi: true },
   ],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
 })
-export class AppModule { }
+export class AppModule {}

@@ -1,16 +1,17 @@
 
-mat-cell, .mat-cell {
+mat-cell, .mat-mdc-cell {
+  font-size: 12px;
   padding-left: 4px;
 }
 
-mat-header-cell, .mat-header-cell {
+mat-header-cell, .mat-mdc-header-cell {
   padding-left: 4px;
 }
 
-.mat-cell .mat-button {
+.mat-mdc-cell .mat-mdc-button {
   font-size: 12px;
   min-width: 30px;
-  padding: 0px;
+  padding: 0;
 }
 
 .mat-column-endDate {
@@ -31,11 +32,10 @@ mat-header-cell, .mat-header-cell {
   flex: 0 0 25%;
 }
 
-.mat-table {
+.mat-mdc-table {
   overflow: auto;
 }
 
 .filter-form-field {
   width: 170px;
 }
-

@@ -1,18 +1,17 @@
-import {Component, Inject, } from '@angular/core';
-import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
+import { Component, Inject, ViewEncapsulation } from '@angular/core';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-can-deactivate',
   templateUrl: './can-deactivate-component.html',
-  styleUrls: ['./can-deactivate-component.scss']
+  styleUrls: ['./can-deactivate-component.scss'],
+  encapsulation: ViewEncapsulation.None,
 })
-
 export class CanDeactivateComponent {
-
   constructor(
     public dialogRef: MatDialogRef<CanDeactivateComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: { message: string; },
-    ) {}
+    @Inject(MAT_DIALOG_DATA) public data: { message: string }
+  ) {}
 
   ignoreChanges() {
     this.dialogRef.close(true);

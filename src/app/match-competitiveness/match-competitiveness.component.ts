@@ -1,10 +1,11 @@
-import {Component, OnInit} from '@angular/core';
-import {environment} from '../../environments/environment';
-import {AppStateService} from '../app-state.service';
-import {HttpClient} from '@angular/common/http';
-import {HttpHeaders} from '@angular/common/http';
-import {STATSTOOL} from '../../assets/stats-tools';
-import {JobState, JobStats, JobStatusService} from '../job-status.service';
+import { Component, OnInit } from '@angular/core';
+import { environment } from '../../environments/environment';
+import { AppStateService } from '../app-state.service';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { STATSTOOL } from '../../assets/stats-tools';
+import { JobStatusService } from '../job-status/job-status.service';
+import { JobState } from '../job-status/job.state';
+import { JobStats } from '../job-status/job-stats';
 
 const REPORT_REQUEST_URL = '/Exports/MatchCompetitivenessReport';
 
@@ -13,9 +14,11 @@ const REPORT_REQUEST_URL = '/Exports/MatchCompetitivenessReport';
   templateUrl: './match-competitiveness.component.html',
   styleUrls: ['./match-competitiveness.component.scss'],
 })
-
 export class MatchCompetitivenessComponent implements OnInit {
-  state: any  = { buildingReport: false, reportReady: false};
+  state: { buildingReport: boolean; reportReady: boolean } = {
+    buildingReport: false,
+    reportReady: false,
+  };
   result = 'no result';
   downloadURL: string;
   today: Date;
@@ -24,7 +27,7 @@ export class MatchCompetitivenessComponent implements OnInit {
   constructor(
     private appState: AppStateService,
     private http: HttpClient,
-    private jobStatusService: JobStatusService,
+    private jobStatusService: JobStatusService
   ) {
     this.today = new Date();
   }
@@ -40,22 +43,27 @@ export class MatchCompetitivenessComponent implements OnInit {
     this.state.buildingReport = true;
     this.state.reportReady = false;
     const httpOptions = {
-      headers: new HttpHeaders({ 'Content-Type': 'application/json'})
+      headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
     };
 
     // When the query string is built, send it to the server and the server
     // send back a string with a file name where the file can be downloaded.
-    this.http.get<string>(`${environment.serverPrefix}${REPORT_REQUEST_URL}/build`, httpOptions)
+    this.http
+      .get<string>(
+        `${environment.serverPrefix}${REPORT_REQUEST_URL}/build`,
+        httpOptions
+      )
       .subscribe(() => {
         this.pollStatus();
       });
   }
 
   pollStatus(): void {
-    this.jobStatusService.getStatus(`${REPORT_REQUEST_URL}/build`).subscribe(
-      data => {
+    this.jobStatusService
+      .getStatus(`${REPORT_REQUEST_URL}/build`)
+      .subscribe((data) => {
         this.requestStatus = data;
-        if (this.requestStatus.status === JobState.IN_PROGRESS  ) {
+        if (this.requestStatus.status === JobState.IN_PROGRESS) {
           this.state.buildingReport = true;
           this.state.reportReady = false;
           setTimeout(() => this.pollStatus(), 200);
@@ -70,9 +78,8 @@ export class MatchCompetitivenessComponent implements OnInit {
           }
         } else {
           this.state.reportReady = false;
-          this.state.buildingRatings = false;
+          this.state.buildingReport = false;
         }
-      }
-    );
+      });
   }
 }

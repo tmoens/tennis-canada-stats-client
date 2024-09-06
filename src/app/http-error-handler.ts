@@ -1,22 +1,25 @@
-import {HttpClient} from '@angular/common/http';
-import {MatSnackBar} from '@angular/material/snack-bar';
-import {AuthService} from './auth/auth.service';
-import {AppStateService} from './app-state.service';
-import {Router} from '@angular/router';
-import {Observable, of} from 'rxjs';
-import {Injectable} from '@angular/core';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { AuthService } from './auth/auth.service';
+import { AppStateService } from './app-state.service';
+import { Router } from '@angular/router';
+import { Observable, of } from 'rxjs';
+import { Injectable } from '@angular/core';
 
 @Injectable()
 export class HttpErrorHandlerService {
-
   constructor(
-    private http: HttpClient,
     private message: MatSnackBar,
     private authService: AuthService,
     private appState: AppStateService,
-    private router: Router,
-  ) {
-  }
+    private router: Router
+  ) {}
+
+  /**
+   * Handle Http operation that failed.
+   * Let the app continue.
+   * @param operation - name of the operation that failed
+   * @param result - optional value to return as the observable result
+   */
 
   /*
    * This generic handler was copied from the Angular tutorial.
@@ -30,13 +33,17 @@ export class HttpErrorHandlerService {
   public handleError<T>(operation = 'operation', result?: T) {
     return (error: any): Observable<T | null> => {
       if (401 === error.status && this.authService.isAuthenticated) {
-        this.message.open('Your session has ended unexpectedly',
-          null, {duration: this.appState.getState('confirmMessageDuration')});
+        this.message.open('Your session has ended unexpectedly', null, {
+          duration: this.appState.getState('confirmMessageDuration'),
+        });
         this.authService.onLogout();
         this.router.navigateByUrl('/login').then();
       } else {
-        this.message.open(operation + '. ' + error.error.message || error.status,
-          null, {duration: this.appState.getState('confirmMessageDuration')});
+        this.message.open(
+          `${operation}. ${error.error.message} || ${error.status}`,
+          null,
+          { duration: this.appState.getState('confirmMessageDuration') }
+        );
       }
       // Let the app keep running by returning what we were told to.
       return of(result as T);

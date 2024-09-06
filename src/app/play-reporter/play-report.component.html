@@ -1,31 +1,37 @@
-<div fxLayout="column" fxLayoutGap="20px" class="mat-elevation-z3 app-box">
-  <h2 fxFlexAlign="center">Play Data Report</h2>
-  <p>Generates an excel report with one line for each player who entered an event.</p>
-  <p>By putting the data in a pivot table Tennis Canada can develop a clear
-    understanding of how the game is growing in various areas
-    and in various play categories.</p>
-  <form class="form-inline " fxLayout="column" fxLayoutAlign="center center" fxLayoutGap="20px">
-    <mat-form-field>
-      <mat-label>Enter a date range</mat-label>
-      <mat-date-range-input [formGroup]="dateRange" [rangePicker]="picker">
-        <input matStartDate formControlName="start" placeholder="Start date">
-        <input matEndDate formControlName="end" placeholder="End date">
-      </mat-date-range-input>
-      <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-      <mat-date-range-picker #picker></mat-date-range-picker>
+<mat-card class="small-tool">
+  <mat-card-header>
+    <mat-card-title>Play Data Report</mat-card-title>
+  </mat-card-header>
+  <mat-card-content>
+    <div class="vertical-spacer-medium"></div>
+    <p class="mat-body-medium">Generate an excel report with one line for each player in each event within a specific date range.</p>
+    <div class="vertical-spacer-medium"></div>
+    <p class="mat-body-medium">By putting the data in a pivot table, you can develop a clear
+      understanding of how the game is growing in various areas
+      and in various play categories.</p>
+    <div class="vertical-spacer-medium"></div>
+    <form>
+      <mat-form-field floatLabel="always" style="width:300px">
+        <mat-label>Enter a date range</mat-label>
+        <mat-date-range-input [formGroup]="dateRange" [rangePicker]="picker">
+          <input matStartDate formControlName="start" placeholder="Start date">
+          <input matEndDate formControlName="end" placeholder="End date">
+        </mat-date-range-input>
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-date-range-picker #picker></mat-date-range-picker>
+        <mat-error *ngIf="dateRange.controls.start.hasError('matStartDateInvalid')">Invalid start date</mat-error>
+        <mat-error *ngIf="dateRange.controls.end.hasError('matEndDateInvalid')">Invalid end date</mat-error>
+      </mat-form-field>
 
-      <mat-error *ngIf="dateRange.controls.start.hasError('matStartDateInvalid')">Invalid start date</mat-error>
-      <mat-error *ngIf="dateRange.controls.end.hasError('matEndDateInvalid')">Invalid end date</mat-error>
-    </mat-form-field>
-
-  </form>
-  <mat-divider></mat-divider>
-  <div fxFlexAlign="center" fxLayout="row"  fxLayoutGap="20px">
-    <a mat-button color="primary" type="button" (click)="getReport()">
-      <mat-icon>cloud_download</mat-icon> Download Report
-    </a>
-  </div>
-  <mat-progress-bar mode="indeterminate" *ngIf="buildingReport">
-    <div>Please wait while we build your report.</div>
-  </mat-progress-bar>
-</div>
+    </form>
+    <div class="flex-row flex-justify-center gap-20">
+      <a mat-button type="button" (click)="getReport()">
+        <mat-icon>cloud_download</mat-icon> Build Report
+      </a>
+    </div>
+    <mat-progress-bar mode="indeterminate" *ngIf="buildingReport || writingReport">
+    </mat-progress-bar>
+    <div class="mat-caption" *ngIf="buildingReport">Please wait while we fetch data for your report.</div>
+    <div class="mat-caption" *ngIf="writingReport">Please wait while we write your report.</div>
+  </mat-card-content>
+</mat-card>

@@ -1,55 +1,33 @@
-<div fxLayout="row" fxLayoutGap="10px" >
-  <div fxFlex="17" class="app-box mat-elevation-z3">
-    <h3>International Results</h3>
-    <p>This application allows you to browse results for Canadians
-      playing in ATP, WTA and ITF.</p>
-    <mat-divider></mat-divider>
-    <form (submit)="search()">
-      <h3>Result Filters</h3>
-
-      <!--Player's ITF Id Filter-->
+<mat-card class="extra-large-tool">
+  <mat-card-header>
+    <div class="flex-row gap-20 flex-justify-start" style="width: 100%">
+      <div class="flex-column">
+        <mat-card-title>International Results</mat-card-title>
+        <mat-card-subtitle class="mat-body-medium">Browse results for Canadians playing in ATP, WTA and ITF.</mat-card-subtitle>
+      </div>
+      <div class="fill-remaining-space"></div>
+      <!--Start Period Filter-->
       <mat-form-field class="filter-form-field">
-        <input matInput [(ngModel)]="filter.playerId" name="ITFId"
-               placeholder="Full ITF Id" type="search">
-        <button mat-button type="button" *ngIf="filter.playerId" matSuffix mat-icon-button
-                aria-label="Clear" (click)="filter.playerId='';search()">
-          <mat-icon>close</mat-icon>
-        </button>
+        <mat-label>From Date</mat-label>
+        <input matInput [matDatepicker]="startDatePicker" [formControl]="startFilterPeriodFC"
+               (dateChange)="onStartDateChanged()" (dateInput)="onStartDateChanged()">
+        <mat-datepicker-toggle matSuffix [for]="startDatePicker"></mat-datepicker-toggle>
+        <mat-datepicker #startDatePicker></mat-datepicker>
       </mat-form-field>
 
-      <!--Players VRID Filter-->
+      <!--End Period Filter-->
       <mat-form-field class="filter-form-field">
-        <input matInput [(ngModel)]="filter.VRID" name="VRId"
-               placeholder="Full VR Id" type="search">
-        <button mat-button type="button" *ngIf="filter.VRID" matSuffix mat-icon-button
-                aria-label="Clear" (click)="filter.VRID='';search()">
-          <mat-icon>close</mat-icon>
-        </button>
-      </mat-form-field>
-
-      <!--Player's Family Name Filter-->
-      <mat-form-field class="filter-form-field">
-        <input matInput [(ngModel)]="filter.lastName" name="familyName"
-               placeholder="Family Name" type="search">
-        <button mat-button type="button" *ngIf="filter.lastName" matSuffix mat-icon-button
-                aria-label="Clear" (click)="filter.lastName='';search()">
-          <mat-icon>close</mat-icon>
-        </button>
-      </mat-form-field>
-
-      <!--Tournament Name Filter-->
-      <mat-form-field class="filter-form-field">
-        <input matInput [(ngModel)]="filter.tournamentName" name="tournamentName"
-               placeholder="Tournament Name" type="search">
-        <button mat-button type="button" *ngIf="filter.tournamentName" matSuffix mat-icon-button
-                aria-label="Clear" (click)="filter.tournamentName='';search()">
-          <mat-icon>close</mat-icon>
-        </button>
+        <mat-label>Until date</mat-label>
+        <input matInput [matDatepicker]="endDatePicker" [formControl]="endFilterPeriodFC"
+               (dateChange)="onEndDateChanged()" (dateInput)="onEndDateChanged()">
+        <mat-datepicker-toggle matSuffix [for]="endDatePicker"></mat-datepicker-toggle>
+        <mat-datepicker #endDatePicker></mat-datepicker>
       </mat-form-field>
 
       <!--Tournament Type filter-->
       <mat-form-field class="filter-form-field">
-        <mat-select (selectionChange)="search()" placeholder="Tournament Type"
+        <mat-label>Tournament Type</mat-label>
+        <mat-select (selectionChange)="search()"
                     class="form-control"
                     [(ngModel)]="selectedTournamentType" name="tournamentType">
           <mat-option *ngFor="let item of tournamentTypes" [value]="item">
@@ -57,138 +35,147 @@
           </mat-option>
         </mat-select>
       </mat-form-field>
-
-      <!--Start Period Filter-->
-      <mat-form-field class="filter-form-field">
-        <input matInput [matDatepicker]="startdp" placeholder="From Date" [formControl]="startFilterPeriodFC"
-               (dateChange)="onStartDateChanged()" (dateInput)="onStartDateChanged()">
-        <mat-datepicker-toggle matSuffix [for]="startdp"></mat-datepicker-toggle>
-        <mat-datepicker #startdp></mat-datepicker>
-      </mat-form-field>
-
-      <!--End Period Filter-->
-      <mat-form-field class="filter-form-field">
-        <input matInput [matDatepicker]="enddp" placeholder="Until date" [formControl]="endFilterPeriodFC"
-               (dateChange)="onEndDateChanged()" (dateInput)="onEndDateChanged()">
-        <mat-datepicker-toggle matSuffix [for]="enddp"></mat-datepicker-toggle>
-        <mat-datepicker #enddp></mat-datepicker>
-      </mat-form-field>
-
-      <span class="fill-remaining-space"></span>
-      <button mat-button color="primary" type="submit" (keyup.enter)="search()">Search</button>
-      <button mat-button color="primary" (click)="export()">Export</button>
-    </form>
-  </div>
-  <div class="app-box mat-elevation-z3" fxFlex>
-    <div *ngIf="loadingResults">
-      <mat-progress-bar mode="indeterminate"></mat-progress-bar>
-      <H3>Loading Results</H3>
     </div>
-    <div class="instruction" *ngIf="resultCount == 0  && !loadingResults">
-      <H3>No results match the filter. Try relaxing the criteria.</H3>
+  </mat-card-header>
+  <mat-card-content>
+    <div class="flex-column gap-20">
+      <form (submit)="search()">
+        <div class="flex-row gap-20 flex-justify-center flex-align-center">
+          <button mat-button type="submit" (keyup.enter)="search()">Search</button>
+
+          <!--Player's ITF Id Filter-->
+          <mat-form-field floatLabel="always" class="filter-form-field">
+            <mat-label>Full ITF Id</mat-label>
+            <input matInput [(ngModel)]="filter.playerId" name="ITFId" type="search">
+          </mat-form-field>
+
+          <!--Players VR ID Filter-->
+          <mat-form-field floatLabel="always" class="filter-form-field">
+            <mat-label>Full VR Id</mat-label>
+            <input matInput [(ngModel)]="filter.VRID" name="VRId" type="search">
+          </mat-form-field>
+
+          <!--Player's Family Name Filter-->
+          <mat-form-field floatLabel="always" class="filter-form-field">
+            <mat-label>Partial Family Name</mat-label>
+            <input matInput [(ngModel)]="filter.lastName" name="familyName"
+                   type="search">
+          </mat-form-field>
+
+          <!--Tournament Name Filter-->
+          <mat-form-field floatLabel="always" class="filter-form-field">
+            <mat-label>Partial Tournament Name</mat-label>
+            <input matInput [(ngModel)]="filter.tournamentName" name="tournamentName"
+                   type="search">
+          </mat-form-field>
+        </div>
+      </form>
+      <button mat-button (click)="export()">Export data in the table below to Excel for loading into VR</button>
+      <div class="mat-elevation-z3 pad-10 fill-remaining-space">
+        <div *ngIf="loadingResults">
+          <div class="mat-title-medium">Loading Results</div>
+          <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+        </div>
+        <div class="instruction" *ngIf="resultCount == 0  && !loadingResults">
+          <div class="mat-title-medium">No results match the filter. Try relaxing the criteria.</div>
+        </div>
+        <div *ngIf="resultCount > 0 && !loadingResults" >
+          <mat-table [dataSource]="results">
+            <!--End Date column-->
+            <ng-container matColumnDef="endDate">
+              <mat-header-cell *matHeaderCellDef>End Date</mat-header-cell>
+              <mat-cell *matCellDef="let t">{{t.endDate}}</mat-cell>
+            </ng-container>
+
+            <!--Tournament Name Column-->
+            <ng-container matColumnDef="name">
+              <mat-header-cell *matHeaderCellDef>Tournament</mat-header-cell>
+              <mat-cell *matCellDef="let t">
+                <button mat-button (click)="onTournamentNameSelected(t.tournamentName)">{{ t.tournamentName }}</button>
+              </mat-cell>
+            </ng-container>
+
+            <!--Tournament Type Column-->
+            <ng-container matColumnDef="tournamentType">
+              <mat-header-cell *matHeaderCellDef>Type</mat-header-cell>
+              <mat-cell *matCellDef="let t">{{ t.tournamentType }}</mat-cell>
+            </ng-container>
+
+            <!--Player's full name-->
+            <ng-container matColumnDef="fullName">
+              <mat-header-cell *matHeaderCellDef>Name</mat-header-cell>
+              <mat-cell *matCellDef="let t">
+                <button mat-button (click)="onPlayerNameSelected(t.externalId)">{{ t.playerName }}</button>
+              </mat-cell>
+            </ng-container>
+
+            <!--Player's VR Id-->
+            <ng-container matColumnDef="vrid">
+              <mat-header-cell *matHeaderCellDef>VR Id</mat-header-cell>
+              <mat-cell *matCellDef="let t">
+                <button mat-button (click)="onVRIDSelected(t.internalId)">{{ t.internalId }}</button>
+              </mat-cell>
+            </ng-container>
+
+            <!--Finishing Position-->
+            <ng-container matColumnDef="fp">
+              <mat-header-cell *matHeaderCellDef>Result</mat-header-cell>
+              <mat-cell *matCellDef="let t">{{ t.finishPosition }}</mat-cell>
+            </ng-container>
+
+            <!--Draw Size-->
+            <ng-container matColumnDef="drawSize">
+              <mat-header-cell *matHeaderCellDef>Draw</mat-header-cell>
+              <mat-cell *matCellDef="let t">{{ t.drawSize }}</mat-cell>
+            </ng-container>
+
+            <!--Points Category Column-->
+            <ng-container matColumnDef="pc">
+              <mat-header-cell *matHeaderCellDef
+                               matTooltip="Type of Tennis Canada points.">
+                Type</mat-header-cell>
+              <mat-cell *matCellDef="let t">{{t.shortPointsCategory}}</mat-cell>
+            </ng-container>
+
+            <!--Tennis Canada Ranking Points-->
+            <ng-container matColumnDef="tcPts">
+              <mat-header-cell *matHeaderCellDef
+                               matTooltip="Points earned towards Tennis Canada rankings.">
+                TC Pts</mat-header-cell>
+              <mat-cell *matCellDef="let t">{{t.tcPoints}}</mat-cell>
+            </ng-container>
+
+            <!--External Rankings Points-->
+            <ng-container matColumnDef="externalPts">
+              <mat-header-cell *matHeaderCellDef
+                               matTooltip="Points earned in the point system of the external tournament.">
+                Ext Pts</mat-header-cell>
+              <mat-cell *matCellDef="let t"
+                        [matTooltip]="t.sanctioningBody + ' points earned'">
+                {{t.externalRankingPoints}}</mat-cell>
+            </ng-container>
+
+            <!--External Rankings Points Override-->
+            <ng-container matColumnDef="epOverride">
+              <mat-header-cell *matHeaderCellDef
+                               matTooltip="Manual entry/override of external points earned.">
+                Override</mat-header-cell>
+              <mat-cell *matCellDef="let t"
+                        [matTooltip]="'Override external points...'">
+                <mat-form-field floatLabel="always" style="width: 60px; font-size: 12px">
+                  <mat-label></mat-label>
+                  <input matInput [(ngModel)]="t.manualPointAllocation"
+                         (change)="onPointOverride(t)">
+                </mat-form-field>
+
+              </mat-cell>
+            </ng-container>
+
+            <mat-header-row *matHeaderRowDef="displayColumns"></mat-header-row>
+            <mat-row *matRowDef="let row;  columns:displayColumns;"></mat-row>
+          </mat-table>
+        </div>
+      </div>
     </div>
-    <div class="instruction" *ngIf="resultCount == -1  && !loadingResults">
-      <h3>Fill in the appropriate filter criteria and hit "search"</h3>
-    </div>
-    <div fxFlex *ngIf="resultCount > 0 && !loadingResults" >
-      <mat-table fxFlex #resultsTable [dataSource]="results">
-        <!--End Date column-->
-        <ng-container matColumnDef="endDate">
-          <mat-header-cell *matHeaderCellDef>End Date</mat-header-cell>
-          <mat-cell *matCellDef="let t">{{t.endDate}}</mat-cell>
-        </ng-container>
-
-        <!--Tournament Name Column-->
-        <ng-container matColumnDef="name">
-          <mat-header-cell *matHeaderCellDef>Tournament</mat-header-cell>
-          <mat-cell *matCellDef="let t">
-            <button mat-button color="primary"
-                    (click)="onTournamentNameSelected(t.tournamentName)">{{ t.tournamentName }}
-            </button>
-          </mat-cell>
-        </ng-container>
-
-        <!--Tournament Type Column-->
-        <ng-container matColumnDef="tournamentType">
-          <mat-header-cell *matHeaderCellDef>Type</mat-header-cell>
-          <mat-cell *matCellDef="let t">{{ t.tournamentType }}</mat-cell>
-        </ng-container>
-
-        <!--Player's full name-->
-        <ng-container matColumnDef="fullName">
-          <mat-header-cell *matHeaderCellDef>Name</mat-header-cell>
-          <mat-cell *matCellDef="let t">
-            <button mat-button color="primary"
-                    (click)="onPlayerNameSelected(t.externalId)">{{ t.playerName }}</button>
-          </mat-cell>
-        </ng-container>
-
-        <!--Player's VR Id-->
-        <ng-container matColumnDef="vrid">
-          <mat-header-cell *matHeaderCellDef>VR Id</mat-header-cell>
-          <mat-cell *matCellDef="let t">
-            <button mat-button color="primary"
-                    (click)="onVRIDSelected(t.internalId)">{{ t.internalId }}</button>
-          </mat-cell>
-        </ng-container>
-
-        <!--Finishing Position-->
-        <ng-container matColumnDef="fp">
-          <mat-header-cell *matHeaderCellDef>Result</mat-header-cell>
-          <mat-cell *matCellDef="let t">{{ t.finishPosition }}</mat-cell>
-        </ng-container>
-
-        <!--Draw Size-->
-        <ng-container matColumnDef="drawSize">
-          <mat-header-cell *matHeaderCellDef>Draw</mat-header-cell>
-          <mat-cell *matCellDef="let t">{{ t.drawSize }}</mat-cell>
-        </ng-container>
-
-        <!--Points Category Column-->
-        <ng-container matColumnDef="pc">
-          <mat-header-cell *matHeaderCellDef
-                           matTooltip="Type of Tennis Canada points.">
-            Type</mat-header-cell>
-          <mat-cell *matCellDef="let t">{{t.shortPointsCategory}}</mat-cell>
-        </ng-container>
-
-        <!--Tennis Canada Ranking Points-->
-        <ng-container matColumnDef="tcPts">
-          <mat-header-cell *matHeaderCellDef
-                           matTooltip="Points earned towards Tennis Canada rankings.">
-            TC Pts</mat-header-cell>
-          <mat-cell *matCellDef="let t">{{t.tcPoints}}</mat-cell>
-        </ng-container>
-
-        <!--External Rankings Points-->
-        <ng-container matColumnDef="externalPts">
-          <mat-header-cell *matHeaderCellDef
-                           matTooltip="Points earned in the point system of the external tournament.">
-            Ext Pts</mat-header-cell>
-          <mat-cell *matCellDef="let t"
-                    [matTooltip]="t.sanctioningBody + ' points earned'">
-            {{t.externalRankingPoints}}</mat-cell>
-        </ng-container>
-
-        <!--External Rankings Points Override-->
-        <ng-container matColumnDef="epOverride">
-          <mat-header-cell *matHeaderCellDef
-                           matTooltip="Manual entry/override of external points earned.">
-            Override</mat-header-cell>
-          <mat-cell *matCellDef="let t"
-                    [matTooltip]="'Override external points...'">
-            <mat-form-field style="width: 60px">
-              <input matInput [(ngModel)]="t.manualPointAllocation"
-                     placeholder="Override"
-                     (change)="onPointOverride(t)">
-            </mat-form-field>
-
-          </mat-cell>
-        </ng-container>
-
-        <mat-header-row *matHeaderRowDef="displayColumns"></mat-header-row>
-        <mat-row *matRowDef="let row;  columns:displayColumns;"></mat-row>
-      </mat-table>
-    </div>
-  </div>
-</div>
+  </mat-card-content>
+</mat-card>

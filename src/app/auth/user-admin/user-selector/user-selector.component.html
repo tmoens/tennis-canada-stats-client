@@ -1,0 +1,24 @@
+<mat-card>
+  <mat-card-content>
+    <div class="flex-column gap-20">
+      <mat-card-title>Users List</mat-card-title>
+      <ng-container *ngIf="service.userList.length > 0">
+        <mat-selection-list #items [multiple]="false"
+                            (selectionChange)="onSelect(items.selectedOptions.selected[0]?.value)">
+          <mat-list-option *ngFor="let item of service.userList"
+                           [value]="item"
+                           [selected]="service.selected?.id === item.id"
+                           [class.selected]="service.selected && service.selected.id === item.id">
+            <span matListItemTitle>{{item.name}}</span>
+            <span matListItemLine *ngIf="item.email">Email: {{item.email}}</span>
+            <span matListItemLine *ngIf="item.username">User Id: {{item.username}}</span>
+          </mat-list-option>
+        </mat-selection-list>
+      </ng-container>
+      <div *ngIf="service.userList.length == 0">
+        <p>No users match the current filter.</p>
+        <p>Try relaxing the filter criteria. </p>
+      </div>
+    </div>
+  </mat-card-content>
+</mat-card>

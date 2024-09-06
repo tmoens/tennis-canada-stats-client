@@ -1,16 +1,24 @@
-import {Component, EventEmitter, OnInit} from '@angular/core';
-import {humanizeBytes, UploaderOptions, UploadFile, UploadInput, UploadOutput} from 'ngx-uploader';
-import {JobState, JobStats, JobStatusService} from '../../job-status.service';
-import {AppStateService} from '../../app-state.service';
-import {environment} from '../../../environments/environment';
-import {STATSTOOL} from '../../../assets/stats-tools';
-import {AuthService} from '../../auth/auth.service';
+import { Component, EventEmitter, OnInit } from '@angular/core';
+import {
+  humanizeBytes,
+  UploaderOptions,
+  UploadFile,
+  UploadInput,
+  UploadOutput,
+} from 'ngx-uploader';
+import { JobStatusService } from '../../job-status/job-status.service';
+import { AppStateService } from '../../app-state.service';
+import { environment } from '../../../environments/environment';
+import { STATSTOOL } from '../../../assets/stats-tools';
+import { AuthService } from '../../auth/auth.service';
+import { JobState } from '../../job-status/job.state';
+import { JobStats } from '../../job-status/job-stats';
 
 /* Note to self about the ngx-uploader 2018-10-05 on account of it having no
  * documentation.  The uploader maintains a queue of files which gets
  * built by a <input type=file ngFileSelect> in your html.
  *
- * You communicate with the uploader by a) fielding events it sends you
+ * You communicate with the uploader by fielding events it sends you
  * (see onUploadOutput()) and sending events to it (see uploadInput.emit()).
  *
  * All I really bought with this is a nice progress bar for the process of
@@ -22,44 +30,43 @@ const PLAYER_IMPORT_ROUTE_ON_SERVER = '/Player/importVRPersonsCSV';
 @Component({
   selector: 'app-player-import',
   templateUrl: './player-import.component.html',
-  styleUrls: ['./player-import.component.scss']
+  styleUrls: ['./player-import.component.scss'],
 })
-
 export class PlayerImportComponent implements OnInit {
   public notes: string[] = [
     'The VR loader automatically pulls in players from ' +
-    'the VR API whenever a new player is encountered. ' +
-    'However, the API provides only minimal information for each player.',
+      'the VR API whenever a new player is encountered. ' +
+      'However, the API provides only minimal information for each player.',
     'The VR Player Importer retrieves more complete and up to date ' +
-    'information like phone numbers and addresses for all players.',
-    'This takes a long time, but it should be done every month or so.'
+      'information like birth dates, phone numbers and addresses for all players.',
+    'This takes a long time, but it should be done every month or so.',
   ];
   public step1: string[] = [
     'Log in to VR as an Tennis Canada Organization Admin and ' +
-    'navigate to the admin reports.',
-    'Run the "All persons" report using "Export XLSX". ' +
-    'DO NOT use "Export CLI".',
+      'navigate to the admin reports.',
+    'Run the "All contacts" report using "Export XLSX". ' +
+      'DO NOT use "Export CSV".',
     'Open the downloaded file and enable editing. ' +
-    'Make sure that the column called "dob" is in "YYYY-MM-DD" format.  ' +
-    'If not, you must convert it accordingly.  Failure to do so, will cause problems. ' +
-    'It is probably best if you set "YYYY-MM-DD" as your default date format.',
+      'Make sure that the column called "dob" is in "YYYY-MM-DD" format.  ' +
+      'If not, you must convert it accordingly.  Failure to do so, will cause problems. ' +
+      'It is probably best if you set "YYYY-MM-DD" as your default date format.',
     'IMPORTANT: save the file with the type: CSV UTF-8 (Comma delimited) (*.csv) ' +
-    'The UTF-8 is critical or else all of accented characters will ' +
-    'become garbled in the player database.',
+      'The UTF-8 is critical or else all of accented characters will ' +
+      'become garbled in the player database.',
     'Save and close the file. ',
-    'Once you have done all of this, move to the next step.'
+    'Once you have done all of this, move to the next step.',
   ];
   public step3: string[] = [
     'Please delete the .xlsx file you downloaded from VR.',
     'Please delete the .csv file you saved',
-    '(you have a lot of personal information on your computer which should not stay around).'
+    '(you have a lot of personal information on your computer which should not stay around).',
   ];
 
   options: UploaderOptions;
   files: UploadFile[];
   file: UploadFile;
   uploadInput: EventEmitter<UploadInput>;
-  humanizeBytes: Function;
+  humanizeBytes: (bytes: number) => string;
 
   state: string;
   importStatus: JobStats;
@@ -67,11 +74,11 @@ export class PlayerImportComponent implements OnInit {
   canSelectFile: boolean;
 
   constructor(
-      private jobStatusService: JobStatusService,
-      private appState: AppStateService,
-      private authService: AuthService,
-    ) {
-    this.options = { concurrency: 1};
+    private jobStatusService: JobStatusService,
+    private appState: AppStateService,
+    private authService: AuthService
+  ) {
+    this.options = { concurrency: 1 };
     this.files = [];
     this.file = null;
     // input events, we use this to emit data to ngx-uploader
@@ -83,16 +90,16 @@ export class PlayerImportComponent implements OnInit {
     this.appState.setActiveTool(STATSTOOL.PLAYER_IMPORTER);
     // When initializing, check if there is already an upload in progress
     // If so, just join in to get status updates.
-    this.jobStatusService.getStatus(PLAYER_IMPORT_ROUTE_ON_SERVER).subscribe(
-      data => {
+    this.jobStatusService
+      .getStatus(PLAYER_IMPORT_ROUTE_ON_SERVER)
+      .subscribe((data) => {
         this.importStatus = data;
-        if (this.importStatus.status === JobState.IN_PROGRESS  ) {
+        if (this.importStatus.status === JobState.IN_PROGRESS) {
           this.pollStatus();
         } else {
           this.setState('not started');
         }
-      }
-    );
+      });
   }
 
   /* Note to future self that cost me about three hours 2018-10-05.
@@ -103,10 +110,11 @@ export class PlayerImportComponent implements OnInit {
    * in the file chooser showing up.
    * Further note to self - if the Angular button label uses the
    * label-for="fileToUpload" attribute, then the Chrome browser is smart
-   * enough to know what you are trying to do and it automatically pops up the
+   * enough to know what you are trying to do, and it automatically pops up the
    * file chooser - meaning that it shows up twice.  Firefox is not so smart.
    * So do not use the label-for and both browsers work.
    */
+
   /* Note: in spite of what tslint says, this breaks if made static */
   openFileChooser() {
     document.getElementById('fileToUpload').click();
@@ -126,15 +134,24 @@ export class PlayerImportComponent implements OnInit {
     // console.log(JSON.stringify(output));
     if (output.type === 'allAddedToQueue') {
       // could call startUpload to upload automatically here
-    } else if (output.type === 'addedToQueue' && typeof output.file !== 'undefined') {
-      this.file = (output.file);
+    } else if (
+      output.type === 'addedToQueue' &&
+      typeof output.file !== 'undefined'
+    ) {
+      this.file = output.file;
       this.setState('selected');
-    } else if (output.type === 'uploading' && typeof output.file !== 'undefined') {
+    } else if (
+      output.type === 'uploading' &&
+      typeof output.file !== 'undefined'
+    ) {
       this.file = output.file;
       this.setState('uploading');
     } else if (output.type === 'removed') {
       this.file = null;
-    } else if (output.type === 'rejected' && typeof output.file !== 'undefined') {
+    } else if (
+      output.type === 'rejected' &&
+      typeof output.file !== 'undefined'
+    ) {
       // console.log(output.file.name + ' rejected');
     } else if (output.type === 'done') {
       this.file = output.file;
@@ -159,30 +176,32 @@ export class PlayerImportComponent implements OnInit {
       url: `${serverURL}/Player/importVRPersonsCSV`,
       method: 'POST',
       file: this.file,
-      data: { },
-      headers: {Authorization: 'Bearer ' + this.authService.accessToken}
+      data: {},
+      headers: { Authorization: 'Bearer ' + this.authService.accessToken },
     };
     this.setState('uploading');
     this.uploadInput.emit(event);
   }
 
   pollStatus(): void {
-    this.jobStatusService.getStatus(PLAYER_IMPORT_ROUTE_ON_SERVER).subscribe(
-      data => {
+    this.jobStatusService
+      .getStatus(PLAYER_IMPORT_ROUTE_ON_SERVER)
+      .subscribe((data) => {
         this.importStatus = data;
-        if (this.importStatus.status === JobState.IN_PROGRESS  ) {
+        if (this.importStatus.status === JobState.IN_PROGRESS) {
           this.setState('processing');
           setTimeout(() => this.pollStatus(), 200);
         } else if (this.importStatus.status === JobState.DONE) {
           this.setState('done');
         }
-      }
-    );
+      });
   }
 
   setState(state: string) {
     this.state = state;
-    this.canSelectFile = !('uploading' === this.state || 'processing' === this.state);
+    this.canSelectFile = !(
+      'uploading' === this.state || 'processing' === this.state
+    );
     this.canUploadFile = this.state === 'selected';
   }
 }

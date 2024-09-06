@@ -1,102 +1,107 @@
-<div fxLayout="column" class="mat-elevation-z3 app-box">
-  <h2 fxFlexAlign="center">VR Player Importer</h2>
-  <p style="margin-left: 20px" *ngFor="let note of notes">{{note}}</p>
-  <mat-vertical-stepper class="mat-elevation-z1">
-    <mat-step>
-      <form >
-        <ng-template matStepLabel>Get VR Player Data Ready</ng-template>
-        <ul>
-          <li *ngFor="let instruction of step1">
-            {{instruction}}
-          </li>
-        </ul>
-        <mat-divider></mat-divider>
-        <div>
-          <button mat-button matStepperNext color="primary">Next</button>
-        </div>
-      </form>
-    </mat-step>
-    <mat-step [completed]="state == 'done'">
-      <form>
-        <ng-template matStepLabel>Upload and Process Player Data</ng-template>
-        <div>
-          <button mat-button color="primary" (click)="openFileChooser()">
-            <label disabled="!canSelectFile">Select VR All Persons File...</label>
-          </button>
-          <input id="fileToUpload" type="file" hidden
-                 ngFileSelect [options]="options"
-                 (uploadOutput)="onUploadOutput($event)"
-                 [uploadInput]="uploadInput" required
-                 [disabled]="!canSelectFile">
+<mat-card class="medium-tool">
+  <mat-card-header>
+    <mat-card-title>VR Player Importer</mat-card-title>
+  </mat-card-header>
+  <mat-card-content>
+    <div class="vertical-spacer-medium"></div>
+    <p *ngFor="let note of notes">{{note}}</p>
+    <mat-vertical-stepper class="mat-elevation-z1">
 
+      <!-- The first step just lays out the preparatory instructions. -->
+      <mat-step>
+        <form >
+          <ng-template matStepLabel>Get VR Player Data Ready</ng-template>
+          <ul>
+            <li *ngFor="let instruction of step1">
+              {{instruction}}
+            </li>
+          </ul>
+          <mat-divider></mat-divider>
           <div>
-            <button mat-button color="primary" type="button" (click)="startUpload()" [disabled]="!canUploadFile">
-              Import <span *ngIf="file">{{ file.name }}</span>...
-            </button>
+            <button mat-button matStepperNext>Next</button>
           </div>
-        </div>
-        <mat-card *ngIf='state == "uploading"'>
-          <mat-card-header class="mat-h3">Uploading file...</mat-card-header>
-          <mat-progress-bar
-            color="primary"
-            mode="determinate"
-            [value]="file.progress?.data?.percentage">
-          </mat-progress-bar>
+        </form>
+      </mat-step>
 
-          <div class="progress-text-content">
+      <!-- The second step prompts the user to supply a file of VR Player data. -->
+      <mat-step [completed]="state == 'done'">
+        <form>
+          <ng-template matStepLabel>Upload and Process Player Data</ng-template>
+          <div>
+            <button mat-button (click)="openFileChooser()">
+              <label disabled="!canSelectFile">Select VR All Persons File...</label>
+            </button>
+            <input id="fileToUpload" type="file" hidden
+                   ngFileSelect [options]="options"
+                   (uploadOutput)="onUploadOutput($event)"
+                   [uploadInput]="uploadInput" required
+                   [disabled]="!canSelectFile">
+            <div>
+              <button mat-button type="button" (click)="startUpload()" [disabled]="!canUploadFile">
+                Import <span *ngIf="file">{{ file.name }}</span>...
+              </button>
+            </div>
+          </div>
+          <mat-card *ngIf='state == "uploading"'>
+            <mat-card-header>Uploading file...</mat-card-header>
+            <mat-progress-bar
+              mode="determinate"
+              [value]="file.progress?.data?.percentage">
+            </mat-progress-bar>
+
+            <div class="progress-text-content">
                     <span class="progress-text" [class.is-done]="file?.progress?.data?.percentage === 100">
                       <span>{{ file.progress?.data?.percentage }}% </span>
                       <span *ngIf="file.progress?.data?.percentage !== 100">Uploading...</span>
                       <span *ngIf="file.progress?.data?.percentage === 100">Done</span>
                     </span>
-            <span class="speed-and-eta-text" *ngIf="file.progress?.data?.percentage !== 0 && file.progress?.data?.percentage !== 100">
+              <span class="speed-and-eta-text" *ngIf="file.progress?.data?.percentage !== 0 && file.progress?.data?.percentage !== 100">
                       <span>{{ file.progress?.data?.speedHuman }} </span>
                       <span>ETA {{ file.progress?.data?.etaHuman }}</span>
                     </span>
-          </div>
-        </mat-card>
-        <mat-card *ngIf="state == 'processing'">
-          <mat-card-header class="mat-h3">File uploaded, now processing players...</mat-card-header>
-          <mat-card-content>
-            <div fxLayout="row" fxLayoutAlign="space-between center">
-              <div>Done: {{importStatus.counters['done']}}</div>
-              <div class="fill-remaining-space"></div>
-              <div>To Do: {{importStatus.toDo}}</div>
             </div>
-            <mat-progress-bar
-              color="primary"
-              mode="determinate"
-              [value]="importStatus.percentComplete">
-            </mat-progress-bar>
-          </mat-card-content>
-        </mat-card>
-        <mat-card *ngIf="state == 'error'">
-          <mat-card-header class="mat-h3">Error uploading file...</mat-card-header>
-          <mat-card-content>
-            {{file.response.message}}
-          </mat-card-content>
-        </mat-card>
+          </mat-card>
+          <mat-card *ngIf="state == 'processing'">
+            <mat-card-header>File uploaded, now processing players...</mat-card-header>
+            <mat-card-content>
+              <div class="flex-row flex-align-center flex-justify-space-between">
+                <div>Done: {{importStatus.counters['done']}}</div>
+                <div class="fill-remaining-space"></div>
+                <div>To Do: {{importStatus.toDo}}</div>
+              </div>
+              <mat-progress-bar
+                mode="determinate"
+                [value]="importStatus.percentComplete">
+              </mat-progress-bar>
+            </mat-card-content>
+          </mat-card>
+          <mat-card *ngIf="state == 'error'">
+            <mat-card-header>Error uploading file...</mat-card-header>
+            <mat-card-content>
+              {{file.response.message}}
+            </mat-card-content>
+          </mat-card>
+          <mat-divider></mat-divider>
+          <div>
+            <button mat-button matStepperPrevious>Previous</button>
+            <button mat-button matStepperNext [disabled]="state != 'done'">Next</button>
+          </div>
+        </form>
+      </mat-step>
+
+      <!-- The final step is guidance on cleaning up private information. -->
+      <mat-step>
+        <ng-template matStepLabel>Tidy Up</ng-template>
+        <ul>
+          <li *ngFor="let instruction of step3">
+            {{instruction}}
+          </li>
+        </ul>
         <mat-divider></mat-divider>
         <div>
-          <button mat-button matStepperPrevious color="primary">Previous</button>
-          <button mat-button matStepperNext color="primary" [disabled]="state != 'done'">Next</button>
+          <button mat-button matStepperPrevious>Previous</button>
         </div>
-
-      </form>
-    </mat-step>
-
-    <mat-step>
-      <ng-template matStepLabel>Tidy Up</ng-template>
-      <ul>
-        <li *ngFor="let instruction of step3" i = index>
-          {{instruction}}
-        </li>
-      </ul>
-      <mat-divider></mat-divider>
-      <div>
-        <button mat-button matStepperPrevious color="primary">Previous</button>
-      </div>
-    </mat-step>
-  </mat-vertical-stepper>
-
-</div>
+      </mat-step>
+    </mat-vertical-stepper>
+  </mat-card-content>
+</mat-card>

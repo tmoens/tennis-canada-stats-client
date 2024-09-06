@@ -5,13 +5,12 @@ export class VRLicense {
 
 export class LicenseUpdate {
   licenseName: string;
-  originalProvince;
-  currentProvince;
+  originalProvince: string;
+  currentProvince: string;
 
   constructor(license: VRLicense) {
     this.licenseName = license.licenseName;
     this.originalProvince = license.province;
     this.currentProvince = license.province;
   }
-
 }

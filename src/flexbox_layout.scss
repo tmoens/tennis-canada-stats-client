@@ -1,0 +1,64 @@
+/* flexbox.css */
+
+/* Display Flex */
+.flex {
+  display: flex;
+}
+
+/* Flex Direction */
+.flex-column {
+  display: flex;
+  flex-direction: column;
+}
+
+.flex-row {
+  display: flex;
+  flex-direction: row;
+}
+
+/* Gap */
+.gap-10 {
+  gap: 10px;
+}
+
+.gap-20 {
+  gap: 20px;
+}
+
+.gap-30 {
+  gap: 30px;
+}
+
+/* Fill remaining space */
+.fill-remaining-space {
+  flex: 1 1 auto;
+}
+
+/* Alignment */
+.flex-align-center {
+  align-items: center;
+}
+
+.flex-align-start{
+  align-items: flex-start;
+}
+
+.flex-justify-center {
+  justify-content: center;
+}
+
+.flex-justify-start {
+  justify-content: start;
+}
+
+.flex-justify-space-between {
+  justify-content: space-between;
+}
+
+.flex-20-percent {
+  flex-basis: 20%;
+}
+
+.flex-35-percent {
+  flex-basis: 35%;
+}
